@@ -3,7 +3,6 @@ import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 plugins {
     kotlin("jvm")
     id("org.jetbrains.compose")
-    id("nebula.lint") version "17.8.0"
 }
 
 group = "org.team11.bdsm.graphs"

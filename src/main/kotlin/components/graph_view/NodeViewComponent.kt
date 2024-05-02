@@ -25,12 +25,12 @@ import kotlin.math.roundToInt
 
 @Composable
 @Preview
-fun <D> NodeViewComponent(nodeView: NodeView<D>) {
-    var offset by remember { mutableStateOf(nodeView.offset - Offset(x = nodeView.radius, y = nodeView.radius)) }
+fun <D> NodeViewComponent(nodeView: NodeView<D>, mainOffset: Offset) {
+    var offset by remember { mutableStateOf(nodeView.offset) }
 
     Box(
         Modifier
-            .offset { IntOffset(offset.x.roundToInt(), offset.y.roundToInt()) }
+            .offset { IntOffset((offset.x - mainOffset.x).roundToInt(), (offset.y - mainOffset.y).roundToInt())}
             .background(Color.Blue, shape = CircleShape)
             .size(nodeView.radius.dp)
             .pointerInput(Unit) {

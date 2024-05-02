@@ -2,53 +2,56 @@ package components.graph_view
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.IntOffset
-import androidx.compose.ui.unit.dp
-import data.Graph
-import kotlin.math.roundToInt
 
 @Composable
 @Preview
-fun <D> GrahpViewComponent(graph: Graph<D>) {
+fun <D> GrahpViewComponent(gv: GrahpView<D>, showNodes: Boolean = true) {
 
-    var gv = GrahpView<D>(graph)
+    var mainOffset by remember { mutableStateOf(Offset(x = 0f, y = 0f)) }
 
-    var selected = -1
+    var gv by remember { mutableStateOf(gv) }
+
+    // Idk why exactly this formula, but it works
+    var sensivity by remember { mutableStateOf(0.2f / gv.nodesViews.size) }
 
     Box(modifier = Modifier.fillMaxSize()) {
 
-        Canvas(modifier = Modifier.fillMaxSize()) {
+        Canvas(modifier = Modifier
+            .fillMaxSize()
+            .pointerInput(Unit) {
+                detectDragGestures { change, dragAmount ->
+                    change.consume()
+                    for (nodeView in gv.nodesViews) {
+                        mainOffset -= dragAmount * sensivity
+                    }
+                }
+            }) {
             for (i in gv.vertViews) {
                 drawLine(
                     color = i.color,
-                    start = i.start.offset + Offset(x = i.start.radius, y = i.start.radius),
-                    end = i.end.offset + Offset(x = i.end.radius, y = i.end.radius)
+                    start = i.start.offset + Offset(x = i.start.radius, y = i.start.radius) - mainOffset,
+                    end = i.end.offset + Offset(x = i.end.radius, y = i.start.radius) - mainOffset,
+                    alpha = i.alpha
                 )
+                // println(i.start.offset)
+                // println(i.end.offset)
             }
         }
-
-        for (i in gv.nodesViews) {
-            NodeViewComponent(i.value)
+        if (showNodes) {
+            for (i in gv.nodesViews) {
+                NodeViewComponent(i.value, mainOffset = mainOffset)
+            }
         }
     }
 }

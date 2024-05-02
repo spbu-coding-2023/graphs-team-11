@@ -1,5 +1,13 @@
 package data.algoritms
 
-class DemonAlgoritm: Algoritm() {
+abstract class DemonAlgoritm: Algoritm() {
+    override fun alogRun() {
+        println("Demon")
+    }
+}
 
+class Floyd: DemonAlgoritm() {
+    override fun alogRun() {
+        println("Floyd")
+    }
 }

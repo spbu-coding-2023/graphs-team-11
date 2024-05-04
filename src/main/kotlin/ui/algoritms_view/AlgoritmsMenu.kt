@@ -18,11 +18,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
+import ui.graph_view.GrahpView
+import ui.graph_view.graph_view_actions.NodeViewUpdate
 import kotlin.reflect.full.createInstance
 
 @Composable
 @Preview
-fun AlgorithmMenu() {
+fun <D>AlgorithmMenu(grahpView: GrahpView<D>) {
     val menuWidth = 200.dp
     var menuVisible by remember { mutableStateOf(true) }
     val density = LocalDensity.current
@@ -40,7 +42,7 @@ fun AlgorithmMenu() {
                 modifier = Modifier.width(menuWidth).fillMaxHeight(),
                 shape = RoundedCornerShape(topEnd = 12.dp, bottomEnd = 12.dp)
             ) {
-                AlgoritmList()
+                AlgoritmList(grahpView)
             }
         }
         Icon(imageVector = if (menuVisible) Icons.AutoMirrored.Filled.KeyboardArrowLeft
@@ -54,9 +56,10 @@ fun AlgorithmMenu() {
 
 @Composable
 @Stable
-fun AlgoritmList() {
+fun <D>AlgoritmList(grahpView: GrahpView<D>) {
 
     val algo = AlgoritmFinder()
+
 
     Column(
         modifier = Modifier.fillMaxSize()
@@ -71,7 +74,10 @@ fun AlgoritmList() {
                 val runAlgo = i.members.single { it.name == "alogRun" }
                 val algoExpample = i.createInstance()
 
-                runAlgo.call(algoExpample)
+                val update = runAlgo.call(algoExpample, grahpView.graph) as MutableMap<D, NodeViewUpdate<D>>
+
+                grahpView.applyAction(update)
+                println(grahpView.nodesViews)
             })
 
         }

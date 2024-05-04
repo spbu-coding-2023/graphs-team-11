@@ -11,6 +11,9 @@ class AlgoritmFinder(
     init {
         val allAlgoritms = getAll("data.algoritms")
         for (i in allAlgoritms) {
+            i.supertypes.forEach { print(it)
+            print(" ")}
+            println()
             if (i.toString() == "class data.algoritms.DemonAlgoritm") continue
             for (j in i.supertypes) {
                 if (j.toString() == "data.algoritms.Algoritm") {
@@ -23,21 +26,22 @@ class AlgoritmFinder(
                 }
             }
         }
+        println(algoritms)
     }
 
     fun getAll(packageName: String): MutableList<KClass<*>> {
         var classLoader = ClassLoader.getSystemClassLoader().getResourceAsStream(packageName.replace(".", "/"))
-        var reader: BufferedReader = BufferedReader(InputStreamReader(classLoader!!))
+        var reader = BufferedReader(InputStreamReader(classLoader!!))
 
         var readerNew = reader
             .lines()
             .filter {line -> line.endsWith(".class")}
             .map { line -> getClass(line, packageName) }
-
         var endArray: MutableList<KClass<*>> = mutableListOf()
         for (i in readerNew) {
             endArray.add(i)
         }
+        println(endArray)
         return endArray
     }
 

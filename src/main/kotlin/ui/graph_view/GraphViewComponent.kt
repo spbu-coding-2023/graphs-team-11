@@ -4,6 +4,7 @@ import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -12,20 +13,54 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
 
 @Composable
 @Preview
-fun <D> GrahpViewComponent(gv: GrahpView<D>, showNodes: Boolean = true) {
+fun <D> GrahpViewComponent(gv: GrahpView<D>, showNodes: Boolean = true, pading: Int = 30) {
 
     var mainOffset by remember { mutableStateOf(Offset(x = 0f, y = 0f)) }
+
+    val localDensity = LocalDensity.current
+    var height by remember { mutableStateOf(844) }
+    var width by remember { mutableStateOf(834) }
+
+    var toAbsoluteOffset = { offset: Offset ->
+        Offset(x = pading + offset.x * (width - 2 * pading) / 2 + (width - 2 * pading) / 2,
+            y = pading + offset.y * (height - 2 * pading) / 2 + (height - 2 * pading) / 2)
+    }
+    var toNotAbsoluteOffset = {offset: Offset ->
+        Offset(x = (offset.x - pading - (width - 2 * pading) / 2) / (width - 2 * pading) * 2,
+            y = (offset.y - pading - (height - 2 * pading) / 2) / (height - 2 * pading) * 2)
+    }
 
     var gv by remember { mutableStateOf(gv) }
 
     // Idk why exactly this formula, but it works
     var sensivity by remember { mutableStateOf(0.2f / gv.nodesViews.size) }
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    BoxWithConstraints(modifier = Modifier
+        .fillMaxSize()
+        .onSizeChanged { coordinates ->
+            height = with(localDensity) {coordinates.height}
+            width = with(localDensity) {coordinates.width}
+
+            toAbsoluteOffset = { offset: Offset ->
+                Offset(x = pading + offset.x * (width - 2 * pading) / 2 + (width - 2 * pading) / 2,
+                    y = pading + offset.y * (height - 2 * pading) / 2 + (height - 2 * pading) / 2)
+            }
+            toNotAbsoluteOffset = {offset: Offset ->
+                Offset(x = (offset.x - pading - (width - 2 * pading) / 2) / (width - 2 * pading) * 2,
+                    y = (offset.y - pading - (height - 2 * pading) / 2) / (height - 2 * pading) * 2)
+            }
+
+
+
+        }) {
 
         Canvas(modifier = Modifier
             .fillMaxSize()
@@ -38,11 +73,12 @@ fun <D> GrahpViewComponent(gv: GrahpView<D>, showNodes: Boolean = true) {
                 }
             }) {
             for (i in gv.vertViews) {
+
                 drawLine(
                     color = i.color,
-                    start = i.start.offset + Offset(x = i.start.radius, y = i.start.radius) - mainOffset,
-                    end = i.end.offset + Offset(x = i.end.radius, y = i.start.radius) - mainOffset,
-                    alpha = i.alpha
+                    start = toAbsoluteOffset(i.start.offset) + Offset(x = i.start.radius, y = i.start.radius) - mainOffset,
+                    end = toAbsoluteOffset(i.end.offset) + Offset(x = i.end.radius, y = i.end.radius) - mainOffset,
+                    alpha = i.alpha,
                 )
                 // println(i.start.offset)
                 // println(i.end.offset)
@@ -50,7 +86,8 @@ fun <D> GrahpViewComponent(gv: GrahpView<D>, showNodes: Boolean = true) {
         }
         if (showNodes) {
             for (i in gv.nodesViews) {
-                NodeViewComponent(i.value, mainOffset = mainOffset)
+                NodeViewComponent(i.value, mainOffset = mainOffset, toAbsoluteOffset = toAbsoluteOffset, toNotAbsoluteOffset = toNotAbsoluteOffset)
+                // println(Pair(width, height))
             }
         }
     }

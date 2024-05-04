@@ -5,11 +5,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 
 data class NodeViewUpdate<D>(
-    var offset: Offset?,
+    var offset: Offset? = null,
     var deltaOffset: Offset = Offset(x = 0f, y = 0f),
 
-    var radius: Float?,
-    var color: Color?,
-    var value: D?,
-    var shape: Shape?
+    var radius: Float? = null,
+    var color: Color? = null,
+    var value: D? = null,
+    var shape: Shape? = null,
+    var alpha: Float? = null
 ) {}

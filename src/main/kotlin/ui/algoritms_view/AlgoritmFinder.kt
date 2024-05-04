@@ -1,12 +1,8 @@
-package components.algoritms_view
+package ui.algoritms_view
 
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import kotlin.reflect.KClass
-import kotlin.reflect.full.createInstance
-
-import data.algoritms.Algoritm
-import kotlin.reflect.full.isSubclassOf
 
 class AlgoritmFinder(
     var algoritms: MutableList<KClass<*>> = mutableListOf(),

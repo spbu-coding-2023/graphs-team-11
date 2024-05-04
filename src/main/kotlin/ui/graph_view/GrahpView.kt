@@ -1,10 +1,10 @@
-package components.graph_view
+package ui.graph_view
 
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
-import components.graph_view.graph_view_actions.NodeViewUpdate
+import ui.graph_view.graph_view_actions.NodeViewUpdate
 import data.Graph
 import kotlin.math.sqrt
 import kotlin.random.Random

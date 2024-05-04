@@ -1,4 +1,4 @@
-package components.algoritms_view
+package ui.algoritms_view
 
 import androidx.compose.animation.*
 import androidx.compose.desktop.ui.tooling.preview.Preview

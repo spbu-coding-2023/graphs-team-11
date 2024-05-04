@@ -1,4 +1,4 @@
-package components.graph_view.graph_view_actions
+package ui.graph_view.graph_view_actions
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color

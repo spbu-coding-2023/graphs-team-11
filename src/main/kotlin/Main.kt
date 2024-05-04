@@ -4,9 +4,9 @@ import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
-import components.algoritms_view.AlgorithmMenu
-import components.graph_view.GrahpView
-import components.graph_view.GrahpViewComponent
+import ui.algoritms_view.AlgorithmMenu
+import ui.graph_view.GrahpView
+import ui.graph_view.GrahpViewComponent
 import data.tools.graphGenerators.flowerSnark
 
 @Composable

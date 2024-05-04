@@ -1,4 +1,4 @@
-package components.graph_view
+package ui.graph_view
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.Canvas

@@ -1,60 +1,73 @@
 package ui.graph_view
 
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import ui.graph_view.graph_view_actions.NodeViewUpdate
 import data.Graph
-import kotlinx.coroutines.delay
-import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.sqrt
 import kotlin.random.Random
 
-data class NodeView<D>(var offset: Offset, var radius: Float, var color: Color, var value: D, var shape: Shape, var alpha: Float = 1f)
+class NodeView<D>(
+    var offset: Offset, var radius: Float, var color: Color, var value: D, var shape: Shape, var alpha: Float = 1f
+) {
+    fun applyUpdate(update: NodeViewUpdate<D>): NodeView<D> {
+        return NodeView(
+            offset = update.offset ?: this.offset,
+            radius = update.radius ?: this.radius,
+            color = update.color ?: this.color,
+            value = this.value, // value should not be updated
+            shape = update.shape ?: this.shape,
+            alpha = update.alpha ?: this.alpha
+        )
+    }
+}
+
 data class VertView<D>(var start: NodeView<D>, var end: NodeView<D>, var color: Color, var alpha: Float = 1f)
 
-class GrahpView<D>(var graph: Graph<D>,
-                   var radius: Float = 10f,
-                   var nodeColor: Color = Color.Blue,
-                   var vertColor: Color = Color.Red,
-                   var baseShape: Shape = CircleShape,
-                   var nodesViews: MutableMap<D, NodeView<D>> =  mutableMapOf(),
-                   var vertViews: MutableList<VertView<D>> = mutableListOf()) {
+class GrahpView<D>(
+    var graph: Graph<D>,
+    var radius: Float = 10f,
+    var nodeColor: Color = Color.Blue,
+    var vertColor: Color = Color.Red,
+    var baseShape: Shape = CircleShape,
+    nodesViews: MutableMap<D, NodeView<D>> = mutableMapOf(),
+    var vertViews: MutableList<VertView<D>> = mutableListOf()
+) {
+
+    var nodesViews by mutableStateOf(nodesViews)
+        private set
 
     init {
         var positions = FA2Layout()
         for (i in positions) {
             nodesViews[i.key] = NodeView(
-                offset = positions[i.key]!!,
-                radius = radius,
-                color = nodeColor,
-                value = i.key,
-                shape = baseShape)
+                offset = positions[i.key]!!, radius = radius, color = nodeColor, value = i.key, shape = baseShape
+            )
         }
         for (i in graph.vertices) {
             for (j in i.value) {
                 vertViews.add(
-                    VertView(start = nodesViews[i.key]!!,
-                    end = nodesViews[j.first]!!,
-                    color = vertColor,
-                        alpha = 0.5f)
+                    VertView(
+                        start = nodesViews[i.key]!!, end = nodesViews[j.first]!!, color = vertColor, alpha = 0.5f
+                    )
                 )
             }
         }
     }
+
     fun applyAction(action: MutableMap<D, NodeViewUpdate<D>>) {
-        for (v in action) {
-            nodesViews[v.key]!!.offset = if (v.value.offset == null) nodesViews[v.key]!!.offset else v.value.offset!!
-            nodesViews[v.key]!!.radius = if (v.value.radius == null) nodesViews[v.key]!!.radius else v.value.radius!!
-            nodesViews[v.key]!!.color = if (v.value.color == null) nodesViews[v.key]!!.color else v.value.color!!
-            nodesViews[v.key]!!.value = nodesViews[v.key]!!.value
-            nodesViews[v.key]!!.shape = if (v.value.shape == null) nodesViews[v.key]!!.shape else v.value.shape!!
-            nodesViews[v.key]!!.alpha = if (v.value.alpha == null) nodesViews[v.key]!!.alpha else v.value.alpha!!
-            // println(v.value)
-            // println(nodesViews[v.key])
+        nodesViews = nodesViews.toMutableMap().apply {
+            for ((key, update) in action) {
+                val nodeView = get(key) ?: continue // Skip if node does not exist
+                this[key] = nodeView.applyUpdate(update)
+            }
         }
     }
 
@@ -67,8 +80,8 @@ class GrahpView<D>(var graph: Graph<D>,
         val C = 1 / sqrt(graph.vertices.size.toFloat())
         val k = C * sqrt(4f / graph.vertices.size)
 
-        val atr = {x: Float, y: Float -> - C * y * k * k / x}
-        val retr = {x: Float, y: Float, z: Float -> ((x - k) / y) - atr(x, z)}
+        val atr = { x: Float, y: Float -> -C * y * k * k / x }
+        val retr = { x: Float, y: Float, z: Float -> ((x - k) / y) - atr(x, z) }
 
         for (i in this.graph.vertices) {
             // Create different window size
@@ -94,20 +107,21 @@ class GrahpView<D>(var graph: Graph<D>,
                 }
                 for (u in v.value) {
                     var delta = positions[u.first]!! - positions[v.key]!!
-                    disp += delta / abs(delta) * retr(abs(delta), v.value.size.toFloat(), abs(positions[u.first]!!)).toFloat()
+                    disp += delta / abs(delta) * retr(
+                        abs(delta), v.value.size.toFloat(), abs(positions[u.first]!!)
+                    ).toFloat()
                 }
 
                 if (!abs(disp).isNaN()) {
                     positions[v.key] = positions[v.key]!! + disp / abs(disp) * min(abs(disp), t.toFloat())
 
                     positions[v.key] = Offset(
-                        x = min(1f, max(-1f, positions[v.key]!!.x)),
-                        y = min(1f, max(-1f, positions[v.key]!!.y))
+                        x = min(1f, max(-1f, positions[v.key]!!.x)), y = min(1f, max(-1f, positions[v.key]!!.y))
                     )
                 }
 
-                    val delta = positions[v.key]!! - oldPos[v.key]!!
-                    if (abs(delta) > k * t) convered = 0
+                val delta = positions[v.key]!! - oldPos[v.key]!!
+                if (abs(delta) > k * t) convered = 0
             }
 
             t *= (1 - 1 / iterations)
@@ -141,5 +155,5 @@ class GrahpView<D>(var graph: Graph<D>,
 
 fun abs(offset: Offset): Float {
     var t = sqrt(offset.x * offset.x + offset.y * offset.y)
-    return t.toFloat()
+    return t
 }

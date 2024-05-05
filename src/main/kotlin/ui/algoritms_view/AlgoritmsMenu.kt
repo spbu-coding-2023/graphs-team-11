@@ -69,17 +69,16 @@ fun <D>AlgoritmList(grahpView: GrahpView<D>) {
         Text(text = "Algorithms")
         Divider(color = Color.Black, modifier = Modifier.fillMaxWidth(0.3f))
         for (i in algo.algoritms) {
-            Text(text = i.simpleName.toString(), modifier = Modifier.clickable() {
-                // i.members.forEach { println(it.name)}
-                val runAlgo = i.members.single { it.name == "alogRun" }
-                val algoExpample = i.createInstance()
+            Text(text = i.simpleName.toString(), modifier = Modifier.clickable(
+                onClick = {
+                    val runAlgo = i.members.single { it.name == "alogRun" }
+                    val algoExpample = i.createInstance()
 
-                val update = runAlgo.call(algoExpample, grahpView.graph) as MutableMap<D, NodeViewUpdate<D>>
+                    val update = runAlgo.call(algoExpample, grahpView.graph) as MutableMap<D, NodeViewUpdate<D>>
 
-                grahpView.applyAction(update)
-                println(grahpView.nodesViews)
-            })
-
+                    grahpView.applyAction(update)
+                }
+            ).offset(10.dp))
         }
     }
 }

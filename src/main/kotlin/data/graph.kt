@@ -36,4 +36,22 @@ open class Graph<D> {
         }
     }
 
+    fun reverse(): Graph<D> {
+        val reversedGraph = Graph<D>()
+
+        // Add all nodes to the reversed graph
+        for ((node, _) in vertices) {
+            reversedGraph.addNode(node)
+        }
+
+        // Add reversed edges to the reversed graph
+        for ((source, neighbors) in vertices) {
+            for ((target, weight) in neighbors) {
+                reversedGraph.addVertice(target, source, weight)
+            }
+        }
+
+        return reversedGraph
+    }
+
 }

@@ -14,20 +14,9 @@ import kotlin.math.min
 import kotlin.math.sqrt
 import kotlin.random.Random
 
-class NodeView<D>(
+data class NodeView<D>(
     var offset: Offset, var radius: Float, var color: Color, var value: D, var shape: Shape, var alpha: Float = 1f
-) {
-    fun applyUpdate(update: NodeViewUpdate<D>): NodeView<D> {
-        return NodeView(
-            offset = update.offset ?: this.offset,
-            radius = update.radius ?: this.radius,
-            color = update.color ?: this.color,
-            value = this.value, // value should not be updated
-            shape = update.shape ?: this.shape,
-            alpha = update.alpha ?: this.alpha
-        )
-    }
-}
+)
 
 data class VertView<D>(var start: NodeView<D>, var end: NodeView<D>, var color: Color, var alpha: Float = 1f)
 
@@ -63,11 +52,13 @@ class GrahpView<D>(
     }
 
     fun applyAction(action: MutableMap<D, NodeViewUpdate<D>>) {
-        nodesViews = nodesViews.toMutableMap().apply {
-            for ((key, update) in action) {
-                val nodeView = get(key) ?: continue // Skip if node does not exist
-                this[key] = nodeView.applyUpdate(update)
-            }
+        for (v in action) {
+            nodesViews[v.key]!!.offset = if (v.value.offset == null) nodesViews[v.key]!!.offset else v.value.offset!!
+            nodesViews[v.key]!!.radius = if (v.value.radius == null) nodesViews[v.key]!!.radius else v.value.radius!!
+            nodesViews[v.key]!!.color = if (v.value.color == null) nodesViews[v.key]!!.color else v.value.color!!
+            nodesViews[v.key]!!.value = nodesViews[v.key]!!.value
+            nodesViews[v.key]!!.shape = if (v.value.shape == null) nodesViews[v.key]!!.shape else v.value.shape!!
+            nodesViews[v.key]!!.alpha = if (v.value.alpha == null) nodesViews[v.key]!!.alpha else v.value.alpha!!
         }
     }
 

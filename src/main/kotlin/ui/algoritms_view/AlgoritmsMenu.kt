@@ -24,7 +24,7 @@ import kotlin.reflect.full.createInstance
 
 @Composable
 @Preview
-fun <D>AlgorithmMenu(grahpView: GrahpView<D>) {
+fun <D>AlgorithmMenu(grahpView: GrahpView<D>, changedAlgo : MutableState<Boolean>) {
     val menuWidth = 200.dp
     var menuVisible by remember { mutableStateOf(true) }
     val density = LocalDensity.current
@@ -42,7 +42,7 @@ fun <D>AlgorithmMenu(grahpView: GrahpView<D>) {
                 modifier = Modifier.width(menuWidth).fillMaxHeight(),
                 shape = RoundedCornerShape(topEnd = 12.dp, bottomEnd = 12.dp)
             ) {
-                AlgoritmList(grahpView)
+                AlgoritmList(grahpView, changedAlgo)
             }
         }
         Icon(imageVector = if (menuVisible) Icons.AutoMirrored.Filled.KeyboardArrowLeft
@@ -56,10 +56,9 @@ fun <D>AlgorithmMenu(grahpView: GrahpView<D>) {
 
 @Composable
 @Stable
-fun <D>AlgoritmList(grahpView: GrahpView<D>) {
+fun <D>AlgoritmList(grahpView: GrahpView<D>, changedAlgo : MutableState<Boolean>) {
 
     val algo = AlgoritmFinder()
-
 
     Column(
         modifier = Modifier.fillMaxSize()
@@ -77,6 +76,8 @@ fun <D>AlgoritmList(grahpView: GrahpView<D>) {
                     val update = runAlgo.call(algoExpample, grahpView.graph) as MutableMap<D, NodeViewUpdate<D>>
 
                     grahpView.applyAction(update)
+
+                    changedAlgo.value = true
                 }
             ).offset(10.dp))
         }

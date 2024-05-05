@@ -6,11 +6,7 @@ import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
@@ -21,8 +17,12 @@ import androidx.compose.ui.platform.LocalDensity
 
 @Composable
 @Preview
-fun <D> GrahpViewComponent(gv: GrahpView<D>, showNodes: Boolean = true, pading: Int = 30) {
-
+fun <D> GrahpViewComponent(gv: GrahpView<D>, showNodes: Boolean = true,changedAlgo: MutableState<Boolean>,
+        pading:
+Int = 30) {
+    if (changedAlgo.value) {
+        changedAlgo.value = false
+    }
     var mainOffset by remember { mutableStateOf(Offset(x = 0f, y = 0f)) }
 
     val localDensity = LocalDensity.current
@@ -37,9 +37,6 @@ fun <D> GrahpViewComponent(gv: GrahpView<D>, showNodes: Boolean = true, pading: 
         Offset(x = (offset.x - pading - (width - 2 * pading) / 2) / (width - 2 * pading) * 2,
             y = (offset.y - pading - (height - 2 * pading) / 2) / (height - 2 * pading) * 2)
     }
-
-    var gv by remember { mutableStateOf(gv) }
-
     // Idk why exactly this formula, but it works
     var sensivity by remember { mutableStateOf(0.2f / gv.nodesViews.size) }
 

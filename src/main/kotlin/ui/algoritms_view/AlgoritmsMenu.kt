@@ -18,13 +18,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
-import ui.graph_view.GrahpView
+import ui.graph_view.GrahpViewClass
 import ui.graph_view.graph_view_actions.NodeViewUpdate
 import kotlin.reflect.full.createInstance
 
 @Composable
 @Preview
-fun <D>AlgorithmMenu(grahpView: GrahpView<D>, changedAlgo : MutableState<Boolean>) {
+fun <D> AlgorithmMenu(grahpViewClass: GrahpViewClass<D>, changedAlgo: MutableState<Boolean>) {
     val menuWidth = 200.dp
     var menuVisible by remember { mutableStateOf(true) }
     val density = LocalDensity.current
@@ -42,7 +42,7 @@ fun <D>AlgorithmMenu(grahpView: GrahpView<D>, changedAlgo : MutableState<Boolean
                 modifier = Modifier.width(menuWidth).fillMaxHeight(),
                 shape = RoundedCornerShape(topEnd = 12.dp, bottomEnd = 12.dp)
             ) {
-                AlgoritmList(grahpView, changedAlgo)
+                AlgoritmList(grahpViewClass, changedAlgo)
             }
         }
         Icon(imageVector = if (menuVisible) Icons.AutoMirrored.Filled.KeyboardArrowLeft
@@ -56,30 +56,28 @@ fun <D>AlgorithmMenu(grahpView: GrahpView<D>, changedAlgo : MutableState<Boolean
 
 @Composable
 @Stable
-fun <D>AlgoritmList(grahpView: GrahpView<D>, changedAlgo : MutableState<Boolean>) {
+fun <D> AlgoritmList(grahpViewClass: GrahpViewClass<D>, changedAlgo: MutableState<Boolean>) {
 
     val algo = AlgoritmFinder()
 
     Column(
-        modifier = Modifier.fillMaxSize()
-            .background(Color.LightGray).padding(8.dp).verticalScroll(rememberScrollState()),
+        modifier = Modifier.fillMaxSize().background(Color.LightGray).padding(8.dp)
+            .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.Top,
     ) {
         Text(text = "Algorithms")
         Divider(color = Color.Black, modifier = Modifier.fillMaxWidth(0.3f))
         for (i in algo.algoritms) {
-            Text(text = i.simpleName.toString(), modifier = Modifier.clickable(
-                onClick = {
-                    val runAlgo = i.members.single { it.name == "alogRun" }
-                    val algoExpample = i.createInstance()
+            Text(text = i.simpleName.toString(), modifier = Modifier.clickable(onClick = {
+                val runAlgo = i.members.single { it.name == "alogRun" }
+                val algoExpample = i.createInstance()
 
-                    val update = runAlgo.call(algoExpample, grahpView.graph) as MutableMap<D, NodeViewUpdate<D>>
+                val update = runAlgo.call(algoExpample, grahpViewClass.graph) as MutableMap<D, NodeViewUpdate<D>>
 
-                    grahpView.applyAction(update)
+                grahpViewClass.applyAction(update)
 
-                    changedAlgo.value = true
-                }
-            ).offset(10.dp))
+                changedAlgo.value = true
+            }).offset(10.dp))
         }
     }
 }

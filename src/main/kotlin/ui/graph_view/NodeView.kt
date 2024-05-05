@@ -18,7 +18,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.onPlaced
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntOffset
@@ -27,17 +26,19 @@ import kotlin.math.roundToInt
 
 @Composable
 @Preview
-fun <D> NodeViewComponent(nodeView: NodeView<D>, mainOffset: Offset, toAbsoluteOffset: (Offset) -> Offset, toNotAbsoluteOffset: (Offset) -> Offset) {
+fun <D> NodeView(
+    nodeView: NodeView<D>,
+    mainOffset: Offset,
+    toAbsoluteOffset: (Offset) -> Offset,
+    toNotAbsoluteOffset: (Offset) -> Offset
+) {
 
 
     var offset by remember { mutableStateOf(toAbsoluteOffset(nodeView.offset)) }
 
     Box(
-        Modifier
-            .offset { IntOffset((offset.x - mainOffset.x).roundToInt(), (offset.y - mainOffset.y).roundToInt())}
-            .background(nodeView.color, shape = CircleShape)
-            .size(nodeView.radius.dp)
-            .pointerInput(Unit) {
+        Modifier.offset { IntOffset((offset.x - mainOffset.x).roundToInt(), (offset.y - mainOffset.y).roundToInt()) }
+            .background(nodeView.color, shape = CircleShape).size(nodeView.radius.dp).pointerInput(Unit) {
                 detectDragGestures { change, dragAmount ->
                     change.consume()
 
@@ -50,8 +51,6 @@ fun <D> NodeViewComponent(nodeView: NodeView<D>, mainOffset: Offset, toAbsoluteO
                     // println(toNotAbsoluteOffset(Offset(x = width / 2f, y = height / 2f)))
                     // println(nodeView.offset)
                 }
-            }
-            .onPlaced { offset = toAbsoluteOffset(nodeView.offset) },
-        contentAlignment = Alignment.Center
+            }.onPlaced { offset = toAbsoluteOffset(nodeView.offset) }, contentAlignment = Alignment.Center
     ) { Text(text = nodeView.value.toString(), color = Color.Yellow, textAlign = TextAlign.Center) }
 }

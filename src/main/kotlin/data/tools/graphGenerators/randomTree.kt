@@ -3,7 +3,7 @@ package data.tools.graphGenerators
 import data.Graph
 import kotlin.random.Random
 
-fun randomTree(n: Int): Graph<Int>{
+fun randomTree(n: Int): Graph<Int> {
     val graph = Graph<Int>()
 
     graph.addNode(0)

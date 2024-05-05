@@ -5,9 +5,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import ui.algoritms_view.AlgorithmMenu
+import ui.graph_view.GrahpViewClass
 import ui.graph_view.GrahpView
-import ui.graph_view.GrahpViewComponent
-import data.tools.graphGenerators.flowerSnark
 import data.tools.graphGenerators.randomTree
 
 @Composable
@@ -16,15 +15,15 @@ fun App() {
 
     val g = randomTree(10)
 
-    val gv = GrahpView(g)
+    val gv = GrahpViewClass(g)
     val changedAlgo = remember { mutableStateOf(false) }
 
     MaterialTheme {
-        Row{
+        Row {
             AlgorithmMenu(gv, changedAlgo)
 
             Card {
-                GrahpViewComponent(gv, showNodes = true, changedAlgo)
+                GrahpView(gv, showNodes = true, changedAlgo)
             }
         }
     }

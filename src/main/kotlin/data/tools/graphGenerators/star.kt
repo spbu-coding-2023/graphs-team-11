@@ -2,7 +2,7 @@ package data.tools.graphGenerators
 
 import data.Graph
 
-fun starDirected(n: Int): Graph<Int>{
+fun starDirected(n: Int): Graph<Int> {
     val graph = Graph<Int>()
 
     graph.addNode(0)
@@ -15,7 +15,7 @@ fun starDirected(n: Int): Graph<Int>{
     return graph
 }
 
-fun starUndirected(n: Int): Graph<Int>{
+fun starUndirected(n: Int): Graph<Int> {
     val graph = Graph<Int>()
 
     graph.addNode(0)

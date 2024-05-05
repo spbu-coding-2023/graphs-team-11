@@ -20,7 +20,7 @@ data class NodeView<D>(
 
 data class VertView<D>(var start: NodeView<D>, var end: NodeView<D>, var color: Color, var alpha: Float = 1f)
 
-class GrahpView<D>(
+class GrahpViewClass<D>(
     var graph: Graph<D>,
     var radius: Float = 10f,
     var nodeColor: Color = Color.Blue,
@@ -34,7 +34,7 @@ class GrahpView<D>(
         private set
 
     init {
-        var positions = FA2Layout()
+        val positions = FA2Layout()
         for (i in positions) {
             nodesViews[i.key] = NodeView(
                 offset = positions[i.key]!!, radius = radius, color = nodeColor, value = i.key, shape = baseShape
@@ -63,8 +63,8 @@ class GrahpView<D>(
     }
 
     // just for fast not implemented like algoritm
-    fun FA2Layout(iterations: Int = 2): MutableMap<D, Offset> {
-        var positions: MutableMap<D, Offset> = mutableMapOf()
+    private fun FA2Layout(iterations: Int = 2): MutableMap<D, Offset> {
+        val positions: MutableMap<D, Offset> = mutableMapOf()
 
         var t = 0.4
 
@@ -79,7 +79,7 @@ class GrahpView<D>(
             positions[i.key] = Offset(x = 1 - 2 * Random.nextFloat(), y = 1 - 2 * Random.nextFloat())
         }
 
-        var oldPos: MutableMap<D, Offset> = mutableMapOf()
+        val oldPos: MutableMap<D, Offset> = mutableMapOf()
 
         var convered = 0
 
@@ -89,18 +89,18 @@ class GrahpView<D>(
             for (u in graph.vertices) oldPos[u.key] = positions[u.key]!!
 
             for (v in graph.vertices) {
-                var disp: Offset = Offset(x = 0f, y = 0f)
+                var disp = Offset(x = 0f, y = 0f)
                 for (u in graph.vertices) {
                     if (u != v) {
-                        var delta = positions[u.key]!! - positions[v.key]!!
-                        disp += delta / abs(delta) * atr(abs(delta), abs(positions[u.key]!!)).toFloat()
+                        val delta = positions[u.key]!! - positions[v.key]!!
+                        disp += delta / abs(delta) * atr(abs(delta), abs(positions[u.key]!!))
                     }
                 }
                 for (u in v.value) {
-                    var delta = positions[u.first]!! - positions[v.key]!!
+                    val delta = positions[u.first]!! - positions[v.key]!!
                     disp += delta / abs(delta) * retr(
                         abs(delta), v.value.size.toFloat(), abs(positions[u.first]!!)
-                    ).toFloat()
+                    )
                 }
 
                 if (!abs(disp).isNaN()) {
@@ -145,6 +145,6 @@ class GrahpView<D>(
 }
 
 fun abs(offset: Offset): Float {
-    var t = sqrt(offset.x * offset.x + offset.y * offset.y)
+    val t = sqrt(offset.x * offset.x + offset.y * offset.y)
     return t
 }

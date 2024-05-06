@@ -4,17 +4,23 @@ import androidx.compose.ui.graphics.Color
 import data.Graph
 import ui.graph_view.graph_view_actions.NodeViewUpdate
 import ui.graph_view.graph_view_actions.Update
+import ui.graph_view.graph_view_actions.VertViewUpdate
 
 class SampleAlgo : Algoritm() {
     override fun <D> alogRun(graph: Graph<D>): Update<D> {
-        val update: MutableMap<D, NodeViewUpdate<D>> = mutableMapOf()
+        val updateNode: MutableMap<D, NodeViewUpdate<D>> = mutableMapOf()
+        val updateVert: MutableMap<D, MutableMap<D, VertViewUpdate<D>>> = mutableMapOf()
         for (i in graph.vertices) {
             if (i.value.size % 2 == 1) {
-                update[i.key] = NodeViewUpdate(color = Color.Red, radius = i.value.size.toFloat() * 5 + 5)
+                updateNode[i.key] = NodeViewUpdate(color = Color.Red, radius = i.value.size.toFloat() * 5 + 5)
             } else {
-                update[i.key] = NodeViewUpdate(color = Color.Green, radius = i.value.size.toFloat() * 5 + 5)
+                updateNode[i.key] = NodeViewUpdate(color = Color.Green, radius = i.value.size.toFloat() * 5 + 5)
+            }
+            updateVert[i.key] = mutableMapOf()
+            for (j in i.value) {
+                updateVert[i.key]!!.set(j.first, VertViewUpdate<D>(color = Color.Yellow))
             }
         }
-        return Update<D>(nodeViewUpdate = update)
+        return Update<D>(nodeViewUpdate = updateNode, vertViewUpdate = updateVert)
     }
 }

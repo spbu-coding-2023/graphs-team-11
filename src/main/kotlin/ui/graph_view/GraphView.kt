@@ -2,15 +2,28 @@ package ui.graph_view
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.isCtrlPressed
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.input.key.onPreviewKeyEvent
+import androidx.compose.ui.input.key.type
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
+import kotlinx.coroutines.processNextEventInCurrentThread
 
 @Composable
 @Preview
@@ -21,6 +34,9 @@ fun <D> GrahpView(
         changedAlgo.value = false
     }
     var mainOffset by remember { mutableStateOf(Offset(x = 0f, y = 0f)) }
+
+    val requester = remember { FocusRequester() }
+    var relesed by remember { mutableStateOf(true) }
 
     val localDensity = LocalDensity.current
     var height by remember { mutableStateOf(844) }
@@ -41,7 +57,9 @@ fun <D> GrahpView(
     // Idk why exactly this formula, but it works
     val sensivity by remember { mutableStateOf(0.2f / gv.nodesViews.size) }
 
-    BoxWithConstraints(modifier = Modifier.fillMaxSize().onSizeChanged { coordinates ->
+    BoxWithConstraints(modifier = Modifier
+        .fillMaxSize()
+        .onSizeChanged { coordinates ->
         height = with(localDensity) { coordinates.height }
         width = with(localDensity) { coordinates.width }
 
@@ -57,9 +75,26 @@ fun <D> GrahpView(
                 y = (offset.y - pading - (height - 2 * pading) / 2) / (height - 2 * pading) * 2
             )
         }
+    }.onPreviewKeyEvent {
 
-
-    }) {
+            when {
+                (it.isCtrlPressed && it.key == Key.Z && relesed) -> {
+                    relesed = false
+                    gv.comeBack()
+                    changedAlgo.value = true
+                    true
+                }
+                (it.type == KeyEventType.KeyUp) -> {
+                    relesed = true
+                    true
+                }
+                else -> false
+            }
+        }
+        .focusRequester(requester)
+        .focusable()
+        .clickable() { requester.requestFocus() }
+    ) {
 
         Canvas(modifier = Modifier.fillMaxSize().pointerInput(Unit) {
             detectDragGestures { change, dragAmount ->
@@ -98,5 +133,8 @@ fun <D> GrahpView(
                 // println(Pair(width, height))
             }
         }
+    }
+    LaunchedEffect(Unit) {
+        requester.requestFocus()
     }
 }

@@ -10,6 +10,8 @@ import androidx.compose.ui.graphics.Shape
 import ui.graph_view.graph_view_actions.NodeViewUpdate
 import data.Graph
 import ui.graph_view.graph_view_actions.Update
+import ui.graph_view.graph_view_actions.VertViewUpdate
+import java.util.Stack
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.sqrt
@@ -36,6 +38,8 @@ class GrahpViewClass<D>(
     var vertViews by mutableStateOf(vertViews)
         private set
 
+    var returnStack by mutableStateOf(Stack<Update<D>>())
+
     init {
         val positions = FA2Layout()
         for (i in positions) {
@@ -54,23 +58,40 @@ class GrahpViewClass<D>(
         }
     }
 
-    fun applyUpdate(update: Update<D>) {
+    fun applyUpdate(update: Update<D>, isNotReUpdate: Boolean = true) {
+        val nodeViewReUpdate: MutableMap<D, NodeViewUpdate<D>> = mutableMapOf()
+        val vertViewReUpdate: MutableMap<D, MutableMap<D, VertViewUpdate<D>>> = mutableMapOf()
         for (v in update.nodeViewUpdate) {
-            nodesViews[v.key]!!.offset = if (v.value.offset == null) nodesViews[v.key]!!.offset else v.value.offset!!
-            nodesViews[v.key]!!.radius = if (v.value.radius == null) nodesViews[v.key]!!.radius else v.value.radius!!
-            nodesViews[v.key]!!.color = if (v.value.color == null) nodesViews[v.key]!!.color else v.value.color!!
-            nodesViews[v.key]!!.value = nodesViews[v.key]!!.value
-            nodesViews[v.key]!!.shape = if (v.value.shape == null) nodesViews[v.key]!!.shape else v.value.shape!!
-            nodesViews[v.key]!!.alpha = if (v.value.alpha == null) nodesViews[v.key]!!.alpha else v.value.alpha!!
+            if (isNotReUpdate) nodeViewReUpdate[v.key] = NodeViewUpdate(
+                offset = nodesViews[v.key]!!.offset,
+                radius = nodesViews[v.key]!!.radius,
+                color = nodesViews[v.key]!!.color,
+                shape = nodesViews[v.key]!!.shape,
+                alpha = nodesViews[v.key]!!.alpha
+            )
+            if (v.value.offset != null) nodesViews[v.key]!!.offset = v.value.offset!!
+            if (v.value.radius != null) nodesViews[v.key]!!.radius = v.value.radius!!
+            if (v.value.color != null) nodesViews[v.key]!!.color = v.value.color!!
+            if (v.value.shape != null) nodesViews[v.key]!!.shape = v.value.shape!!
+            if (v.value.alpha != null) nodesViews[v.key]!!.alpha = v.value.alpha!!
         }
         for ((v, verts) in update.vertViewUpdate) {
+            vertViewReUpdate[v] = mutableMapOf()
             for ((u, viewUpdate) in verts) {
-                if (v in vertViews) {
-                    vertViews[v]!!.get(u)!!.color = if (viewUpdate.color == null) vertViews[v]!!.get(u)!!.color else viewUpdate.color!!
-                    vertViews[v]!!.get(u)!!.alpha = if (viewUpdate.alpha == null) vertViews[v]!!.get(u)!!.alpha else viewUpdate.alpha!!
-                }
+                if (isNotReUpdate) vertViewReUpdate[v]!![u] = VertViewUpdate(
+                    color = vertViews[v]!![u]!!.color,
+                    alpha = vertViews[v]!![u]!!.alpha
+                )
+                if (viewUpdate.color != null) vertViews[v]!![u]!!.color = viewUpdate.color
+                if (viewUpdate.alpha != null) vertViews[v]!![u]!!.alpha = viewUpdate.alpha
             }
         }
+        if (isNotReUpdate) returnStack.add(Update(nodeViewUpdate = nodeViewReUpdate, vertViewUpdate = vertViewReUpdate))
+    }
+
+    fun comeBack() {
+        println(returnStack)
+        if (this.returnStack.size > 0) this.applyUpdate(this.returnStack.pop(), isNotReUpdate = false)
     }
 
     // just for fast not implemented like algoritm

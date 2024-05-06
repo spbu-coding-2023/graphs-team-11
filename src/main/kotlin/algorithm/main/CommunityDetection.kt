@@ -1,6 +1,11 @@
 package algorithm.main
 
+import androidx.compose.ui.graphics.Color
 import data.Graph
+import kotlinx.coroutines.processNextEventInCurrentThread
+import ui.graph_view.graph_view_actions.NodeViewUpdate
+import ui.graph_view.graph_view_actions.Update
+import kotlin.random.Random
 
 fun <D> detectCommunities(graph: Graph<D>) {
     val leiden = LeidenAlgorithm(graph)
@@ -21,6 +26,38 @@ fun <D> detectCommunities(graph: Graph<D>) {
         ++communityIndex
     }
 
+}
+
+class LeidenToRun: Algoritm() {
+    override fun <D> alogRun(graph: Graph<D>): Update<D> {
+        val leidenAlgorithm = LeidenAlgorithm<D>(graph)
+        val communities = leidenAlgorithm.detectCommunities()
+
+        val communityMap = mutableMapOf<Int, MutableList<D>>()
+        var communityIndex = 0
+        communities.forEach { (node, community) ->
+            if (communityMap.containsKey(community)) {
+                communityMap[community]!!.add(node)
+            } else {
+                communityMap[community] = mutableListOf(node)
+            }
+        }
+        communityMap.forEach { (_, nodes) ->
+            println("Community $communityIndex: $nodes")
+            ++communityIndex
+        }
+
+        var colors: MutableMap<Int, Color> = mutableMapOf()
+        for ((community, _) in communityMap) { colors[community] = Color(Random.nextInt(256), Random.nextInt(256), Random.nextInt(256))}
+
+
+        val update: MutableMap<D, NodeViewUpdate<D>> = mutableMapOf()
+        for ((node, community) in communities) {
+            update[node] = NodeViewUpdate(color = colors[community])
+        }
+
+        return Update<D>(nodeViewUpdate = update)
+    }
 }
 
 class LeidenAlgorithm<D>(private val graph: Graph<D>) {

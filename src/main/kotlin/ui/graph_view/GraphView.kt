@@ -69,18 +69,22 @@ fun <D> GrahpView(
                 }
             }
         }) {
-            for (i in gv.vertViews) {
-
-                drawLine(
-                    color = i.color,
-                    start = toAbsoluteOffset(i.start.offset) + Offset(
-                        x = i.start.radius, y = i.start.radius
-                    ) - mainOffset,
-                    end = toAbsoluteOffset(i.end.offset) + Offset(x = i.end.radius, y = i.end.radius) - mainOffset,
-                    alpha = i.alpha,
-                )
-                // println(i.start.offset)
-                // println(i.end.offset)
+            for ((i, verts) in gv.vertViews) {
+                for ((j, view) in verts) {
+                    drawLine(
+                        color = view.color,
+                        start = toAbsoluteOffset(view.start.offset) + Offset(
+                            x = view.start.radius, y = view.start.radius
+                        ) - mainOffset,
+                        end = toAbsoluteOffset(view.end.offset) + Offset(
+                            x = view.end.radius,
+                            y = view.end.radius
+                        ) - mainOffset,
+                        alpha = view.alpha,
+                    )
+                    // println(i.start.offset)
+                    // println(i.end.offset)
+                }
             }
         }
         if (showNodes) {

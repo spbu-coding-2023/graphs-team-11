@@ -20,6 +20,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import ui.graph_view.GrahpViewClass
 import ui.graph_view.graph_view_actions.NodeViewUpdate
+import ui.graph_view.graph_view_actions.Update
 import kotlin.reflect.full.createInstance
 
 @Composable
@@ -72,9 +73,9 @@ fun <D> AlgoritmList(grahpViewClass: GrahpViewClass<D>, changedAlgo: MutableStat
                 val runAlgo = i.members.single { it.name == "alogRun" }
                 val algoExpample = i.createInstance()
 
-                val update = runAlgo.call(algoExpample, grahpViewClass.graph) as MutableMap<D, NodeViewUpdate<D>>
+                val update = runAlgo.call(algoExpample, grahpViewClass.graph) as Update<D>
 
-                grahpViewClass.applyAction(update)
+                grahpViewClass.applyUpdate(update)
 
                 changedAlgo.value = true
             }).offset(10.dp))

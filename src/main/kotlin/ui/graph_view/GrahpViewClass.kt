@@ -9,6 +9,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import ui.graph_view.graph_view_actions.NodeViewUpdate
 import data.Graph
+import ui.graph_view.graph_view_actions.Update
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.sqrt
@@ -27,10 +28,12 @@ class GrahpViewClass<D>(
     var vertColor: Color = Color.Red,
     var baseShape: Shape = CircleShape,
     nodesViews: MutableMap<D, NodeView<D>> = mutableMapOf(),
-    var vertViews: MutableList<VertView<D>> = mutableListOf()
+    vertViews: MutableMap<D, MutableMap<D, VertView<D>>> = mutableMapOf()
 ) {
 
     var nodesViews by mutableStateOf(nodesViews)
+        private set
+    var vertViews by mutableStateOf(vertViews)
         private set
 
     init {
@@ -40,25 +43,33 @@ class GrahpViewClass<D>(
                 offset = positions[i.key]!!, radius = radius, color = nodeColor, value = i.key, shape = baseShape
             )
         }
-        for (i in graph.vertices) {
-            for (j in i.value) {
-                vertViews.add(
-                    VertView(
-                        start = nodesViews[i.key]!!, end = nodesViews[j.first]!!, color = vertColor, alpha = 0.5f
-                    )
+        for ((i, verts) in graph.vertices) {
+            vertViews[i] = mutableMapOf()
+            for ((j, weight) in verts) {
+                vertViews[i]!!.set(j, VertView(
+                    start = nodesViews[i]!!, end = nodesViews[j]!!, color = vertColor, alpha = 0.5f
+                )
                 )
             }
         }
     }
 
-    fun applyAction(action: MutableMap<D, NodeViewUpdate<D>>) {
-        for (v in action) {
+    fun applyUpdate(update: Update<D>) {
+        for (v in update.nodeViewUpdate) {
             nodesViews[v.key]!!.offset = if (v.value.offset == null) nodesViews[v.key]!!.offset else v.value.offset!!
             nodesViews[v.key]!!.radius = if (v.value.radius == null) nodesViews[v.key]!!.radius else v.value.radius!!
             nodesViews[v.key]!!.color = if (v.value.color == null) nodesViews[v.key]!!.color else v.value.color!!
             nodesViews[v.key]!!.value = nodesViews[v.key]!!.value
             nodesViews[v.key]!!.shape = if (v.value.shape == null) nodesViews[v.key]!!.shape else v.value.shape!!
             nodesViews[v.key]!!.alpha = if (v.value.alpha == null) nodesViews[v.key]!!.alpha else v.value.alpha!!
+        }
+        for ((v, verts) in update.vertViewUpdate) {
+            for ((u, viewUpdate) in verts) {
+                if (v in vertViews) {
+                    vertViews[v]!!.get(u)!!.color = if (viewUpdate.color == null) vertViews[v]!!.get(u)!!.color else viewUpdate.color!!
+                    vertViews[v]!!.get(u)!!.alpha = if (viewUpdate.alpha == null) vertViews[v]!!.get(u)!!.alpha else viewUpdate.alpha!!
+                }
+            }
         }
     }
 

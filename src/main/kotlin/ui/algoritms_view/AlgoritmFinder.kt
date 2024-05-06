@@ -9,20 +9,20 @@ class AlgoritmFinder(
     var demonAlgoritms: MutableList<KClass<*>> = mutableListOf()
 ) {
     init {
-        val allAlgoritms = getAll("data.algoritms")
+        val allAlgoritms = getAll("algorithm.main")
         for (i in allAlgoritms) {
             i.supertypes.forEach {
                 print(it)
                 print(" ")
             }
             println()
-            if (i.toString() == "class data.algoritms.DemonAlgoritm") continue
+            if (i.toString() == "class algorithm.main.DemonAlgoritm") continue
             for (j in i.supertypes) {
-                if (j.toString() == "data.algoritms.Algoritm") {
+                if (j.toString() == "algorithm.main.Algoritm") {
                     algoritms.add(i)
                     break
                 }
-                if (j.toString() == "data.algoritms.DemonAlgoritm") {
+                if (j.toString() == "algorithm.main.DemonAlgoritm") {
                     demonAlgoritms.add(i)
                     break
                 }

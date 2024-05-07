@@ -1,8 +1,7 @@
 package algorithm.main
 
-import data.Graph
-import ui.graph_view.graph_view_actions.NodeViewUpdate
-import ui.graph_view.graph_view_actions.Update
+import model.graph_model.Graph
+import model.graph_model.graph_model_actions.Update
 
 abstract class DemonAlgoritm : Algoritm() {
     override fun <D> alogRun(graph: Graph<D>): Update<D> {

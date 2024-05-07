@@ -1,6 +1,6 @@
 package data.tools.graphGenerators
 
-import data.Graph
+import model.graph_model.Graph
 import kotlin.random.Random
 
 fun randomTree(n: Int): Graph<Int> {

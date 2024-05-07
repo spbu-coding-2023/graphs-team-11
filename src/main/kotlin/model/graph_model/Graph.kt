@@ -1,4 +1,4 @@
-package data
+package model.graph_model
 
 import androidx.compose.runtime.Stable
 

@@ -1,6 +1,6 @@
 package data.tools.graphGenerators
 
-import data.Graph
+import model.graph_model.Graph
 
 fun flowerSnark(n: Int): Graph<Int> {
     val graph = Graph<Int>()

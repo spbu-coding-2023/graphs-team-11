@@ -1,9 +1,9 @@
 package algorithm.main
 
 import androidx.compose.ui.graphics.Color
-import data.Graph
-import ui.graph_view.graph_view_actions.NodeViewUpdate
-import ui.graph_view.graph_view_actions.Update
+import model.graph_model.Graph
+import model.graph_model.graph_model_actions.NodeViewUpdate
+import model.graph_model.graph_model_actions.Update
 import kotlin.random.Random
 
 class LeidenToRun: Algoritm() {
@@ -84,7 +84,7 @@ class LeidenAlgorithm<D>(private val graph: Graph<D>) {
                 neighborCommunities.add(communities[inNeighbor]!!)
             }
         }
-        
+
         // Add communities of incoming neighbors
         if (graph.vertices[node]?.size == 0) {
             reversedGraph.vertices[node]?.forEach { (inNeighbor, _) ->

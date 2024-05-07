@@ -1,25 +1,15 @@
 import androidx.compose.desktop.ui.tooling.preview.Preview
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.input.key.Key
-import androidx.compose.ui.input.key.KeyEventType
-import androidx.compose.ui.input.key.isCtrlPressed
-import androidx.compose.ui.input.key.key
-import androidx.compose.ui.input.key.onPreviewKeyEvent
-import androidx.compose.ui.input.key.type
-import androidx.compose.ui.window.Window
-import androidx.compose.ui.window.application
-import data.tools.graphGenerators.flowerSnark
-import ui.algoritms_view.AlgorithmMenu
-import ui.graph_view.GrahpViewClass
-import ui.graph_view.GrahpView
+import androidx.compose.ui.unit.DpSize
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.*
+import ui.AlgorithmMenu
+import model.graph_model.GrahpViewClass
+import model.graph_model.GrahpView
 import data.tools.graphGenerators.randomTree
-import data.tools.graphGenerators.starUndirected
+import viewmodel.MainVM
 
 @Composable
 @Preview
@@ -43,7 +33,17 @@ fun App() {
 }
 
 fun main() = application {
-    Window(onCloseRequest = ::exitApplication, title = "BDSM Graphs") {
+    val viewModel = MainVM()
+    val windowState = rememberWindowState(size = DpSize(1200.dp, 760.dp))
+
+    Window(
+        onCloseRequest = ::exitApplication,
+        title = viewModel.appName,
+        state = windowState,
+    ) {
+        MenuBar {
+            // there will be menu bar on the top left side
+        }
         App()
     }
 }

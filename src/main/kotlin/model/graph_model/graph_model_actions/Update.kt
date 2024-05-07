@@ -1,6 +1,4 @@
-package ui.graph_view.graph_view_actions
-
-import ui.graph_view.VertView
+package model.graph_model.graph_model_actions
 
 data class Update<D>(
     val nodeViewUpdate: MutableMap<D, NodeViewUpdate<D>> = mutableMapOf(),

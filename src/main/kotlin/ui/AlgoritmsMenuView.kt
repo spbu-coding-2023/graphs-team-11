@@ -1,4 +1,4 @@
-package ui.algoritms_view
+package ui
 
 import androidx.compose.animation.*
 import androidx.compose.desktop.ui.tooling.preview.Preview
@@ -18,21 +18,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
-import ui.graph_view.GrahpViewClass
-import ui.graph_view.graph_view_actions.NodeViewUpdate
-import ui.graph_view.graph_view_actions.Update
-import kotlin.reflect.full.createInstance
+import model.graph_model.GrahpViewClass
+import viewmodel.AlgorithmMenuVM
 
 @Composable
 @Preview
 fun <D> AlgorithmMenu(grahpViewClass: GrahpViewClass<D>, changedAlgo: MutableState<Boolean>) {
-    val menuWidth = 200.dp
-    var menuVisible by remember { mutableStateOf(true) }
+    val viewModel = remember { AlgorithmMenuVM() }
+    val isMenuVisible = viewModel.isMenuVisible.value
+
     val density = LocalDensity.current
 
     Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxHeight().background(Color.White)) {
-
-        AnimatedVisibility(visible = menuVisible, enter = slideInHorizontally {
+        AnimatedVisibility(visible = isMenuVisible, enter = slideInHorizontally {
             with(density) { -40.dp.roundToPx() }
         } + expandHorizontally(
             expandFrom = Alignment.Start
@@ -40,27 +38,24 @@ fun <D> AlgorithmMenu(grahpViewClass: GrahpViewClass<D>, changedAlgo: MutableSta
             initialAlpha = 0.3f
         ), exit = slideOutHorizontally() + shrinkHorizontally() + fadeOut()) {
             Surface(
-                modifier = Modifier.width(menuWidth).fillMaxHeight(),
+                modifier = Modifier.width(viewModel.menuWidth).fillMaxHeight(),
                 shape = RoundedCornerShape(topEnd = 12.dp, bottomEnd = 12.dp)
             ) {
-                AlgoritmList(grahpViewClass, changedAlgo)
+                AlgoritmList(grahpViewClass, changedAlgo, viewModel)
             }
         }
-        Icon(imageVector = if (menuVisible) Icons.AutoMirrored.Filled.KeyboardArrowLeft
+        Icon(imageVector = if (isMenuVisible) Icons.AutoMirrored.Filled.KeyboardArrowLeft
         else Icons.AutoMirrored.Filled.KeyboardArrowRight,
             contentDescription = "Menu",
-            modifier = Modifier.size(30.dp).clickable {
-                menuVisible = !menuVisible
-            })
+            modifier = Modifier.size(30.dp).clickable { viewModel.toggleMenu() })
     }
 }
 
 @Composable
 @Stable
-fun <D> AlgoritmList(grahpViewClass: GrahpViewClass<D>, changedAlgo: MutableState<Boolean>) {
-
-    val algo = AlgoritmFinder()
-
+fun <D> AlgoritmList(
+    grahpViewClass: GrahpViewClass<D>, changedAlgo: MutableState<Boolean>, viewModel: AlgorithmMenuVM
+) {
     Column(
         modifier = Modifier.fillMaxSize().background(Color.LightGray).padding(8.dp)
             .verticalScroll(rememberScrollState()),
@@ -68,16 +63,9 @@ fun <D> AlgoritmList(grahpViewClass: GrahpViewClass<D>, changedAlgo: MutableStat
     ) {
         Text(text = "Algorithms")
         Divider(color = Color.Black, modifier = Modifier.fillMaxWidth(0.3f))
-        for (i in algo.algoritms) {
-            Text(text = i.simpleName.toString(), modifier = Modifier.clickable(onClick = {
-                val runAlgo = i.members.single { it.name == "alogRun" }
-                val algoExpample = i.createInstance()
-
-                val update = runAlgo.call(algoExpample, grahpViewClass.graph) as Update<D>
-
-                grahpViewClass.applyUpdate(update)
-
-                changedAlgo.value = true
+        for (algorithm in viewModel.algo.algoritms) {
+            Text(text = algorithm.simpleName.toString(), modifier = Modifier.clickable(onClick = {
+                viewModel.runAlgorithm(algorithm, grahpViewClass, changedAlgo)
             }).offset(10.dp))
         }
     }

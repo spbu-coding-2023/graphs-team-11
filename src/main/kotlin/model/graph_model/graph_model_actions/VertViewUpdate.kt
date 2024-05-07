@@ -1,7 +1,6 @@
-package ui.graph_view.graph_view_actions
+package model.graph_model.graph_model_actions
 
 import androidx.compose.ui.graphics.Color
-import ui.graph_view.NodeView
 
 class VertViewUpdate<D>(
     val color: Color? = null,

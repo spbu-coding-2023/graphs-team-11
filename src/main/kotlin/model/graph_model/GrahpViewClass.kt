@@ -1,4 +1,4 @@
-package ui.graph_view
+package model.graph_model
 
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.getValue
@@ -7,10 +7,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
-import ui.graph_view.graph_view_actions.NodeViewUpdate
-import data.Graph
-import ui.graph_view.graph_view_actions.Update
-import ui.graph_view.graph_view_actions.VertViewUpdate
+import model.graph_model.graph_model_actions.NodeViewUpdate
+import model.graph_model.graph_model_actions.Update
+import model.graph_model.graph_model_actions.VertViewUpdate
 import java.util.Stack
 import kotlin.math.max
 import kotlin.math.min
@@ -25,7 +24,7 @@ data class VertView<D>(var start: NodeView<D>, var end: NodeView<D>, var color: 
 
 class GrahpViewClass<D>(
     var graph: Graph<D>,
-    var radius: Float = 10f,
+    var radius: Float = 30f,
     var nodeColor: Color = Color.Blue,
     var vertColor: Color = Color.Red,
     var baseShape: Shape = CircleShape,

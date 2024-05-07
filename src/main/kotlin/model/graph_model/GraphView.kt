@@ -23,27 +23,19 @@ fun <D> GrahpView(
     gv: GrahpViewClass<D>, showNodes: Boolean = true, changedAlgo: MutableState<Boolean>, padding: Int = 30
 ) {
     val viewModel = remember { GraphVM<D>() }
-    viewModel.gv = gv
     viewModel.padding = padding
 
     if (changedAlgo.value) {
         changedAlgo.value = false
     }
 
-    val requester = FocusRequester()
     val toAbsoluteOffset = viewModel.toAbsoluteOffset
     val toNotAbsoluteOffset = viewModel.toNotAbsoluteOffset
     val sensitivity by mutableStateOf(0.2f / gv.nodesViews.size)
-    val interactionSource = MutableInteractionSource()
 
     BoxWithConstraints(modifier = Modifier.fillMaxSize().onSizeChanged { coordinates ->
         viewModel.onBoxSizeChanged(coordinates)
-    }.onPreviewKeyEvent { event ->
-        viewModel.onBoxHotkeys(event, changedAlgo)
-
-    }.focusRequester(requester).clickable(
-        interactionSource = interactionSource, indication = null,
-    ) { requester.requestFocus() }) {
+    }) {
 
         Canvas(modifier = Modifier.fillMaxSize().pointerInput(Unit) {
             detectDragGestures { change, dragAmount ->

@@ -18,6 +18,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
+import model.algoritms.detectCommunities
+import model.algoritms.sampleAlgo
 import model.graph_model.GrahpViewClass
 import viewmodel.AlgorithmMenuVM
 
@@ -56,6 +58,12 @@ fun <D> AlgorithmMenu(grahpViewClass: GrahpViewClass<D>, changedAlgo: MutableSta
 fun <D> AlgoritmList(
     grahpViewClass: GrahpViewClass<D>, changedAlgo: MutableState<Boolean>, viewModel: AlgorithmMenuVM
 ) {
+    val algoList = mutableListOf(
+        Pair("Detect Communities", detectCommunities(grahpViewClass.graph)),
+        Pair("Sample Algorithm", sampleAlgo(grahpViewClass.graph)),
+        Pair("Something like DFS", sampleAlgo(grahpViewClass.graph)),
+    )
+
     Column(
         modifier = Modifier.fillMaxSize().background(Color.LightGray).padding(8.dp)
             .verticalScroll(rememberScrollState()),
@@ -63,9 +71,9 @@ fun <D> AlgoritmList(
     ) {
         Text(text = "Algorithms")
         Divider(color = Color.Black, modifier = Modifier.fillMaxWidth(0.3f))
-        for (algorithm in viewModel.algo.algoritms) {
-            Text(text = algorithm.simpleName.toString(), modifier = Modifier.clickable(onClick = {
-                viewModel.runAlgorithm(algorithm, grahpViewClass, changedAlgo)
+        for (algorithm in algoList) {
+            Text(text = algorithm.first, modifier = Modifier.clickable(onClick = {
+                viewModel.runAlgorithm(algorithm.second, grahpViewClass, changedAlgo)
             }).offset(10.dp))
         }
     }

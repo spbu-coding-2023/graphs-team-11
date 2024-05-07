@@ -7,7 +7,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.unit.IntSize
 import kotlin.properties.Delegates
 
-class GraphVM<D> {
+class GraphVM {
     private var height by mutableStateOf(0)
     private var width by mutableStateOf(0)
     var mainOffset by mutableStateOf(Offset(x = 0f, y = 0f))

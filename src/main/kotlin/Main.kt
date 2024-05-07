@@ -11,6 +11,7 @@ import model.graph_model.GrahpView
 import data.tools.graphGenerators.randomTree
 import viewmodel.MainVM
 
+
 @Composable
 @Preview
 fun App() {

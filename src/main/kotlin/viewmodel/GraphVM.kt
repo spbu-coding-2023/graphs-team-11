@@ -54,8 +54,9 @@ class GraphVM<D> {
     fun onBoxHotkeys(event: KeyEvent, changedAlgo: MutableState<Boolean>): Boolean {
         if (event.type == KeyEventType.KeyDown) {
             when {
-                (event.isMetaPressed && event.key == Key.Z && released) -> {
+                (event.isCtrlPressed && event.key == Key.Z && released) -> {
                     released = false
+                    println(event)
                     gv.comeBack()
                     changedAlgo.value = true
                     return true

@@ -30,7 +30,6 @@ fun <D> GrahpView(
         changedAlgo.value = false
     }
 
-    var mainOffset = viewModel.mainOffset
     val requester = FocusRequester()
     val toAbsoluteOffset = viewModel.toAbsoluteOffset
     val toNotAbsoluteOffset = viewModel.toNotAbsoluteOffset
@@ -60,10 +59,10 @@ fun <D> GrahpView(
                         color = view.color,
                         start = toAbsoluteOffset(view.start.offset) + Offset(
                             x = view.start.radius, y = view.start.radius
-                        ) - mainOffset,
+                        ) - viewModel.mainOffset,
                         end = toAbsoluteOffset(view.end.offset) + Offset(
                             x = view.end.radius, y = view.end.radius
-                        ) - mainOffset,
+                        ) - viewModel.mainOffset,
                         alpha = view.alpha,
                     )
                     // println(i.start.offset)
@@ -75,7 +74,7 @@ fun <D> GrahpView(
             for (i in gv.nodesViews) {
                 NodeView(
                     i.value,
-                    mainOffset = mainOffset,
+                    mainOffset = viewModel.mainOffset,
                     toAbsoluteOffset = toAbsoluteOffset,
                     toNotAbsoluteOffset = toNotAbsoluteOffset
                 )

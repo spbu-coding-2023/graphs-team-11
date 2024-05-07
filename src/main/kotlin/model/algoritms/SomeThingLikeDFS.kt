@@ -1,4 +1,4 @@
-package algorithm.main
+package model.algoritms
 
 import androidx.compose.ui.graphics.Color
 import model.graph_model.Graph

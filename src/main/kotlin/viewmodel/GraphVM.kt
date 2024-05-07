@@ -13,8 +13,8 @@ import kotlin.properties.Delegates
 class GraphVM<D> {
     lateinit var gv: GrahpViewClass<D>
     private var released by mutableStateOf(true)
-    private var height by mutableStateOf(844)
-    private var width by mutableStateOf(834)
+    private var height by mutableStateOf(0)
+    private var width by mutableStateOf(0)
     var mainOffset by mutableStateOf(Offset(x = 0f, y = 0f))
 
     var padding by Delegates.notNull<Int>()

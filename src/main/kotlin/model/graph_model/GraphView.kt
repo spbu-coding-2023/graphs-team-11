@@ -50,7 +50,7 @@ fun <D> GrahpView(
             detectDragGestures { change, dragAmount ->
                 change.consume()
                 for (nodeView in gv.nodesViews) {
-                    mainOffset -= dragAmount * sensitivity
+                    viewModel.mainOffset -= dragAmount * sensitivity
                 }
             }
         }) {

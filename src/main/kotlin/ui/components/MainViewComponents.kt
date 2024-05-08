@@ -21,18 +21,12 @@ class MyApplicationState {
     private fun MyWindowState(
         title: String
     ) = MyWindowState(
-        title,
-        openNewWindow = ::openNewWindow,
-        exit = ::exit,
-        windows::remove
+        title, openNewWindow = ::openNewWindow, exit = ::exit, windows::remove
     )
 }
 
 class MyWindowState(
-    val title: String,
-    val openNewWindow: () -> Unit,
-    val exit: () -> Unit,
-    private val close: (MyWindowState) -> Unit
+    val title: String, val openNewWindow: () -> Unit, val exit: () -> Unit, private val close: (MyWindowState) -> Unit
 ) {
     fun close() = close(this)
 }

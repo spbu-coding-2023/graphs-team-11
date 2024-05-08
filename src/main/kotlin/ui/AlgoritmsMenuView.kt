@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import model.algoritms.detectCommunities
 import model.algoritms.sampleAlgo
 import model.graph_model.GrahpViewClass
+import ui.theme.BdsmAppTheme
 import viewmodel.AlgorithmMenuVM
 
 @Composable
@@ -31,7 +32,11 @@ fun <D> AlgorithmMenu(grahpViewClass: GrahpViewClass<D>, changedAlgo: MutableSta
 
     val density = LocalDensity.current
 
-    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxHeight().background(Color.White)) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxHeight().background(
+            MaterialTheme.colors.background
+        )
+    ) {
         AnimatedVisibility(visible = isMenuVisible, enter = slideInHorizontally {
             with(density) { -40.dp.roundToPx() }
         } + expandHorizontally(
@@ -65,7 +70,7 @@ fun <D> AlgoritmList(
     )
 
     Column(
-        modifier = Modifier.fillMaxSize().background(Color.LightGray).padding(8.dp)
+        modifier = Modifier.fillMaxSize().background(MaterialTheme.colors.surface).padding(8.dp)
             .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.Top,
     ) {

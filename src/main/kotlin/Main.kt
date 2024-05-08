@@ -8,6 +8,7 @@ import androidx.compose.ui.window.*
 import ui.AlgorithmMenu
 import model.graph_model.GrahpViewClass
 import model.graph_model.GrahpView
+import ui.SettingsView
 import ui.components.MyApplicationState
 import ui.components.MyWindowState
 import viewmodel.MainVM
@@ -46,8 +47,15 @@ private fun MyWindow(
                 Item("Copy", shortcut = viewModel.copyShortcut, onClick = {})
             }
 
+            Menu(state.title) {
+                Item("Settings", onClick = {viewModel.onSettingsPressed()})
+            }
+
         }
         App(viewModel.graphView, viewModel.changedAlgo)
+        if (viewModel.isSettingMenuOpen.value) {
+            SettingsView(onClose = {viewModel.isSettingMenuOpen.value = false})
+        }
     }
 }
 

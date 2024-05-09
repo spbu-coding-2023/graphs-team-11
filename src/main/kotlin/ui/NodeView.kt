@@ -1,4 +1,4 @@
-package model.graph_model
+package ui
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
@@ -23,6 +23,7 @@ import androidx.compose.ui.layout.onPlaced
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import model.graph_model.NodeView
 import kotlin.math.roundToInt
 
 @Composable
@@ -53,9 +54,12 @@ fun <D> NodeView(
                     // println(nodeView.offset)
                 }
             }.onPlaced { offset = toAbsoluteOffset(nodeView.offset) }, contentAlignment = Alignment.Center
-    ) { Text(
-        text = nodeView.value.toString(),
-        color = Color.Red,
-        textAlign = TextAlign.Center,
-        modifier = Modifier.wrapContentSize(unbounded = true)) }
+    ) {
+        Text(
+            text = nodeView.value.toString(),
+            color = Color.Red,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.wrapContentSize(unbounded = true)
+        )
+    }
 }

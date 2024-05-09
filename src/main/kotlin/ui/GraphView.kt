@@ -1,15 +1,18 @@
-package model.graph_model
+package ui
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
+import model.graph_model.GrahpViewClass
 import viewmodel.GraphVM
 
 @Composable
@@ -28,9 +31,11 @@ fun <D> GrahpView(
     val toNotAbsoluteOffset = viewModel.toNotAbsoluteOffset
     val sensitivity by mutableStateOf(0.2f / gv.nodesViews.size)
 
-    BoxWithConstraints(modifier = Modifier.fillMaxSize().onSizeChanged { coordinates ->
-        viewModel.onBoxSizeChanged(coordinates)
-    }) {
+    BoxWithConstraints(
+        modifier = Modifier.fillMaxSize().onSizeChanged { coordinates ->
+            viewModel.onBoxSizeChanged(coordinates)
+        }.background(MaterialTheme.colors.background)
+    ) {
 
         Canvas(modifier = Modifier.fillMaxSize().pointerInput(Unit) {
             detectDragGestures { change, dragAmount ->

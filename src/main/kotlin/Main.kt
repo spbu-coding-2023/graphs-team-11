@@ -7,16 +7,19 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.*
 import ui.AlgorithmMenu
 import model.graph_model.GrahpViewClass
-import model.graph_model.GrahpView
+import ui.GrahpView
+import ui.SettingsView
 import ui.components.MyApplicationState
 import ui.components.MyWindowState
+import ui.theme.BdsmAppTheme
+import ui.theme.Theme
 import viewmodel.MainVM
 
 @Composable
 @Preview
-fun<D> App(graphView: GrahpViewClass<D>, changedAlgo: MutableState<Boolean>) {
+fun <D> App(graphView: GrahpViewClass<D>, changedAlgo: MutableState<Boolean>, appTheme: MutableState<Theme>) {
 
-    MaterialTheme {
+    BdsmAppTheme(appTheme = appTheme.value) {
         Row {
             AlgorithmMenu(graphView, changedAlgo)
 
@@ -46,8 +49,18 @@ private fun MyWindow(
                 Item("Copy", shortcut = viewModel.copyShortcut, onClick = {})
             }
 
+            Menu(state.title) {
+                Item("Settings", onClick = { viewModel.onSettingsPressed() })
+            }
+
         }
-        App(viewModel.graphView, viewModel.changedAlgo)
+        App(viewModel.graphView, viewModel.changedAlgo, viewModel.appTheme)
+        if (viewModel.isSettingMenuOpen.value) {
+            SettingsView(
+                onClose = { viewModel.isSettingMenuOpen.value = false },
+                viewModel.appTheme,
+            )
+        }
     }
 }
 

@@ -25,6 +25,8 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Window
 import ui.theme.Theme
 import ui.theme.ThemeColors
+import java.io.File
+import javax.sound.sampled.AudioSystem
 
 @Composable
 fun SettingsView(onClose: () -> Unit, appTheme: MutableState<Theme>) {
@@ -34,6 +36,7 @@ fun SettingsView(onClose: () -> Unit, appTheme: MutableState<Theme>) {
         Theme.LIGHT -> ThemeColors.Light.background
         else -> ThemeColors.Golden.background
     }
+    val showSberIcon = mutableStateOf(false)
     Window(
         title = "Settings",
         onCloseRequest = onClose,
@@ -46,34 +49,62 @@ fun SettingsView(onClose: () -> Unit, appTheme: MutableState<Theme>) {
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.SpaceBetween,
             ) {
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    darkModeToggle(appTheme)
-                    if (goldenMode.value) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.Center,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text("Golden Mode", fontSize = 22.sp)
-                            Spacer(modifier = Modifier.width(30.dp))
-                            Checkbox(
-                                checked = appTheme.value == Theme.GOLDEN, onCheckedChange = {
-                                    goldenMode.value = false
-                                    appTheme.value = Theme.LIGHT
-                                }, modifier = Modifier.size(40.dp), colors = CheckboxDefaults.colors(
-                                    checkedColor = MaterialTheme.colors.primary,
-                                    uncheckedColor = MaterialTheme.colors.secondary
+                if (showSberIcon.value) {
+                    Icon(
+                        painter = painterResource("drawable/ic_sber.xml"),
+                        contentDescription = "Sber Icon",
+                        tint = Color(0xFF21a038),
+                        modifier = Modifier.fillMaxSize().clickable(onClick = {
+                            showSberIcon.value = false
+                            goldenMode.value = true
+                            appTheme.value = Theme.GOLDEN
+                        })
+                    )
+                    playSound("src/main/resources/sounds/paid.wav")
+                } else {
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        darkModeToggle(appTheme)
+                        if (goldenMode.value) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.Center,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text("Golden Mode", fontSize = 22.sp)
+                                Spacer(modifier = Modifier.width(30.dp))
+                                Checkbox(
+                                    checked = appTheme.value == Theme.GOLDEN, onCheckedChange = {
+                                        goldenMode.value = false
+                                        appTheme.value = Theme.LIGHT
+                                    }, modifier = Modifier.size(40.dp), colors = CheckboxDefaults.colors(
+                                        checkedColor = MaterialTheme.colors.primary,
+                                        uncheckedColor = MaterialTheme.colors.secondary
+                                    )
                                 )
-                            )
+                            }
+                        }
+                    }
+
+                    if (!goldenMode.value) {
+                        Column(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+
+                            Text("Golden Theme за", fontSize = 22.sp)
+                            Spacer(modifier = Modifier.height(10.dp))
+                            donateButton() {
+                                showSberIcon.value = true
+                            }
+                            Spacer(modifier = Modifier.height(20.dp))
                         }
                     }
                 }
-
-                donateButton(goldenMode, appTheme)
             }
         }
     }
@@ -148,11 +179,12 @@ fun darkModeToggle(appTheme: MutableState<Theme>) {
 }
 
 @Composable
-fun donateButton(goldenMode: MutableState<Boolean>, appTheme: MutableState<Theme>) {
+fun donateButton(
+    onClick: () -> Unit
+) {
     Button(
         onClick = {
-            goldenMode.value = true
-            appTheme.value = Theme.GOLDEN
+            onClick()
         }, colors = ButtonDefaults.buttonColors(
             backgroundColor = MaterialTheme.colors.primary, contentColor = MaterialTheme.colors.onPrimary
         )
@@ -165,4 +197,11 @@ fun donateButton(goldenMode: MutableState<Boolean>, appTheme: MutableState<Theme
         Spacer(modifier = Modifier.width(10.dp))
         Text("Donate", color = MaterialTheme.colors.onPrimary)
     }
+}
+
+fun playSound(soundFileName: String) {
+    val audioInputStream = AudioSystem.getAudioInputStream(File(soundFileName))
+    val clip = AudioSystem.getClip()
+    clip.open(audioInputStream)
+    clip.start()
 }

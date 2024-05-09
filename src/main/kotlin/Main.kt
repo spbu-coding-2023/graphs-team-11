@@ -5,12 +5,13 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.*
-import ui.AlgorithmMenu
+import ui.LeftMenu
 import model.graph_model.GrahpViewClass
 import ui.GrahpView
 import ui.SettingsView
 import ui.components.MyApplicationState
 import ui.components.MyWindowState
+import ui.components.cosmetic.CommeticsMenu
 import ui.theme.BdsmAppTheme
 import ui.theme.Theme
 import viewmodel.MainVM
@@ -21,8 +22,10 @@ fun <D> App(graphView: GrahpViewClass<D>, changedAlgo: MutableState<Boolean>, ap
 
     BdsmAppTheme(appTheme = appTheme.value) {
         Row {
-            AlgorithmMenu(graphView, changedAlgo)
-
+            Column {
+                LeftMenu(graphView, changedAlgo)
+                CommeticsMenu(graphView, changedAlgo)
+            }
             Card {
                 GrahpView(graphView, showNodes = true, changedAlgo)
             }

@@ -21,8 +21,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import model.graph_model.GrahpViewClass
-import ui.theme.BdsmAppTheme
-import viewmodel.AlgorithmMenuVM
 
 @Composable
 @Preview
@@ -33,9 +31,7 @@ fun <D> CommeticsMenu(grahpViewClass: GrahpViewClass<D>, changedAlgo: MutableSta
     val density = LocalDensity.current
 
     Row(
-        verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxHeight().background(
-            MaterialTheme.colors.background
-        )
+        verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxHeight()
     ) {
         AnimatedVisibility(visible = isMenuVisible, enter = slideInHorizontally {
             with(density) { -40.dp.roundToPx() }
@@ -49,7 +45,7 @@ fun <D> CommeticsMenu(grahpViewClass: GrahpViewClass<D>, changedAlgo: MutableSta
                 shape = RoundedCornerShape(topEnd = 12.dp, bottomEnd = 12.dp)
             ) {
                 Column {
-                    CommeticsList(grahpViewClass, changedAlgo, viewModel)
+                    CommeticsList(viewModel)
                     Button(
                         onClick = {
                             viewModel.createUpdate(grahpViewClass)
@@ -70,8 +66,8 @@ fun <D> CommeticsMenu(grahpViewClass: GrahpViewClass<D>, changedAlgo: MutableSta
 
 @Composable
 @Stable
-fun <D> CommeticsList(
-    grahpViewClass: GrahpViewClass<D>, changedAlgo: MutableState<Boolean>, viewModel: CosmeticVM
+fun CommeticsList(
+    viewModel: CosmeticVM
 ) {
 
     Column(

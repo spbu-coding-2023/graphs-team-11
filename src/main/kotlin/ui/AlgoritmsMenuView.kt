@@ -22,7 +22,6 @@ import model.algoritms.LeidenToRun
 import model.algoritms.SampleAlgo
 import model.algoritms.SomeThingLikeDFS
 import model.graph_model.GrahpViewClass
-import ui.theme.BdsmAppTheme
 import viewmodel.AlgorithmMenuVM
 
 @Composable
@@ -34,9 +33,7 @@ fun <D> LeftMenu(grahpViewClass: GrahpViewClass<D>, changedAlgo: MutableState<Bo
     val density = LocalDensity.current
 
     Row(
-        verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxHeight(0.5f).background(
-            MaterialTheme.colors.background
-        )
+        verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxHeight(0.5f)
     ) {
         AnimatedVisibility(visible = isMenuVisible, enter = slideInHorizontally {
             with(density) { -40.dp.roundToPx() }

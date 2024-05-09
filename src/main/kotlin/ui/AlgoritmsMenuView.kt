@@ -18,22 +18,23 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
-import model.algoritms.detectCommunities
-import model.algoritms.sampleAlgo
+import model.algoritms.LeidenToRun
+import model.algoritms.SampleAlgo
+import model.algoritms.SomeThingLikeDFS
 import model.graph_model.GrahpViewClass
 import ui.theme.BdsmAppTheme
 import viewmodel.AlgorithmMenuVM
 
 @Composable
 @Preview
-fun <D> AlgorithmMenu(grahpViewClass: GrahpViewClass<D>, changedAlgo: MutableState<Boolean>) {
+fun <D> LeftMenu(grahpViewClass: GrahpViewClass<D>, changedAlgo: MutableState<Boolean>) {
     val viewModel = remember { AlgorithmMenuVM() }
     val isMenuVisible = viewModel.isMenuVisible.value
 
     val density = LocalDensity.current
 
     Row(
-        verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxHeight().background(
+        verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxHeight(0.5f).background(
             MaterialTheme.colors.background
         )
     ) {
@@ -64,9 +65,9 @@ fun <D> AlgoritmList(
     grahpViewClass: GrahpViewClass<D>, changedAlgo: MutableState<Boolean>, viewModel: AlgorithmMenuVM
 ) {
     val algoList = mutableListOf(
-        Pair("Detect Communities", detectCommunities(grahpViewClass.graph)),
-        Pair("Sample Algorithm", sampleAlgo(grahpViewClass.graph)),
-        Pair("Something like DFS", sampleAlgo(grahpViewClass.graph)),
+        Pair("Detect Communities", LeidenToRun()),
+        Pair("Sample Algorithm", SampleAlgo()),
+        Pair("Something like DFS", SomeThingLikeDFS()),
     )
 
     Column(

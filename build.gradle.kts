@@ -14,9 +14,22 @@ repositories {
     google()
 }
 
+val exposedVersion = "0.50.1"
+val sqliteJdbcVersion = "3.41.2.2"
 dependencies {
     implementation(compose.desktop.currentOs)
     implementation(kotlin("reflect"))
+
+    // JetBrains Exposed
+    implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")
+    implementation("org.jetbrains.exposed:exposed-dao:$exposedVersion")
+    implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
+
+    // SQLite JDBC
+    implementation("org.xerial:sqlite-jdbc:$sqliteJdbcVersion")
+
+    // Logging
+    implementation("org.slf4j", "slf4j-simple", "2.0.13")
 }
 
 compose.desktop {
@@ -25,7 +38,7 @@ compose.desktop {
 
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "GraphsTeam11"
+            packageName = "Graphs Team 11"
             packageVersion = "1.0.0"
         }
     }

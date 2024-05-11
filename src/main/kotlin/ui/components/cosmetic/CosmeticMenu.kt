@@ -15,18 +15,21 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.runtime.*
+import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import model.graph_model.GrahpViewClass
-import ui.theme.BdsmAppTheme
-import viewmodel.AlgorithmMenuVM
 
 @Composable
 @Preview
-fun <D> CommeticsMenu(grahpViewClass: GrahpViewClass<D>, changedAlgo: MutableState<Boolean>) {
+fun <D> CommeticsMenu(
+    grahpViewClass: GrahpViewClass<D>,
+    changedAlgo: MutableState<Boolean>,
+    selected: SnapshotStateMap<D, Boolean>
+) {
     val viewModel = remember { CosmeticVM() }
     val isMenuVisible = viewModel.isMenuVisible.value
 

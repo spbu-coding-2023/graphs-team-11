@@ -16,11 +16,11 @@ import kotlin.math.min
 import kotlin.math.sqrt
 import kotlin.random.Random
 
-data class NodeView<D>(
+data class NodeViewClass<D>(
     var offset: Offset, var radius: Float, var color: Color, var value: D, var shape: Shape, var alpha: Float = 1f
 )
 
-data class VertView<D>(var start: NodeView<D>, var end: NodeView<D>, var color: Color, var alpha: Float = 1f)
+data class VertView<D>(var start: NodeViewClass<D>, var end: NodeViewClass<D>, var color: Color, var alpha: Float = 1f)
 
 class GrahpViewClass<D> (
     var graph: Graph<D>,
@@ -28,7 +28,7 @@ class GrahpViewClass<D> (
     var nodeColor: Color = Color.Blue,
     var vertColor: Color = Color.Red,
     var baseShape: Shape = CircleShape,
-    nodesViews: MutableMap<D, NodeView<D>> = mutableMapOf(),
+    nodesViews: MutableMap<D, NodeViewClass<D>> = mutableMapOf(),
     vertViews: MutableMap<D, MutableMap<D, VertView<D>>> = mutableMapOf()
 ) {
 
@@ -42,7 +42,7 @@ class GrahpViewClass<D> (
     init {
         val positions = FA2Layout()
         for (i in positions) {
-            nodesViews[i.key] = NodeView(
+            nodesViews[i.key] = NodeViewClass(
                 offset = positions[i.key]!!, radius = radius, color = nodeColor, value = i.key, shape = baseShape
             )
         }
@@ -62,7 +62,7 @@ class GrahpViewClass<D> (
         val vertViewReUpdate: MutableMap<D, MutableMap<D, VertViewUpdate<D>>> = mutableMapOf()
         for (v in update.nodeViewUpdate) {
             if (isNotReUpdate) nodeViewReUpdate[v.key] = NodeViewUpdate(
-                offset = nodesViews[v.key]!!.offset,
+                offset = null,
                 radius = nodesViews[v.key]!!.radius,
                 color = nodesViews[v.key]!!.color,
                 shape = nodesViews[v.key]!!.shape,
@@ -89,7 +89,7 @@ class GrahpViewClass<D> (
     }
 
     fun comeBack() {
-        println(returnStack)
+        returnStack.forEach { println(it.nodeViewUpdate)}
         if (this.returnStack.size > 0) this.applyUpdate(this.returnStack.pop(), isNotReUpdate = false)
     }
 

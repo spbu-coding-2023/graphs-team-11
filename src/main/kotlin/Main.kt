@@ -2,6 +2,7 @@ import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.*
@@ -18,16 +19,16 @@ import viewmodel.MainVM
 
 @Composable
 @Preview
-fun <D> App(graphView: GrahpViewClass<D>, changedAlgo: MutableState<Boolean>, appTheme: MutableState<Theme>) {
+fun <D> App(graphView: GrahpViewClass<D>, changedAlgo: MutableState<Boolean>, selected: SnapshotStateMap<D, Boolean>, appTheme: MutableState<Theme>) {
 
     BdsmAppTheme(appTheme = appTheme.value) {
         Row {
             Column {
-                LeftMenu(graphView, changedAlgo)
-                CommeticsMenu(graphView, changedAlgo)
+                LeftMenu(graphView, changedAlgo, selected)
+                CommeticsMenu(graphView, changedAlgo, selected)
             }
             Card {
-                GrahpView(graphView, showNodes = true, changedAlgo)
+                GrahpView(graphView, changedAlgo, selected)
             }
         }
     }
@@ -37,7 +38,7 @@ fun <D> App(graphView: GrahpViewClass<D>, changedAlgo: MutableState<Boolean>, ap
 private fun MyWindow(
     state: MyWindowState
 ) {
-    val viewModel = MainVM()
+    val viewModel = MainVM<Int>()
     val windowState = rememberWindowState(size = DpSize(1200.dp, 760.dp))
 
     Window(onCloseRequest = state::close, title = state.title, state = windowState) {
@@ -57,7 +58,7 @@ private fun MyWindow(
             }
 
         }
-        App(viewModel.graphView, viewModel.changedAlgo, viewModel.appTheme)
+        App(viewModel.graphView, viewModel.changedAlgo, viewModel.selected, viewModel.appTheme)
         if (viewModel.isSettingMenuOpen.value) {
             SettingsView(
                 onClose = { viewModel.isSettingMenuOpen.value = false },

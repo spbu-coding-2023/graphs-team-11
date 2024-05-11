@@ -13,6 +13,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.runtime.*
+import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -22,12 +23,15 @@ import model.algoritms.LeidenToRun
 import model.algoritms.SampleAlgo
 import model.algoritms.SomeThingLikeDFS
 import model.graph_model.GrahpViewClass
-import ui.theme.BdsmAppTheme
 import viewmodel.AlgorithmMenuVM
 
 @Composable
 @Preview
-fun <D> LeftMenu(grahpViewClass: GrahpViewClass<D>, changedAlgo: MutableState<Boolean>) {
+fun <D> LeftMenu(
+    grahpViewClass: GrahpViewClass<D>,
+    changedAlgo: MutableState<Boolean>,
+    selected: SnapshotStateMap<D, Boolean>
+) {
     val viewModel = remember { AlgorithmMenuVM() }
     val isMenuVisible = viewModel.isMenuVisible.value
 

@@ -3,13 +3,18 @@ package ui
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.*
+import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.input.key.isShiftPressed
+import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import model.graph_model.GrahpViewClass
@@ -18,7 +23,7 @@ import viewmodel.GraphVM
 @Composable
 @Preview
 fun <D> GrahpView(
-    gv: GrahpViewClass<D>, showNodes: Boolean = true, changedAlgo: MutableState<Boolean>, padding: Int = 30
+    gv: GrahpViewClass<D>, changedAlgo: MutableState<Boolean>, selected: SnapshotStateMap<D, Boolean>, padding: Int = 30, showNodes: Boolean = true
 ) {
     val viewModel = remember { GraphVM() }
     viewModel.padding = padding
@@ -30,6 +35,8 @@ fun <D> GrahpView(
     val toAbsoluteOffset = viewModel.toAbsoluteOffset
     val toNotAbsoluteOffset = viewModel.toNotAbsoluteOffset
     val sensitivity by mutableStateOf(0.2f / gv.nodesViews.size)
+
+    val isShifted = mutableStateOf(false)
 
     BoxWithConstraints(
         modifier = Modifier.fillMaxSize().onSizeChanged { coordinates ->
@@ -65,10 +72,12 @@ fun <D> GrahpView(
         if (showNodes) {
             for (i in gv.nodesViews) {
                 NodeView(
-                    i.value,
+                    nodeView = i.value,
                     mainOffset = viewModel.mainOffset,
                     toAbsoluteOffset = toAbsoluteOffset,
-                    toNotAbsoluteOffset = toNotAbsoluteOffset
+                    toNotAbsoluteOffset = toNotAbsoluteOffset,
+                    selected = selected,
+                    isShifted = isShifted
                 )
                 // println(Pair(width, height))
             }

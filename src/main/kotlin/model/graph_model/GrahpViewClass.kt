@@ -128,7 +128,9 @@ class GrahpViewClass<D> (
                     }
                 }
                 for (u in v.value) {
-                    val delta = positions[u.first]!! - positions[v.key]!!
+                    val h1 = positions[u.first]!!
+                    val h2 = positions[v.key]!!
+                    val delta = h1 - h2
                     disp += delta / abs(delta) * retr(
                         abs(delta), v.value.size.toFloat(), abs(positions[u.first]!!)
                     )

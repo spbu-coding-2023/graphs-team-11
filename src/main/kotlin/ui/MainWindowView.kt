@@ -24,13 +24,19 @@ import viewmodel.MainWindowVM
 fun MyWindow(
     state: MyWindowState
 ) {
-    val viewModel = MainWindowVM()
+    val viewModel = MainWindowVM(state.graph)
+
+    println(viewModel.graph.vertices)
+    if (state.graph != null) {
+       println(state.graph.vertices)
+    }
+
     val windowState = rememberWindowState(size = DpSize(1200.dp, 760.dp))
 
     Window(onCloseRequest = state::close, title = state.title, state = windowState) {
         MenuBar {
             Menu("Window") {
-                Item("New window", onClick = state.openNewWindow)
+                Item("New window", onClick = { state.openNewWindow(null) })
                 Item("Exit", onClick = state.exit)
             }
             Menu("Edit") {
@@ -40,7 +46,13 @@ fun MyWindow(
             }
 
             Menu(state.title) {
+                Item("SQLite Exposed", onClick = { viewModel.onSQLESaveGraphPressed(viewModel.graph) })
                 Item("Settings", onClick = { viewModel.onSettingsPressed() })
+            }
+
+            Menu("SQLite Exposed") {
+                Item("Save Graph", onClick = { viewModel.onSQLESaveGraphPressed(viewModel.graph) })
+                Item("View Graphs", onClick = { viewModel.onSQLEViewGraphsPressed() })
             }
 
         }
@@ -49,6 +61,12 @@ fun MyWindow(
             SettingsView(
                 onClose = { viewModel.isSettingMenuOpen.value = false },
                 viewModel.appTheme,
+            )
+        }
+        if (viewModel.isSavedGraphsOpen.value) {
+            SavedGraphsView(
+                onClose = { viewModel.isSavedGraphsOpen.value = false },
+                viewModel.appTheme, viewModel.graphList, state
             )
         }
     }

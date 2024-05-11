@@ -1,6 +1,7 @@
 package ui.components
 
 import androidx.compose.runtime.mutableStateListOf
+import model.graph_model.Graph
 
 class MyApplicationState {
     val windows = mutableStateListOf<MyWindowState>()
@@ -10,8 +11,8 @@ class MyApplicationState {
         windows += MyWindowState(appName)
     }
 
-    private fun openNewWindow() {
-        windows += MyWindowState("$appName ${windows.size}")
+    private fun openNewWindow(graph: Graph<Int>?) {
+        windows += MyWindowState("$appName ${windows.size}", graph)
     }
 
     private fun exit() {
@@ -19,14 +20,19 @@ class MyApplicationState {
     }
 
     private fun MyWindowState(
-        title: String
+        title: String,
+        graph: Graph<Int>? = null
     ) = MyWindowState(
-        title, openNewWindow = ::openNewWindow, exit = ::exit, windows::remove
+        title, graph, openNewWindow = ::openNewWindow, exit = ::exit, windows::remove
     )
 }
 
 class MyWindowState(
-    val title: String, val openNewWindow: () -> Unit, val exit: () -> Unit, private val close: (MyWindowState) -> Unit
+    val title: String,
+    val graph: Graph<Int>? = null,
+    val openNewWindow: (Graph<Int>?) -> Unit,
+    val exit: () -> Unit,
+    private val close: (MyWindowState) -> Unit
 ) {
     fun close() = close(this)
 }

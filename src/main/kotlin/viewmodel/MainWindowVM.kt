@@ -21,8 +21,8 @@ class MainVM<D> {
     val undoShortcut = if (isMac) KeyShortcut(Key.Z, meta = true) else KeyShortcut(Key.Z, ctrl = true)
     val redoShortcut = if (isMac) KeyShortcut(Key.Z, shift = true, meta = true) else KeyShortcut(Key.Y, ctrl = true)
 
-    val graph: Graph<Int> = flowerSnark(10)
-    val graphView: GrahpViewClass<Int> = GrahpViewClass(graph)
+    val graph = flowerSnark(10)
+    val graphView = GrahpViewClass(graph)
 
     fun onUndoPressed() {
         changedAlgo.value = true

@@ -36,9 +36,7 @@ fun <D> CommeticsMenu(
     val density = LocalDensity.current
 
     Row(
-        verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxHeight().background(
-            MaterialTheme.colors.background
-        )
+        verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxHeight()
     ) {
         AnimatedVisibility(visible = isMenuVisible, enter = slideInHorizontally {
             with(density) { -40.dp.roundToPx() }
@@ -52,7 +50,7 @@ fun <D> CommeticsMenu(
                 shape = RoundedCornerShape(topEnd = 12.dp, bottomEnd = 12.dp)
             ) {
                 Column {
-                    CommeticsList(grahpViewClass, changedAlgo, viewModel)
+                    CommeticsList(viewModel)
                     Button(
                         onClick = {
                             viewModel.createUpdate(grahpViewClass)
@@ -73,8 +71,8 @@ fun <D> CommeticsMenu(
 
 @Composable
 @Stable
-fun <D> CommeticsList(
-    grahpViewClass: GrahpViewClass<D>, changedAlgo: MutableState<Boolean>, viewModel: CosmeticVM
+fun CommeticsList(
+    viewModel: CosmeticVM
 ) {
 
     Column(

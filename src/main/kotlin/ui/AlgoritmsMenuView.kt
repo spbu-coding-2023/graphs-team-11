@@ -38,9 +38,7 @@ fun <D> LeftMenu(
     val density = LocalDensity.current
 
     Row(
-        verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxHeight(0.5f).background(
-            MaterialTheme.colors.background
-        )
+        verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxHeight(0.5f)
     ) {
         AnimatedVisibility(visible = isMenuVisible, enter = slideInHorizontally {
             with(density) { -40.dp.roundToPx() }

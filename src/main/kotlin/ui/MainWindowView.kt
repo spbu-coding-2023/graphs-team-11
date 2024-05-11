@@ -7,6 +7,7 @@ import androidx.compose.material.Card
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
@@ -18,13 +19,13 @@ import ui.components.MyWindowState
 import ui.components.cosmetic.CommeticsMenu
 import ui.theme.BdsmAppTheme
 import ui.theme.Theme
-import viewmodel.MainWindowVM
+import viewmodel.MainVM
 
 @Composable
 fun MyWindow(
     state: MyWindowState
 ) {
-    val viewModel = MainWindowVM()
+    val viewModel = MainVM<Int>()
     val windowState = rememberWindowState(size = DpSize(1200.dp, 760.dp))
 
     Window(onCloseRequest = state::close, title = state.title, state = windowState) {
@@ -44,7 +45,7 @@ fun MyWindow(
             }
 
         }
-        App(viewModel.graphView, viewModel.changedAlgo, viewModel.appTheme)
+        App(viewModel.graphView, viewModel.changedAlgo, viewModel.selected, viewModel.appTheme)
         if (viewModel.isSettingMenuOpen.value) {
             SettingsView(
                 onClose = { viewModel.isSettingMenuOpen.value = false },
@@ -55,15 +56,15 @@ fun MyWindow(
 }
 
 @Composable
-fun <D> App(graphView: GrahpViewClass<D>, changedAlgo: MutableState<Boolean>, appTheme: MutableState<Theme>) {
+fun <D> App(graphView: GrahpViewClass<D>, changedAlgo: MutableState<Boolean>, selected: SnapshotStateMap<D, Boolean>, appTheme: MutableState<Theme>) {
     BdsmAppTheme(appTheme = appTheme.value) {
         Row {
             Column(modifier = Modifier.background(MaterialTheme.colors.background)) {
-                LeftMenu(graphView, changedAlgo)
-                CommeticsMenu(graphView, changedAlgo)
+                LeftMenu(graphView, changedAlgo, selected)
+                CommeticsMenu(graphView, changedAlgo, selected)
             }
             Card {
-                GrahpView(graphView, showNodes = true, changedAlgo)
+                GrahpView(graphView, changedAlgo, selected)
             }
         }
     }

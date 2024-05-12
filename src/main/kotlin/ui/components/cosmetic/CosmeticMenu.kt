@@ -26,9 +26,7 @@ import model.graph_model.GrahpViewClass
 @Composable
 @Preview
 fun <D> CommeticsMenu(
-    grahpViewClass: GrahpViewClass<D>,
-    changedAlgo: MutableState<Boolean>,
-    selected: SnapshotStateMap<D, Boolean>
+    grahpViewClass: GrahpViewClass<D>, changedAlgo: MutableState<Boolean>, selected: SnapshotStateMap<D, Boolean>
 ) {
     val viewModel = remember { CosmeticVM() }
     val isMenuVisible = viewModel.isMenuVisible.value
@@ -51,12 +49,10 @@ fun <D> CommeticsMenu(
             ) {
                 Column {
                     CommeticsList(viewModel)
-                    Button(
-                        onClick = {
-                            viewModel.createUpdate(grahpViewClass)
-                            changedAlgo.value = true
-                        }
-                    ) {
+                    Button(onClick = {
+                        viewModel.createUpdate(grahpViewClass)
+                        changedAlgo.value = true
+                    }) {
                         Text("Apply")
                     }
                 }

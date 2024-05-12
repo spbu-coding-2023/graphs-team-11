@@ -16,7 +16,7 @@ class AlgorithmMenuVM {
         isMenuVisible.value = !isMenuVisible.value
     }
 
-    fun<D> runAlgorithm(algorithm: Algoritm, grahpViewClass: GrahpViewClass<D>, changedAlgo: MutableState<Boolean>) {
+    fun <D> runAlgorithm(algorithm: Algoritm, grahpViewClass: GrahpViewClass<D>, changedAlgo: MutableState<Boolean>) {
         val update = algorithm.alogRun(grahpViewClass.graph)
         grahpViewClass.applyUpdate(update)
         changedAlgo.value = true

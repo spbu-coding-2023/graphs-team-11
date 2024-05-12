@@ -12,9 +12,9 @@ import model.graph_model.GrahpViewClass
 import model.graph_model.Graph
 import ui.theme.Theme
 
-class MainVM<D> (
-    passedGraph: Graph<*>? = null
-)  {
+class MainVM<D>(
+    passedGraph: Graph<*>?
+) {
     private val isMac = System.getProperty("os.name").lowercase().contains("mac")
     val appTheme = mutableStateOf(Theme.LIGHT)
     val changedAlgo = mutableStateOf(false)
@@ -51,8 +51,7 @@ class MainVM<D> (
         }
 
         saveGraph(
-            graph, if (graphName.value.isEmpty()) "Graph " + (getAllGraphs() + 1).size else graphName
-                .value
+            graph, if (graphName.value.isEmpty()) "Graph " + (getAllGraphs() + 1).size else graphName.value
         )
     }
 

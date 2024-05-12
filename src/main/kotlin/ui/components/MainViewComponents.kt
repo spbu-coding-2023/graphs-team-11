@@ -37,8 +37,7 @@ class MyApplicationState {
     }
 
     private fun MyWindowState(
-        title: String,
-        graph: Graph<*>? = null
+        title: String, graph: Graph<*>? = null
     ) = MyWindowState(
         title, graph, openNewWindow = ::openNewWindow, exit = ::exit, windows::remove
     )
@@ -56,10 +55,7 @@ class MyWindowState(
 
 @Composable
 fun SelectNameWindow(
-    onClose: () -> Unit,
-    appTheme: MutableState<Theme>,
-    graphName: MutableState<String>,
-    onSave: () -> Unit
+    onClose: () -> Unit, appTheme: MutableState<Theme>, graphName: MutableState<String>, onSave: () -> Unit
 ) {
     Window(
         title = "Select Graph Name",
@@ -70,8 +66,7 @@ fun SelectNameWindow(
         BdsmAppTheme(appTheme = appTheme.value) {
             Column(
                 modifier = Modifier.background(MaterialTheme.colors.background).fillMaxSize(),
-                horizontalAlignment = Alignment
-                    .CenterHorizontally,
+                horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
                 Text(

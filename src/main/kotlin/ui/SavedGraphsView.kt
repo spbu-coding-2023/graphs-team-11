@@ -38,9 +38,7 @@ fun SavedGraphsView(
     val graphList = mutableStateOf(graphs)
 
     Window(
-        title = "Saved Graphs",
-        onCloseRequest = onClose,
-        alwaysOnTop = true
+        title = "Saved Graphs", onCloseRequest = onClose, alwaysOnTop = true
     ) {
         window.minimumSize = Dimension(600, 450)
         BdsmAppTheme(appTheme = appTheme.value) {

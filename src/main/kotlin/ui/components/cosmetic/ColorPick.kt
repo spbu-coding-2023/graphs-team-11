@@ -29,15 +29,13 @@ import viewmodel.cosmetics.ColorSetter
 @Composable
 @Preview
 fun ColorPick(cosVM: CosmeticVM) {
-    val model by remember{ mutableStateOf(ColorSetter()) }
-
-
+    val model by remember { mutableStateOf(ColorSetter()) }
 
     cosVM.cosmeticWidgetsViewModels.add(model)
 
-    var red by remember { mutableStateOf(model.color.red ) }
-    var green by remember { mutableStateOf(model.color.green ) }
-    var blue by remember { mutableStateOf(model.color.blue ) }
+    var red by remember { mutableStateOf(model.color.red) }
+    var green by remember { mutableStateOf(model.color.green) }
+    var blue by remember { mutableStateOf(model.color.blue) }
 
 
     Column {
@@ -47,39 +45,27 @@ fun ColorPick(cosVM: CosmeticVM) {
         }
         Row {
             Text("R:")
-            Slider(value = red,
-                valueRange = 0f..1f,
-                steps = 256,
-                onValueChange = {
-                    red = it
-                    model.color = Color(red, green, blue)
-                    println(model.color)
-                }
-            )
+            Slider(value = red, valueRange = 0f..1f, steps = 256, onValueChange = {
+                red = it
+                model.color = Color(red, green, blue)
+                println(model.color)
+            })
         }
         Row {
             Text("G:")
-            Slider(value = green,
-                valueRange = 0f..1f,
-                steps = 256,
-                onValueChange = {
-                    green = it
-                    model.color = Color(red, green, blue)
-                    println(model.color)
-                }
-            )
+            Slider(value = green, valueRange = 0f..1f, steps = 256, onValueChange = {
+                green = it
+                model.color = Color(red, green, blue)
+                println(model.color)
+            })
         }
         Row {
             Text("B:")
-            Slider(value = blue,
-                valueRange = 0f..1f,
-                steps = 256,
-                onValueChange = {
-                    blue = it
-                    model.color = Color(red, green, blue)
-                    println(model.color)
-                }
-            )
+            Slider(value = blue, valueRange = 0f..1f, steps = 256, onValueChange = {
+                blue = it
+                model.color = Color(red, green, blue)
+                println(model.color)
+            })
         }
     }
 }

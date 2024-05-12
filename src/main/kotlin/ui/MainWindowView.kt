@@ -28,7 +28,7 @@ import java.awt.Dimension
 fun MyWindow(
     state: MyWindowState
 ) {
-    val viewModel = MainVM<Int>()
+    val viewModel = MainVM<Int>(state.graph)
     val windowState = rememberWindowState(size = DpSize(1200.dp, 760.dp))
 
     Window(onCloseRequest = state::close, title = state.title, state = windowState) {
@@ -77,8 +77,12 @@ fun MyWindow(
 }
 
 @Composable
-fun <D> App(graphView: GrahpViewClass<D>, changedAlgo: MutableState<Boolean>, selected: SnapshotStateMap<*,
-        Boolean>, appTheme: MutableState<Theme>) {
+fun <D> App(
+    graphView: GrahpViewClass<D>,
+    changedAlgo: MutableState<Boolean>,
+    selected: SnapshotStateMap<*, Boolean>,
+    appTheme: MutableState<Theme>
+) {
     BdsmAppTheme(appTheme = appTheme.value) {
         Row {
             Column(modifier = Modifier.background(MaterialTheme.colors.background)) {

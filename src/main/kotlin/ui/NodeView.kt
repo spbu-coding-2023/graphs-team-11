@@ -45,12 +45,11 @@ fun <D> NodeView(
     var offset by remember { mutableStateOf(toAbsoluteOffset(nodeView.offset)) }
 
     Box(
-        Modifier
-            .offset { IntOffset((offset.x - mainOffset.x).roundToInt(), (offset.y - mainOffset.y).roundToInt()) }
-            .background(nodeView.color,
-                shape = if (selected.getOrDefault(nodeView.value, false)) RectangleShape else CircleShape)
-            .size(nodeView.radius.dp)
-            .pointerInput(Unit) {
+        Modifier.offset { IntOffset((offset.x - mainOffset.x).roundToInt(), (offset.y - mainOffset.y).roundToInt()) }
+            .background(
+                nodeView.color,
+                shape = if (selected.getOrDefault(nodeView.value, false)) RectangleShape else CircleShape
+            ).size(nodeView.radius.dp).pointerInput(Unit) {
                 detectDragGestures { change, dragAmount ->
                     change.consume()
 
@@ -63,15 +62,13 @@ fun <D> NodeView(
                     // println(toNotAbsoluteOffset(Offset(x = width / 2f, y = height / 2f)))
                     // println(nodeView.offset)
                 }
-            }
-            .onPlaced { offset = toAbsoluteOffset(nodeView.offset) }
+            }.onPlaced { offset = toAbsoluteOffset(nodeView.offset) }
             .selectable(selected.getOrDefault(nodeView.value, false)) {
-                selected.forEach { selected.remove(it.key)}
+                selected.forEach { selected.remove(it.key) }
                 selected[nodeView.value] = true
 
                 println()
-            }
-        , contentAlignment = Alignment.Center
+            }, contentAlignment = Alignment.Center
     ) {
         Text(
             text = nodeView.value.toString(),

@@ -6,10 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Divider
-import androidx.compose.material.Icon
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
@@ -25,35 +22,30 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Window
 import model.graph_model.Graph
 import ui.components.MyWindowState
+import ui.theme.BdsmAppTheme
 import ui.theme.Theme
-import ui.theme.ThemeColors
 import viewmodel.SavedGraphsVM
+import java.awt.Dimension
 
 @Composable
 fun SavedGraphsView(
     onClose: () -> Unit,
     appTheme: MutableState<Theme>,
-    graphs: List<Triple<Int, Graph<Any>, String>>,
+    graphs: List<Triple<Int, Graph<*>, String>>,
     state: MyWindowState
 ) {
-    val backgroundColor = when (appTheme.value) {
-        Theme.DARK -> ThemeColors.Dark.background
-        Theme.LIGHT -> ThemeColors.Light.background
-        else -> ThemeColors.Golden.background
-    }
-
     val viewModel = SavedGraphsVM()
     val graphList = mutableStateOf(graphs)
 
     Window(
         title = "Saved Graphs",
         onCloseRequest = onClose,
+        alwaysOnTop = true
     ) {
-        Surface(
-            modifier = Modifier.fillMaxSize()
-        ) {
+        window.minimumSize = Dimension(600, 450)
+        BdsmAppTheme(appTheme = appTheme.value) {
             LazyColumn(
-                modifier = Modifier.background(backgroundColor).fillMaxSize(),
+                modifier = Modifier.background(MaterialTheme.colors.background).fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 graphList.value.forEach { (id, graph, name) ->
@@ -69,7 +61,7 @@ fun SavedGraphsView(
 }
 
 @Composable
-fun SavedGraphItem(graph: Graph<Any>, name: String, onUsePressed: () -> Unit, onDeletePressed: () -> Unit) {
+fun SavedGraphItem(graph: Graph<*>, name: String, onUsePressed: () -> Unit, onDeletePressed: () -> Unit) {
     Row(
         modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp, vertical = 5.dp).clip(RoundedCornerShape(10.dp))
             .border(1.dp, Color.Gray, RoundedCornerShape(10.dp)),

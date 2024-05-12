@@ -1,10 +1,8 @@
 package ui
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.material.Card
-import androidx.compose.material.MaterialTheme
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
@@ -14,26 +12,24 @@ import androidx.compose.ui.window.MenuBar
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.rememberWindowState
 import model.graph_model.GrahpViewClass
+import model.graph_model.Graph
 import ui.components.MyWindowState
+import ui.components.SelectNameWindow
 import ui.components.cosmetic.CommeticsMenu
 import ui.theme.BdsmAppTheme
 import ui.theme.Theme
 import viewmodel.MainWindowVM
+import java.awt.Dimension
 
 @Composable
 fun MyWindow(
     state: MyWindowState
 ) {
     val viewModel = MainWindowVM(state.graph)
-
-    println(viewModel.graph.vertices)
-    if (state.graph != null) {
-       println(state.graph.vertices)
-    }
-
     val windowState = rememberWindowState(size = DpSize(1200.dp, 760.dp))
 
     Window(onCloseRequest = state::close, title = state.title, state = windowState) {
+        window.minimumSize = Dimension(800, 600)
         MenuBar {
             Menu("Window") {
                 Item("New window", onClick = { state.openNewWindow(null) })
@@ -46,12 +42,11 @@ fun MyWindow(
             }
 
             Menu(state.title) {
-                Item("SQLite Exposed", onClick = { viewModel.onSQLESaveGraphPressed(viewModel.graph) })
                 Item("Settings", onClick = { viewModel.onSettingsPressed() })
             }
 
             Menu("SQLite Exposed") {
-                Item("Save Graph", onClick = { viewModel.onSQLESaveGraphPressed(viewModel.graph) })
+                Item("Save Graph", onClick = { viewModel.isSelectNameWindowOpen.value = true })
                 Item("View Graphs", onClick = { viewModel.onSQLEViewGraphsPressed() })
             }
 
@@ -65,9 +60,15 @@ fun MyWindow(
         }
         if (viewModel.isSavedGraphsOpen.value) {
             SavedGraphsView(
-                onClose = { viewModel.isSavedGraphsOpen.value = false },
-                viewModel.appTheme, viewModel.graphList, state
+                onClose = { viewModel.isSavedGraphsOpen.value = false }, viewModel.appTheme, viewModel.graphList, state
             )
+        }
+        if (viewModel.isSelectNameWindowOpen.value) {
+            SelectNameWindow(onClose = {
+                viewModel.isSelectNameWindowOpen.value = false
+            }, viewModel.appTheme, viewModel.graphName, onSave = {
+                viewModel.saveSQLiteGraph(viewModel.graph as Graph<*>)
+            })
         }
     }
 }

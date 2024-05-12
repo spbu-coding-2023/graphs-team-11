@@ -12,13 +12,15 @@ import model.graph_model.Graph
 import ui.theme.Theme
 
 class MainWindowVM(
-    passedGraph: Graph<Int>?
+    passedGraph: Graph<*>?
 ) {
     private val isMac = System.getProperty("os.name").lowercase().contains("mac")
     val appTheme = mutableStateOf(Theme.LIGHT)
     val changedAlgo = mutableStateOf(false)
     val isSettingMenuOpen = mutableStateOf(false)
     val isSavedGraphsOpen = mutableStateOf(false)
+    val isSelectNameWindowOpen = mutableStateOf(false)
+    val graphName = mutableStateOf("")
 
     val copyShortcut = if (isMac) KeyShortcut(Key.C, meta = true) else KeyShortcut(Key.C, ctrl = true)
     val undoShortcut = if (isMac) KeyShortcut(Key.Z, meta = true) else KeyShortcut(Key.Z, ctrl = true)
@@ -26,10 +28,10 @@ class MainWindowVM(
     private var sqliteDBConnected = false
 
 
-    var graphList: List<Triple<Int, Graph<Any>, String>> = emptyList()
+    var graphList: List<Triple<Int, Graph<*>, String>> = emptyList()
 
     var graph = passedGraph ?: randomTree(5)
-//    var graph = randomTree(5)
+
     val graphView = GrahpViewClass(graph)
 
     fun onUndoPressed() {
@@ -41,11 +43,15 @@ class MainWindowVM(
         isSettingMenuOpen.value = true
     }
 
-    fun <D : Any> onSQLESaveGraphPressed(graph: Graph<D>) {
+    fun saveSQLiteGraph(graph: Graph<*>) {
         if (!sqliteDBConnected) {
             initSQLiteExposed()
         }
-        saveGraph(graph as Graph<Any>, "some graph")
+
+        saveGraph(
+            graph, if (graphName.value.isEmpty()) "Graph " + (getAllGraphs() + 1).size else graphName
+                .value
+        )
     }
 
     fun onSQLEViewGraphsPressed() {

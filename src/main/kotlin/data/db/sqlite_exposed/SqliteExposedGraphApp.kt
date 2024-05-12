@@ -14,7 +14,7 @@ fun connect() {
     }
 }
 
-fun saveGraph(graph: Graph<Any>, name: String): Int {
+fun saveGraph(graph: Graph<*>, name: String): Int {
     return transaction {
         val graphId = Graphs.insertAndGetId {
             it[Graphs.name] = name
@@ -26,8 +26,8 @@ fun saveGraph(graph: Graph<Any>, name: String): Int {
             neighbors.forEach { target ->
                 Edges.insert {
                     it[Edges.graphId] = EntityID(graphId, Graphs)
-                    it[Edges.edgeSource] = source.toString()
-                    it[Edges.edgeTarget] = target.toString()
+                    it[edgeSource] = source.toString()
+                    it[edgeTarget] = target.toString()
                 }
             }
         }
@@ -36,15 +36,7 @@ fun saveGraph(graph: Graph<Any>, name: String): Int {
     }
 }
 
-
-fun <D> getGraph(id: Int): Pair<Graph<Any>?, String?> {
-    return transaction {
-        val graphEntity = data.db.sqlite_exposed.graph.Graph.findById(id) ?: return@transaction Pair(null, null)
-        Pair(deserializeGraph(graphEntity.data, graphEntity.size), graphEntity.name)
-    }
-}
-
-fun getAllGraphs(): List<Triple<Int, Graph<Any>, String>> {
+fun getAllGraphs(): List<Triple<Int, Graph<*>, String>> {
     return transaction {
         data.db.sqlite_exposed.graph.Graph.all().map { entity ->
             Triple(entity.id.value, deserializeGraph(entity.data, entity.size), entity.name)
@@ -53,43 +45,37 @@ fun getAllGraphs(): List<Triple<Int, Graph<Any>, String>> {
 }
 
 
-fun deleteGraph(id: Int): Pair<Graph<Any>?, String?> {
-    return transaction {
+fun deleteGraph(id: Int) {
+    transaction {
         val graphEntity = data.db.sqlite_exposed.graph.Graph.findById(id) ?: return@transaction Pair(null, null)
-        val graph = deserializeGraph(graphEntity.data, graphEntity.size)
-        val name = graphEntity.name
         graphEntity.delete()
-        Pair(graph, name)
     }
 }
 
-private fun serializeGraph(graph: Graph<Any>): String {
+private fun serializeGraph(graph: Graph<*>): String {
     val serializedVertices = graph.vertices.entries.joinToString(separator = "|") { (source, neighbors) ->
         "$source:${neighbors.joinToString(";") { it.toString() }}"
     }
     return "$serializedVertices:${graph.size}"
 }
 
-private fun deserializeGraph(data: String, size: Int): Graph<Any> {
+private fun deserializeGraph(data: String, size: Int): Graph<*> {
     val graph = Graph<Any>()
     val entries = data.split("|")
     val vertices = mutableMapOf<Any, MutableSet<Pair<Any, Float>>>()
 
     for (entry in entries) {
         val parts = entry.split(":")
-        val source = parts[0].toInt() as Any
+        val source = detectType(parts[0])
 
         val neighbors = parts[1].split(";")
-        val h1 = neighbors[0]
-        val h2 = h1.split(", ")
-
-        val hhh = neighbors.mapNotNull { it ->
+        val hhh = neighbors.mapNotNull {
             val neighborParts = it.split(", ")
 
             if (neighborParts.size == 2) {
-                val vertex = neighborParts[0].removePrefix("(").toInt()
+                val vertex = detectType(neighborParts[0].removePrefix("("))
                 val weight = neighborParts[1].removeSuffix(")").toFloat()
-                Pair(vertex as Any, weight)
+                Pair(vertex, weight)
             } else {
                 null
             }
@@ -102,4 +88,14 @@ private fun deserializeGraph(data: String, size: Int): Graph<Any> {
     return graph
 }
 
+private fun detectType(input: String): Any {
+    // Try to convert to Int
+    val intVal = input.toIntOrNull()
+    if (intVal != null) return intVal
 
+    // Check if it's a single character
+    if (input.length == 1) return input[0]
+
+    // If none of the above, it's a String
+    return input
+}

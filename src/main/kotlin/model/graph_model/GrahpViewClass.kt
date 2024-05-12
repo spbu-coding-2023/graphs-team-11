@@ -22,7 +22,7 @@ data class NodeViewClass<D>(
 
 data class VertView<D>(var start: NodeViewClass<D>, var end: NodeViewClass<D>, var color: Color, var alpha: Float = 1f)
 
-class GrahpViewClass<D> (
+class GrahpViewClass<D>(
     var graph: Graph<D>,
     var radius: Float = 30f,
     var nodeColor: Color = Color.Blue,
@@ -49,9 +49,10 @@ class GrahpViewClass<D> (
         for ((i, verts) in graph.vertices) {
             vertViews[i] = mutableMapOf()
             for ((j, weight) in verts) {
-                vertViews[i]!!.set(j, VertView(
-                    start = nodesViews[i]!!, end = nodesViews[j]!!, color = vertColor, alpha = 0.5f
-                )
+                vertViews[i]!!.set(
+                    j, VertView(
+                        start = nodesViews[i]!!, end = nodesViews[j]!!, color = vertColor, alpha = 0.5f
+                    )
                 )
             }
         }
@@ -78,8 +79,7 @@ class GrahpViewClass<D> (
             vertViewReUpdate[v] = mutableMapOf()
             for ((u, viewUpdate) in verts) {
                 if (isNotReUpdate) vertViewReUpdate[v]!![u] = VertViewUpdate(
-                    color = vertViews[v]!![u]!!.color,
-                    alpha = vertViews[v]!![u]!!.alpha
+                    color = vertViews[v]!![u]!!.color, alpha = vertViews[v]!![u]!!.alpha
                 )
                 if (viewUpdate.color != null) vertViews[v]!![u]!!.color = viewUpdate.color
                 if (viewUpdate.alpha != null) vertViews[v]!![u]!!.alpha = viewUpdate.alpha

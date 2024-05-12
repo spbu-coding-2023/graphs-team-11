@@ -23,29 +23,24 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Window
+import ui.theme.BdsmAppTheme
 import ui.theme.Theme
-import ui.theme.ThemeColors
+import java.awt.Dimension
 import java.io.File
 import javax.sound.sampled.AudioSystem
 
 @Composable
 fun SettingsView(onClose: () -> Unit, appTheme: MutableState<Theme>) {
     val goldenMode = remember { mutableStateOf(false) }
-    val backgroundColor = when (appTheme.value) {
-        Theme.DARK -> ThemeColors.Dark.background
-        Theme.LIGHT -> ThemeColors.Light.background
-        else -> ThemeColors.Golden.background
-    }
     val showSberIcon = mutableStateOf(false)
     Window(
         title = "Settings",
         onCloseRequest = onClose,
     ) {
-        Surface(
-            modifier = Modifier.fillMaxSize()
-        ) {
+        window.minimumSize = Dimension(600, 400)
+        BdsmAppTheme(appTheme = appTheme.value) {
             Column(
-                modifier = Modifier.background(backgroundColor).fillMaxSize().padding(20.dp),
+                modifier = Modifier.background(MaterialTheme.colors.background).fillMaxSize().padding(20.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.SpaceBetween,
             ) {

@@ -42,6 +42,10 @@ fun <D> GrahpView(
         modifier = Modifier.fillMaxSize().onSizeChanged { coordinates ->
             viewModel.onBoxSizeChanged(coordinates)
         }.background(MaterialTheme.colors.background)
+            .onKeyEvent { keyEvent ->
+                isShifted.value = keyEvent.isShiftPressed
+                false
+            }
     ) {
 
         Canvas(modifier = Modifier.fillMaxSize().pointerInput(Unit) {

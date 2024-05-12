@@ -66,10 +66,14 @@ fun <D> NodeView(
             }
             .onPlaced { offset = toAbsoluteOffset(nodeView.offset) }
             .selectable(selected.getOrDefault(nodeView.value, false)) {
-                selected.forEach { selected.remove(it.key)}
-                selected[nodeView.value] = true
-
-                println()
+                if (!isShifted.value) {
+                    selected.forEach { selected.remove(it.key) }
+                    selected[nodeView.value] = true
+                }
+                else {
+                    selected[nodeView.value] = !selected.getOrDefault(nodeView.value, false)
+                }
+                println(isShifted.value)
             }
         , contentAlignment = Alignment.Center
     ) {

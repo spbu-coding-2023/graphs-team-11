@@ -4,8 +4,22 @@ import data.db.sqlite_exposed.edge.Edges
 import data.db.sqlite_exposed.graph.Graphs
 import model.graph_model.Graph
 import org.jetbrains.exposed.dao.id.EntityID
-import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.SchemaUtils
+import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.insertAndGetId
 import org.jetbrains.exposed.sql.transactions.transaction
+import kotlin.collections.List
+import kotlin.collections.MutableSet
+import kotlin.collections.component1
+import kotlin.collections.component2
+import kotlin.collections.forEach
+import kotlin.collections.joinToString
+import kotlin.collections.map
+import kotlin.collections.mapNotNull
+import kotlin.collections.mutableMapOf
+import kotlin.collections.set
+import kotlin.collections.toMutableSet
 
 fun connect() {
     Database.connect("jdbc:sqlite:sqlite_exposed_graph.db", driver = "org.sqlite.JDBC")

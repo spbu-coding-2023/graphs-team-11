@@ -47,8 +47,10 @@ fun <D> NodeView(
     Box(
         Modifier
             .offset { IntOffset((offset.x - mainOffset.x).roundToInt(), (offset.y - mainOffset.y).roundToInt()) }
-            .background(nodeView.color,
-                shape = if (selected.getOrDefault(nodeView.value, false)) RectangleShape else CircleShape)
+            .background(
+                nodeView.color,
+                shape = if (selected.getOrDefault(nodeView.value, false)) RectangleShape else CircleShape
+            )
             .size(nodeView.radius.dp)
             .pointerInput(Unit) {
                 detectDragGestures { change, dragAmount ->
@@ -69,13 +71,11 @@ fun <D> NodeView(
                 if (!isShifted.value) {
                     selected.forEach { selected.remove(it.key) }
                     selected[nodeView.value] = true
-                }
-                else {
+                } else {
                     selected[nodeView.value] = !selected.getOrDefault(nodeView.value, false)
                 }
                 println(isShifted.value)
-            }
-        , contentAlignment = Alignment.Center
+            }, contentAlignment = Alignment.Center
     ) {
         Text(
             text = nodeView.value.toString(),

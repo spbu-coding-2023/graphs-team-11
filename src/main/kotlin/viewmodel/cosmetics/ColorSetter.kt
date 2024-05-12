@@ -5,7 +5,7 @@ import model.graph_model.Graph
 import model.graph_model.graph_model_actions.NodeViewUpdate
 import model.graph_model.graph_model_actions.Update
 
-class ColorSetter: CosmeticWidgetsMV {
+class ColorSetter : CosmeticWidgetsMV {
 
     var color: Color = Color.White
     override fun <D> getUpdate(graph: Graph<D>): Update<D> {

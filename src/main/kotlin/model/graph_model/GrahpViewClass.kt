@@ -10,7 +10,7 @@ import androidx.compose.ui.graphics.Shape
 import model.graph_model.graph_model_actions.NodeViewUpdate
 import model.graph_model.graph_model_actions.Update
 import model.graph_model.graph_model_actions.VertViewUpdate
-import java.util.Stack
+import java.util.*
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.sqrt
@@ -89,7 +89,7 @@ class GrahpViewClass<D>(
     }
 
     fun comeBack() {
-        returnStack.forEach { println(it.nodeViewUpdate)}
+        returnStack.forEach { println(it.nodeViewUpdate) }
         if (this.returnStack.size > 0) this.applyUpdate(this.returnStack.pop(), isNotReUpdate = false)
     }
 

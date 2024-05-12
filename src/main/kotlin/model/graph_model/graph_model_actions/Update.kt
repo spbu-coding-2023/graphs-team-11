@@ -1,9 +1,5 @@
 package model.graph_model.graph_model_actions
 
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shape
-
 class Update<D>(
     val nodeViewUpdate: MutableMap<D, NodeViewUpdate<D>> = mutableMapOf(),
     val vertViewUpdate: MutableMap<D, MutableMap<D, VertViewUpdate<D>>> = mutableMapOf()
@@ -21,8 +17,7 @@ class Update<D>(
                     shape = other.nodeViewUpdate[node]?.shape ?: this.nodeViewUpdate[node]?.shape,
                     alpha = other.nodeViewUpdate[node]?.alpha ?: this.nodeViewUpdate[node]?.alpha
                 )
-            }
-            else {
+            } else {
                 sumUpdate.nodeViewUpdate[node] = this.nodeViewUpdate[node]!!
             }
         }
@@ -38,7 +33,8 @@ class Update<D>(
                     val otherVerts = other.vertViewUpdate[u]!!
                     if (v in otherVerts) {
                         exist = true
-                        sumUpdate.vertViewUpdate[u]?.set(v,
+                        sumUpdate.vertViewUpdate[u]?.set(
+                            v,
                             VertViewUpdate(
                                 color = other.vertViewUpdate[u]?.get(v)?.color ?: update.color,
                                 alpha = other.vertViewUpdate[u]?.get(v)?.alpha ?: update.alpha

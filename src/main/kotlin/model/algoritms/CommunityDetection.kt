@@ -6,7 +6,7 @@ import model.graph_model.graph_model_actions.NodeViewUpdate
 import model.graph_model.graph_model_actions.Update
 import kotlin.random.Random
 
-class LeidenToRun: Algoritm {
+class LeidenToRun : Algoritm {
     override fun <D> alogRun(graph: Graph<D>): Update<D> {
         val leidenAlgorithm = LeidenAlgorithm<D>(graph)
         val communities = leidenAlgorithm.detectCommunities()
@@ -26,7 +26,9 @@ class LeidenToRun: Algoritm {
 //        }
 
         val colors: MutableMap<Int, Color> = mutableMapOf()
-        for ((community, _) in communityMap) { colors[community] = Color(Random.nextInt(256), Random.nextInt(256), Random.nextInt(256))}
+        for ((community, _) in communityMap) {
+            colors[community] = Color(Random.nextInt(256), Random.nextInt(256), Random.nextInt(256))
+        }
 
 
         val update: MutableMap<D, NodeViewUpdate<D>> = mutableMapOf()

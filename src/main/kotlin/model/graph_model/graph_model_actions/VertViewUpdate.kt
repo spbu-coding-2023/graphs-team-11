@@ -4,5 +4,5 @@ import androidx.compose.ui.graphics.Color
 
 class VertViewUpdate<D>(
     val color: Color? = null,
-    val alpha: Float? = null)
-{}
+    val alpha: Float? = null
+) {}

@@ -5,7 +5,7 @@ import model.graph_model.Graph
 import model.graph_model.graph_model_actions.Update
 import model.graph_model.graph_model_actions.VertViewUpdate
 
-class SomeThingLikeDFS: Algoritm {
+class SomeThingLikeDFS : Algoritm {
     override fun <D> alogRun(graph: Graph<D>): Update<D> {
         var vertUpdate: MutableMap<D, MutableMap<D, VertViewUpdate<D>>> = mutableMapOf()
         var visited: MutableSet<D> = mutableSetOf()

@@ -2,6 +2,7 @@ package ui
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.offset
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -40,33 +42,23 @@ fun <D> NodeView(
     selected: SnapshotStateMap<D, Boolean>,
     isShifted: MutableState<Boolean>
 ) {
-
-
     var offset by remember { mutableStateOf(toAbsoluteOffset(nodeView.offset)) }
 
     Box(
-        Modifier
-            .offset { IntOffset((offset.x - mainOffset.x).roundToInt(), (offset.y - mainOffset.y).roundToInt()) }
+        Modifier.offset { IntOffset((offset.x - mainOffset.x).roundToInt(), (offset.y - mainOffset.y).roundToInt()) }
             .background(
-                nodeView.color,
-                shape = if (selected.getOrDefault(nodeView.value, false)) RectangleShape else CircleShape
-            )
-            .size(nodeView.radius.dp)
-            .pointerInput(Unit) {
+                MaterialTheme.colors.background,
+            ).border(
+                if (selected.getOrDefault(nodeView.value, false)) 4.dp else 2.dp,
+                color = nodeView.color,
+                shape = CircleShape,
+            ).size(nodeView.radius.dp).pointerInput(Unit) {
                 detectDragGestures { change, dragAmount ->
                     change.consume()
-
-                    // println(offset)
-                    // println(toAbsoluteOffset(nodeView.offset))
-
                     offset += dragAmount
-
                     nodeView.offset = toNotAbsoluteOffset(offset)
-                    // println(toNotAbsoluteOffset(Offset(x = width / 2f, y = height / 2f)))
-                    // println(nodeView.offset)
                 }
-            }
-            .onPlaced { offset = toAbsoluteOffset(nodeView.offset) }
+            }.onPlaced { offset = toAbsoluteOffset(nodeView.offset) }
             .selectable(selected.getOrDefault(nodeView.value, false)) {
                 if (!isShifted.value) {
                     selected.forEach { selected.remove(it.key) }
@@ -74,7 +66,6 @@ fun <D> NodeView(
                 } else {
                     selected[nodeView.value] = !selected.getOrDefault(nodeView.value, false)
                 }
-                println(isShifted.value)
             }, contentAlignment = Alignment.Center
     ) {
         Text(

@@ -3,7 +3,7 @@ import androidx.compose.ui.window.*
 import ui.MyWindow
 import ui.components.MyApplicationState
 
-fun main() = application {
+fun main() = application{
 
     val applicationState = remember { MyApplicationState() }
 

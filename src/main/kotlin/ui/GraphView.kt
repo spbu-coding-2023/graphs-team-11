@@ -23,7 +23,11 @@ import viewmodel.GraphVM
 @Composable
 @Preview
 fun <D> GrahpView(
-    gv: GrahpViewClass<D>, changedAlgo: MutableState<Boolean>, selected: SnapshotStateMap<D, Boolean>, padding: Int = 30, showNodes: Boolean = true
+    gv: GrahpViewClass<D>,
+    changedAlgo: MutableState<Boolean>,
+    selected: SnapshotStateMap<D, Boolean>,
+    padding: Int = 30,
+    showNodes: Boolean = true
 ) {
     val viewModel = remember { GraphVM() }
     viewModel.padding = padding

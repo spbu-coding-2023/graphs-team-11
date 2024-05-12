@@ -28,9 +28,7 @@ import viewmodel.AlgorithmMenuVM
 @Composable
 @Preview
 fun <D> LeftMenu(
-    grahpViewClass: GrahpViewClass<D>,
-    changedAlgo: MutableState<Boolean>,
-    selected: SnapshotStateMap<D, Boolean>
+    grahpViewClass: GrahpViewClass<D>, changedAlgo: MutableState<Boolean>, selected: SnapshotStateMap<D, Boolean>
 ) {
     val viewModel = remember { AlgorithmMenuVM() }
     val isMenuVisible = viewModel.isMenuVisible.value

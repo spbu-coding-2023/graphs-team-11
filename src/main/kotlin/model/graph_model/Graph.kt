@@ -5,7 +5,7 @@ import androidx.compose.runtime.Stable
 @Stable
 open class Graph<D> {
     var vertices: MutableMap<D, MutableSet<Pair<D, Float>>> = mutableMapOf()
-    private var size: Int = 0
+    var size: Int = 0
 
     fun addNode(data: D) {
         this.vertices[data] = mutableSetOf()

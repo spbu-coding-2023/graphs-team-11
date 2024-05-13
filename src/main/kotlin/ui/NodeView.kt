@@ -1,6 +1,5 @@
 package ui
 
-import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectDragGestures
@@ -23,7 +22,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onPlaced
 import androidx.compose.ui.text.style.TextAlign
@@ -33,40 +31,43 @@ import model.graph_model.NodeViewClass
 import kotlin.math.roundToInt
 
 @Composable
-@Preview
 fun <D> NodeView(
     nodeView: NodeViewClass<D>,
     mainOffset: Offset,
     toAbsoluteOffset: (Offset) -> Offset,
     toNotAbsoluteOffset: (Offset) -> Offset,
     selected: SnapshotStateMap<D, Boolean>,
-    isShifted: MutableState<Boolean>
+    isShifted: MutableState<Boolean>,
+    scaleFactor: Float
 ) {
     var offset by remember { mutableStateOf(toAbsoluteOffset(nodeView.offset)) }
 
-    Box(
-        Modifier.offset { IntOffset((offset.x - mainOffset.x).roundToInt(), (offset.y - mainOffset.y).roundToInt()) }
-            .background(
-                MaterialTheme.colors.background,
-            ).border(
-                if (selected.getOrDefault(nodeView.value, false)) 4.dp else 2.dp,
-                color = nodeView.color,
-                shape = CircleShape,
-            ).size(nodeView.radius.dp).pointerInput(Unit) {
-                detectDragGestures { change, dragAmount ->
-                    change.consume()
-                    offset += dragAmount
-                    nodeView.offset = toNotAbsoluteOffset(offset)
-                }
-            }.onPlaced { offset = toAbsoluteOffset(nodeView.offset) }
-            .selectable(selected.getOrDefault(nodeView.value, false)) {
-                if (!isShifted.value) {
-                    selected.forEach { selected.remove(it.key) }
-                    selected[nodeView.value] = true
-                } else {
-                    selected[nodeView.value] = !selected.getOrDefault(nodeView.value, false)
-                }
-            }, contentAlignment = Alignment.Center
+    Box(Modifier.offset {
+        IntOffset(
+            ((offset.x - mainOffset.x) * scaleFactor).roundToInt(),
+            ((offset.y - mainOffset.y) * scaleFactor).roundToInt()
+        )
+    }.background(
+        MaterialTheme.colors.background,
+    ).border(
+        if (selected.getOrDefault(nodeView.value, false)) 4.dp else 2.dp,
+        color = nodeView.color,
+        shape = CircleShape,
+    ).size((nodeView.radius * scaleFactor).dp).pointerInput(Unit) {
+        detectDragGestures { change, dragAmount ->
+            change.consume()
+            // there is a problem with the offset calculation
+            offset += dragAmount / scaleFactor
+            nodeView.offset = toNotAbsoluteOffset(offset)
+        }
+    }.onPlaced { offset = toAbsoluteOffset(nodeView.offset) }.selectable(selected.getOrDefault(nodeView.value, false)) {
+            if (!isShifted.value) {
+                selected.forEach { selected.remove(it.key) }
+                selected[nodeView.value] = true
+            } else {
+                selected[nodeView.value] = !selected.getOrDefault(nodeView.value, false)
+            }
+        }, contentAlignment = Alignment.Center
     ) {
         Text(
             text = nodeView.value.toString(),

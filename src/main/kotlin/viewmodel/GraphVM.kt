@@ -4,13 +4,17 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.input.pointer.PointerEvent
 import androidx.compose.ui.unit.IntSize
+import kotlin.math.sign
 import kotlin.properties.Delegates
 
 class GraphVM {
     private var height by mutableStateOf(0)
     private var width by mutableStateOf(0)
     var mainOffset by mutableStateOf(Offset(x = 0f, y = 0f))
+    val scaleFactor = mutableStateOf(1f)
+
 
     var padding by Delegates.notNull<Int>()
 
@@ -44,6 +48,14 @@ class GraphVM {
                 y = (offset.y - padding - (height - 2 * padding) / 2) / (height - 2 * padding) * 2
             )
         }
+    }
+
+    fun onMouseScroll(pointerEvent: PointerEvent) {
+        val change = pointerEvent.changes.first()
+        val delta = change.scrollDelta.y.toInt().sign
+        val zoomVal = scaleFactor.value + delta * 0.1f
+        if (zoomVal < 0.5f || zoomVal > 3.0f) return
+        scaleFactor.value = zoomVal
     }
 
 }

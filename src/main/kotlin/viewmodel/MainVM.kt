@@ -32,7 +32,7 @@ class MainVM<D>(
 
     var graphList: List<Triple<Int, Graph<*>, String>> = emptyList()
 
-    var graph = passedGraph ?: randomTree(5)
+    var graph = passedGraph ?: randomTree(100)
 
     val graphView = GrahpViewClass(graph)
 

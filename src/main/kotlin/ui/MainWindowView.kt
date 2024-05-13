@@ -28,7 +28,7 @@ import java.awt.Dimension
 fun MyWindow(
     state: MyWindowState
 ) {
-    val viewModel = MainVM<Int>(state.graph)
+    val viewModel = MainVM(state.graph)
     val windowState = rememberWindowState(size = DpSize(1200.dp, 760.dp))
 
     Window(onCloseRequest = state::close, title = state.title, state = windowState) {
@@ -54,7 +54,7 @@ fun MyWindow(
             }
 
         }
-        App(viewModel.graphView, viewModel.changedAlgo, viewModel.selected, viewModel.appTheme)
+        App(viewModel, viewModel.changedAlgo, viewModel.appTheme)
         if (viewModel.isSettingMenuOpen.value) {
             SettingsView(
                 onClose = { viewModel.isSettingMenuOpen.value = false },
@@ -78,19 +78,18 @@ fun MyWindow(
 
 @Composable
 fun <D> App(
-    graphView: GrahpViewClass<D>,
+    viewModel: MainVM<D>,
     changedAlgo: MutableState<Boolean>,
-    selected: SnapshotStateMap<*, Boolean>,
     appTheme: MutableState<Theme>
 ) {
     BdsmAppTheme(appTheme = appTheme.value) {
         Row {
             Column(modifier = Modifier.background(MaterialTheme.colors.background)) {
-                LeftMenu(graphView, changedAlgo, selected as SnapshotStateMap<D, Boolean>)
-                CommeticsMenu(graphView, changedAlgo, selected)
+                LeftMenu(viewModel.graphView, changedAlgo, viewModel.selected)
+                CommeticsMenu(viewModel.graphView, changedAlgo, viewModel.selected)
             }
             Card {
-                GrahpView(graphView, changedAlgo, selected as SnapshotStateMap<D, Boolean>)
+                GrahpView(viewModel.graphView, changedAlgo, viewModel.selected)
             }
         }
     }

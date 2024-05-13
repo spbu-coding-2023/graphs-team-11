@@ -7,15 +7,12 @@ import androidx.compose.material.Card
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.MenuBar
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.rememberWindowState
-import model.graph_model.GrahpViewClass
-import model.graph_model.Graph
 import ui.components.MyWindowState
 import ui.components.SelectNameWindow
 import ui.components.cosmetic.CommeticsMenu
@@ -70,7 +67,7 @@ fun MyWindow(
             SelectNameWindow(onClose = {
                 viewModel.isSelectNameWindowOpen.value = false
             }, viewModel.appTheme, viewModel.graphName, onSave = {
-                viewModel.saveSQLiteGraph(viewModel.graph as Graph<*>)
+                viewModel.saveSQLiteGraph(viewModel.graph)
             })
         }
     }

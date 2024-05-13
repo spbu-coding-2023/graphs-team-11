@@ -28,7 +28,7 @@ fun connect() {
     }
 }
 
-fun saveGraph(graph: Graph<*>, name: String): Int {
+fun <D> saveGraph(graph: Graph<D>, name: String): Int {
     return transaction {
         val graphId = Graphs.insertAndGetId {
             it[Graphs.name] = name
@@ -66,7 +66,7 @@ fun deleteGraph(id: Int) {
     }
 }
 
-private fun serializeGraph(graph: Graph<*>): String {
+private fun <D> serializeGraph(graph: Graph<D>): String {
     val serializedVertices = graph.vertices.entries.joinToString(separator = "|") { (source, neighbors) ->
         "$source:${neighbors.joinToString(";") { it.toString() }}"
     }

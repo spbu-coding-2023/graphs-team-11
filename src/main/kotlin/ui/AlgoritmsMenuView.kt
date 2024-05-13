@@ -10,7 +10,6 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -24,8 +23,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Divider
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.ExposedDropdownMenuBox
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
@@ -47,13 +44,13 @@ import androidx.compose.ui.unit.dp
 import model.algoritms.LeidenToRun
 import model.algoritms.SampleAlgo
 import model.algoritms.SomeThingLikeDFS
-import model.graph_model.GrahpViewClass
+import model.graph_model.GraphViewClass
 import viewmodel.AlgorithmMenuVM
 
 @Composable
 @Preview
 fun <D> LeftMenu(
-    grahpViewClass: GrahpViewClass<D>, changedAlgo: MutableState<Boolean>, selected: SnapshotStateMap<D, Boolean>
+    graphViewClass: GraphViewClass<D>, changedAlgo: MutableState<Boolean>, selected: SnapshotStateMap<D, Boolean>
 ) {
     val viewModel = remember { AlgorithmMenuVM() }
     val isMenuVisible = viewModel.isMenuVisible.value
@@ -74,7 +71,7 @@ fun <D> LeftMenu(
                 modifier = Modifier.width(viewModel.menuWidth).fillMaxHeight(),
                 shape = RoundedCornerShape(topEnd = 12.dp, bottomEnd = 12.dp)
             ) {
-                AlgoritmList(grahpViewClass, changedAlgo, viewModel)
+                AlgoritmList(graphViewClass, changedAlgo, viewModel)
             }
         }
         Icon(imageVector = if (isMenuVisible) Icons.AutoMirrored.Filled.KeyboardArrowLeft
@@ -84,11 +81,10 @@ fun <D> LeftMenu(
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 @Stable
 fun <D> AlgoritmList(
-    grahpViewClass: GrahpViewClass<D>, changedAlgo: MutableState<Boolean>, viewModel: AlgorithmMenuVM
+    graphViewClass: GraphViewClass<D>, changedAlgo: MutableState<Boolean>, viewModel: AlgorithmMenuVM
 ) {
     val algoList = mutableListOf(
         Pair("Detect Communities", LeidenToRun()),
@@ -106,7 +102,7 @@ fun <D> AlgoritmList(
         Divider(color = Color.Black, modifier = Modifier.fillMaxWidth(0.3f))
         for (algorithm in algoList) {
             Text(text = algorithm.first, modifier = Modifier.clickable(onClick = {
-                viewModel.runAlgorithm(algorithm.second, grahpViewClass, changedAlgo)
+                viewModel.runAlgorithm(algorithm.second, graphViewClass, changedAlgo)
             }).offset(10.dp))
         }
     }

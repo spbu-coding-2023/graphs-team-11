@@ -22,7 +22,7 @@ data class NodeViewClass<D>(
 
 data class VertView<D>(var start: NodeViewClass<D>, var end: NodeViewClass<D>, var color: Color, var alpha: Float = 1f)
 
-class GrahpViewClass<D>(
+class GraphViewClass<D>(
     var graph: Graph<D>,
     var radius: Float = 30f,
     var nodeColor: Color = Color.Blue,

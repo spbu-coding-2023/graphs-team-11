@@ -4,7 +4,6 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
-import androidx.compose.foundation.gestures.rememberTransformableState
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,13 +19,13 @@ import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.onPointerEvent
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
-import model.graph_model.GrahpViewClass
+import model.graph_model.GraphViewClass
 import viewmodel.GraphVM
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun <D> GrahpView(
-    gv: GrahpViewClass<D>,
+    gv: GraphViewClass<D>,
     changedAlgo: MutableState<Boolean>,
     selected: SnapshotStateMap<D, Boolean>,
     padding: Int = 30,

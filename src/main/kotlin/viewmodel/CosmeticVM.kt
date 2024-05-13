@@ -2,7 +2,7 @@ package viewmodel
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.unit.dp
-import model.graph_model.GrahpViewClass
+import model.graph_model.GraphViewClass
 import model.graph_model.graph_model_actions.Update
 import viewmodel.cosmetics.CosmeticWidgetsMV
 
@@ -16,7 +16,7 @@ class CosmeticVM {
         isMenuVisible.value = !isMenuVisible.value
     }
 
-    fun <D> createUpdate(grahpView: GrahpViewClass<D>) {
+    fun <D> createUpdate(grahpView: GraphViewClass<D>) {
         var update: Update<D> = Update()
         for (cosVM in cosmeticWidgetsViewModels) {
             update += cosVM.getUpdate(graph = grahpView.graph)

@@ -8,8 +8,7 @@ import androidx.compose.ui.input.key.KeyShortcut
 import data.db.sqlite_exposed.connect
 import data.db.sqlite_exposed.getAllGraphs
 import data.db.sqlite_exposed.saveGraph
-import data.tools.graphGenerators.randomTree
-import model.graph_model.GrahpViewClass
+import model.graph_model.GraphViewClass
 import model.graph_model.Graph
 import ui.theme.Theme
 
@@ -23,7 +22,7 @@ class MainVM<D>(
     val isSavedGraphsOpen = mutableStateOf(false)
     val isSelectNameWindowOpen = mutableStateOf(false)
     val graphName = mutableStateOf("")
-    val selected: SnapshotStateMap<D, Boolean> = mutableStateMapOf<D, Boolean>()
+    val selected: SnapshotStateMap<D, Boolean> = mutableStateMapOf()
 
     val copyShortcut = if (isMac) KeyShortcut(Key.C, meta = true) else KeyShortcut(Key.C, ctrl = true)
     val undoShortcut = if (isMac) KeyShortcut(Key.Z, meta = true) else KeyShortcut(Key.Z, ctrl = true)
@@ -34,7 +33,7 @@ class MainVM<D>(
 
     var graph: Graph<D> = passedGraph ?: Graph()
 
-    val graphView = GrahpViewClass(graph)
+    val graphView = GraphViewClass(graph)
 
     fun onUndoPressed() {
         changedAlgo.value = true
@@ -51,7 +50,7 @@ class MainVM<D>(
         }
 
         saveGraph(
-            graph, if (graphName.value.isEmpty()) "Graph " + (getAllGraphs() + 1).size else graphName.value
+            graph, graphName.value.ifEmpty { "Graph " + (getAllGraphs() + 1).size }
         )
     }
 

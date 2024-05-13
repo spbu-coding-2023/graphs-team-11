@@ -41,13 +41,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
-import model.graph_model.GrahpViewClass
+import model.graph_model.GraphViewClass
 import viewmodel.CosmeticVM
 
 @Composable
 @Preview
 fun <D> CommeticsMenu(
-    grahpViewClass: GrahpViewClass<D>, changedAlgo: MutableState<Boolean>, selected: SnapshotStateMap<D, Boolean>
+    graphViewClass: GraphViewClass<D>, changedAlgo: MutableState<Boolean>, selected: SnapshotStateMap<D, Boolean>
 ) {
     val viewModel = remember { CosmeticVM() }
     val isMenuVisible = viewModel.isMenuVisible.value
@@ -71,7 +71,7 @@ fun <D> CommeticsMenu(
                 Column {
                     CommeticsList(viewModel)
                     Button(onClick = {
-                        viewModel.createUpdate(grahpViewClass)
+                        viewModel.createUpdate(graphViewClass)
                         changedAlgo.value = true
                     }) {
                         Text("Apply")

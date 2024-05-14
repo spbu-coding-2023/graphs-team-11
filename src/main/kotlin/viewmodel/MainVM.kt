@@ -22,7 +22,7 @@ class MainVM<D>(
     val isSavedGraphsOpen = mutableStateOf(false)
     val isSelectNameWindowOpen = mutableStateOf(false)
     val graphName = mutableStateOf("")
-    val selected: SnapshotStateMap<D, Boolean> = mutableStateMapOf()
+    val selected: SnapshotStateMap<D, Int> = mutableStateMapOf()
 
     val copyShortcut = if (isMac) KeyShortcut(Key.C, meta = true) else KeyShortcut(Key.C, ctrl = true)
     val undoShortcut = if (isMac) KeyShortcut(Key.Z, meta = true) else KeyShortcut(Key.Z, ctrl = true)

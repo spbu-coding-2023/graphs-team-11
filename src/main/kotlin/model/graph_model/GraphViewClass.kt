@@ -17,7 +17,7 @@ import kotlin.math.sqrt
 import kotlin.random.Random
 
 data class NodeViewClass<D>(
-    var offset: Offset, var radius: Float, var color: Color, var value: D, var shape: Shape, var alpha: Float = 1f
+    var offset: Offset, var radius: Float, var color: Color, var value: D?, var shape: Shape, var alpha: Float = 1f
 )
 
 data class VertView<D>(var start: NodeViewClass<D>, var end: NodeViewClass<D>, var color: Color, var alpha: Float = 1f)
@@ -29,12 +29,15 @@ class GraphViewClass<D>(
     var vertColor: Color = Color.Red,
     var baseShape: Shape = CircleShape,
     nodesViews: MutableMap<D, NodeViewClass<D>> = mutableMapOf(),
-    vertViews: MutableMap<D, MutableMap<D, VertView<D>>> = mutableMapOf()
+    vertViews: MutableMap<D, MutableMap<D, VertView<D>>> = mutableMapOf(),
+    newNodes: MutableList<NodeViewClass<D>> = mutableListOf()
 ) {
 
     var nodesViews by mutableStateOf(nodesViews)
         private set
     var vertViews by mutableStateOf(vertViews)
+        private set
+    var newNodes by mutableStateOf(newNodes)
         private set
 
     var returnStack by mutableStateOf(Stack<Update<D>>())
@@ -54,6 +57,39 @@ class GraphViewClass<D>(
                         start = nodesViews[i]!!, end = nodesViews[j]!!, color = vertColor, alpha = 0.5f
                     )
                 )
+            }
+        }
+    }
+
+    fun addNode(value: D?, offset: Offset, color: Color = nodeColor) {
+        if (value != null) {
+            this.graph.addNode(value)
+            this.nodesViews[value] = NodeViewClass<D>(
+                offset = offset, radius = radius, color = color, value = value, shape = baseShape
+            )
+        }
+        else {
+            newNodes.add(
+                NodeViewClass(
+                    offset = offset, radius = radius, color = color, value = null, shape = baseShape
+                )
+            )
+        }
+
+    }
+
+    fun addVert(oneValue: D, twoValue: D) {
+        if (oneValue in this.nodesViews && twoValue in this.nodesViews) {
+            this.graph.addVertice(oneValue, twoValue)
+            if (oneValue in this.vertViews) {
+                this.vertViews[oneValue]!!.set(twoValue, VertView(
+                    start = nodesViews[oneValue]!!, end = nodesViews[twoValue]!!, color = vertColor, alpha = 0.5f
+                ))
+            } else {
+                this.vertViews[oneValue] = mutableMapOf()
+                this.vertViews[oneValue]!!.set(twoValue, VertView(
+                    start = nodesViews[oneValue]!!, end = nodesViews[twoValue]!!, color = vertColor, alpha = 0.5f
+                ))
             }
         }
     }

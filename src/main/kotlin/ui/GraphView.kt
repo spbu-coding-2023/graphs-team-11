@@ -13,13 +13,17 @@ import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.input.key.isShiftPressed
 import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.input.pointer.PointerButton
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.onPointerEvent
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import model.graph_model.GraphViewClass
+import model.graph_model.NodeViewClass
+import model.graph_model.abs
 import viewmodel.GraphVM
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -27,7 +31,7 @@ import viewmodel.GraphVM
 fun <D> GrahpView(
     gv: GraphViewClass<D>,
     changedAlgo: MutableState<Boolean>,
-    selected: SnapshotStateMap<D, Boolean>,
+    selected: SnapshotStateMap<D, Int>,
     padding: Int = 30,
     showNodes: Boolean = true
 ) {
@@ -40,7 +44,7 @@ fun <D> GrahpView(
 
     val toAbsoluteOffset = viewModel.toAbsoluteOffset
     val toNotAbsoluteOffset = viewModel.toNotAbsoluteOffset
-    val sensitivity by mutableStateOf(0.2f / gv.nodesViews.size)
+    val sensitivity by mutableStateOf(0.2f)
 
     val isShifted = mutableStateOf(false)
     val interactionSource = remember { MutableInteractionSource() }
@@ -59,25 +63,61 @@ fun <D> GrahpView(
         Canvas(modifier = Modifier.fillMaxSize().pointerInput(Unit) {
             detectDragGestures { change, dragAmount ->
                 change.consume()
-                for (nodeView in gv.nodesViews) {
                     viewModel.mainOffset -= dragAmount * sensitivity
-                }
             }
 
         }.onPointerEvent(PointerEventType.Scroll) {
             viewModel.onMouseScroll(it)
 
-        }) {
+        }.onPointerEvent(PointerEventType.Press) {
+            selected.forEach { print(Pair(it.key, it.value))}
+            println()
+            val selectedList = mutableMapOf<Int, D>()
+            for ((i, isSel) in selected) {
+                selectedList[isSel] = i
+            }
+            if (it.button == PointerButton.Secondary) {
+                if (selectedList.size == 0) {
+                    gv.addNode(null, toNotAbsoluteOffset(it.changes.first.position))
+                    changedAlgo.value = true
+                } else if (selectedList.size == 2) {
+                    gv.addVert(selectedList[0]!!, selectedList[1]!!)
+                    changedAlgo.value = true
+                }
+            }
+        }
+        ) {
+
+
+
             for ((i, verts) in gv.vertViews) {
                 for ((j, view) in verts) {
+                    val arrow = Path()
+
+
+                    val start = (toAbsoluteOffset(view.start.offset) + Offset(
+                        x = view.start.radius, y = view.start.radius
+                    ) * 0.5f - viewModel.mainOffset) * viewModel.scaleFactor.value
+
+                    val end = (toAbsoluteOffset(view.end.offset) + Offset(
+                        x = view.end.radius, y = view.end.radius
+                    ) * 0.5f - viewModel.mainOffset) * viewModel.scaleFactor.value
+
+                    val d = - (end - start) / abs(end - start)
+
+                    // Algebra Time!!!
+                    arrow.moveTo((end + d * (view.end.radius / 2f + 10f)).x, (end + d * (view.end.radius / 2f + 10f)).y)
+                    arrow.lineTo((end + d * (view.end.radius / 2f + 10f)).x + 10f * d.y, (end + d * (view.end.radius / 2f + 10f)).y - 10f * d.x)
+                    arrow.lineTo((end + d * (view.end.radius / 2f + 10f)).x - 10f * d.x, (end + d * (view.end.radius / 2f + 10f)).y - 10f * d.y)
+                    arrow.lineTo((end + d * (view.end.radius / 2f + 10f)).x - 10f * d.y , (end + d * (view.end.radius / 2f + 10f)).y + 10f * d.x)
+                    arrow.close()
+
+                    drawPath(arrow, color = view.color)
+
                     drawLine(
                         color = view.color,
-                        start = (toAbsoluteOffset(view.start.offset) + Offset(
-                            x = view.start.radius, y = view.start.radius
-                        ) - viewModel.mainOffset) * viewModel.scaleFactor.value,
-                        end = (toAbsoluteOffset(view.end.offset) + Offset(
-                            x = view.end.radius, y = view.end.radius
-                        ) - viewModel.mainOffset) * viewModel.scaleFactor.value,
+                        start = start,
+                        end = end,
                         alpha = view.alpha,
                     )
                 }
@@ -94,6 +134,29 @@ fun <D> GrahpView(
                     isShifted = isShifted,
                     scaleFactor = viewModel.scaleFactor.value
                 )
+            }
+            val toRemove = mutableListOf<NodeViewClass<D>>()
+            for (i in gv.newNodes) {
+                if (i.value != null) {
+                    val value = i.value!!
+                    gv.nodesViews[value] = i
+                    gv.graph.addNode(value)
+                    changedAlgo.value = true
+                    toRemove.add(i)
+                    continue
+                }
+                NodeView(
+                    nodeView = i,
+                    mainOffset = viewModel.mainOffset,
+                    toAbsoluteOffset = toAbsoluteOffset,
+                    toNotAbsoluteOffset = toNotAbsoluteOffset,
+                    selected = selected,
+                    isShifted = isShifted,
+                    scaleFactor = viewModel.scaleFactor.value
+                )
+            }
+            for (i in toRemove) {
+                gv.newNodes.remove(i)
             }
         }
     }

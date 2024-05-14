@@ -4,6 +4,7 @@ import androidx.compose.ui.graphics.Color
 import model.graph_model.Graph
 import model.graph_model.graph_model_actions.NodeViewUpdate
 import model.graph_model.graph_model_actions.Update
+import model.graph_model.graph_model_actions.VertViewUpdate
 import kotlin.random.Random
 
 class LeidenToRun : Algoritm {
@@ -31,12 +32,22 @@ class LeidenToRun : Algoritm {
         }
 
 
-        val update: MutableMap<D, NodeViewUpdate<D>> = mutableMapOf()
+        val updateNode: MutableMap<D, NodeViewUpdate<D>> = mutableMapOf()
+        val updateVert: MutableMap<D, MutableMap<D, VertViewUpdate<D>>> = mutableMapOf()
+
         for ((node, community) in communities) {
-            update[node] = NodeViewUpdate(color = colors[community])
+            updateNode[node] = NodeViewUpdate(color = colors[community])
+            updateVert[node] = mutableMapOf()
+            for ((neibour, _) in graph.vertices.getOrDefault(node, mutableSetOf())) {
+                if (neibour in communityMap[community]!!) {
+                    updateVert[node]!![neibour] = VertViewUpdate(color = colors[community])
+                } else {
+                    updateVert[node]!![neibour] = VertViewUpdate(color = Color.Gray, alpha = 0.1f)
+                }
+            }
         }
 
-        return Update(nodeViewUpdate = update)
+        return Update(nodeViewUpdate = updateNode, vertViewUpdate = updateVert)
     }
 }
 

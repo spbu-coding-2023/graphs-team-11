@@ -17,10 +17,21 @@ import kotlin.math.sqrt
 import kotlin.random.Random
 
 data class NodeViewClass<D>(
-    var offset: Offset, var radius: Float, var color: Color, var value: D?, var shape: Shape, var alpha: Float = 1f
+    var offset: Offset,
+    var radius: Float,
+    var color: Color,
+    var value: D?,
+    var shape: Shape,
+    var alpha: Float = 1f
 )
 
-data class VertView<D>(var start: NodeViewClass<D>, var end: NodeViewClass<D>, var color: Color, var alpha: Float = 1f)
+data class VertView<D>(
+    var start: NodeViewClass<D>,
+    var end: NodeViewClass<D>,
+    var color: Color,
+    var alpha: Float = 1f,
+    var weight: Float = 1f
+)
 
 class GraphViewClass<D>(
     var graph: Graph<D>,
@@ -54,7 +65,7 @@ class GraphViewClass<D>(
             for ((j, weight) in verts) {
                 vertViews[i]!!.set(
                     j, VertView(
-                        start = nodesViews[i]!!, end = nodesViews[j]!!, color = vertColor, alpha = 0.5f
+                        start = nodesViews[i]!!, end = nodesViews[j]!!, color = vertColor, alpha = 0.5f, weight = weight
                     )
                 )
             }

@@ -42,6 +42,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import model.algoritms.ConnectivityСomponent
+import model.algoritms.Kruskal
 import model.algoritms.LeidenToRun
 import model.algoritms.SampleAlgo
 import model.algoritms.SomeThingLikeDFS
@@ -91,7 +92,8 @@ fun <D> AlgoritmList(
         Pair("Detect Communities", LeidenToRun()),
         Pair("Sample Algorithm", SampleAlgo()),
         Pair("Something like DFS", SomeThingLikeDFS()),
-        Pair("Kosaraju", ConnectivityСomponent())
+        Pair("Kosaraju", ConnectivityСomponent()),
+        Pair("Minimal Tree", Kruskal())
     )
 
     val expanded = mutableStateOf(false)

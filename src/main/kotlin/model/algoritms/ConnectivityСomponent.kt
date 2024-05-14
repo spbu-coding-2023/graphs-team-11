@@ -76,7 +76,7 @@ class ConnectivityСomponent: Algoritm {
                 updateVert[i] = mutableMapOf()
                 for ((j, _) in graph.vertices.getOrDefault(i, mutableSetOf())) {
                     if (j in component) {
-                        updateVert[i]!![j] = VertViewUpdate(color = compColor)
+                        updateVert[i]!![j] = VertViewUpdate(color = compColor, alpha = 1f)
                     } else {
                         updateVert[i]!![j] = VertViewUpdate(color = Color.Gray, alpha = 0.1f)
                     }

@@ -26,7 +26,7 @@ class GraphViewClass<D>(
     var graph: Graph<D>,
     var radius: Float = 30f,
     var nodeColor: Color = Color.Blue,
-    var vertColor: Color = Color.Red,
+    var vertColor: Color = Color.Blue,
     var baseShape: Shape = CircleShape,
     nodesViews: MutableMap<D, NodeViewClass<D>> = mutableMapOf(),
     vertViews: MutableMap<D, MutableMap<D, VertView<D>>> = mutableMapOf(),

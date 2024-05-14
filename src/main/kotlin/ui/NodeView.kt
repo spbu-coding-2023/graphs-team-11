@@ -96,7 +96,7 @@ fun <D> NodeView(
         if (nodeView.value != null) {
             Text(
                 text = nodeView.value.toString(),
-                color = Color.Red,
+                color = nodeView.color,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.wrapContentSize(unbounded = true).zIndex(1f)
             )
@@ -106,7 +106,7 @@ fun <D> NodeView(
             TextField(
 
                 label = null,
-                textStyle = TextStyle(fontSize=16.sp, textAlign = TextAlign.Center, color = Color.Red),
+                textStyle = TextStyle(fontSize=16.sp, textAlign = TextAlign.Center, color = nodeView.color),
                 value = newValue.value,
                 onValueChange = { text ->
                     if (!text.endsWith("\n")) {

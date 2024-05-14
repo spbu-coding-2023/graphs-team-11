@@ -41,6 +41,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
+import model.algoritms.ConnectivityСomponent
 import model.algoritms.LeidenToRun
 import model.algoritms.SampleAlgo
 import model.algoritms.SomeThingLikeDFS
@@ -50,7 +51,7 @@ import viewmodel.AlgorithmMenuVM
 @Composable
 @Preview
 fun <D> LeftMenu(
-    graphViewClass: GraphViewClass<D>, changedAlgo: MutableState<Boolean>, selected: SnapshotStateMap<D, Boolean>
+    graphViewClass: GraphViewClass<D>, changedAlgo: MutableState<Boolean>, selected: SnapshotStateMap<D, Int>
 ) {
     val viewModel = remember { AlgorithmMenuVM() }
     val isMenuVisible = viewModel.isMenuVisible.value
@@ -90,6 +91,7 @@ fun <D> AlgoritmList(
         Pair("Detect Communities", LeidenToRun()),
         Pair("Sample Algorithm", SampleAlgo()),
         Pair("Something like DFS", SomeThingLikeDFS()),
+        Pair("Kosaraju", ConnectivityСomponent())
     )
 
     val expanded = mutableStateOf(false)

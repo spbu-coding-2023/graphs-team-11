@@ -23,16 +23,18 @@ import java.awt.Dimension
 
 @Composable
 fun MyWindow(
-    state: MyWindowState
+    state: MyWindowState,
+    isSettingMenuOpen: MutableState<Boolean>,
+    appTheme: MutableState<Theme>
 ) {
-    val viewModel = MainVM(state.graph)
+    val viewModel = MainVM(state.graph, isSettingMenuOpen)
     val windowState = rememberWindowState(size = DpSize(1200.dp, 760.dp))
 
     Window(onCloseRequest = state::close, title = state.title, state = windowState) {
         window.minimumSize = Dimension(800, 600)
         MenuBar {
             Menu("Window") {
-                Item("New window", onClick = { state.openNewWindow(null) })
+                Item("New window", onClick = { state.openChooseGraphWindow() })
                 Item("Exit", onClick = state.exit)
             }
             Menu("Edit") {
@@ -51,22 +53,22 @@ fun MyWindow(
             }
 
         }
-        App(viewModel, viewModel.changedAlgo, viewModel.appTheme)
+        App(viewModel, viewModel.changedAlgo, appTheme)
         if (viewModel.isSettingMenuOpen.value) {
             SettingsView(
-                onClose = { viewModel.isSettingMenuOpen.value = false },
-                viewModel.appTheme,
+                onClose = { isSettingMenuOpen.value = false },
+                appTheme,
             )
         }
         if (viewModel.isSavedGraphsOpen.value) {
             SavedGraphsView(
-                onClose = { viewModel.isSavedGraphsOpen.value = false }, viewModel.appTheme, viewModel.graphList, state
+                onClose = { viewModel.isSavedGraphsOpen.value = false }, appTheme, viewModel.graphList, state
             )
         }
         if (viewModel.isSelectNameWindowOpen.value) {
             SelectNameWindow(onClose = {
                 viewModel.isSelectNameWindowOpen.value = false
-            }, viewModel.appTheme, viewModel.graphName, onSave = {
+            }, appTheme, viewModel.graphName, onSave = {
                 viewModel.saveSQLiteGraph(viewModel.graph)
             })
         }

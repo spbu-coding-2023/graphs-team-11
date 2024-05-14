@@ -8,8 +8,8 @@ import ui.components.MyWindowState
 class SavedGraphsVM {
 
     fun onUseGraphSqliteExposedPressed(state: MyWindowState, graph: Graph<*>) {
-        state.openNewWindow(graph)
         state.close()
+        state.openNewWindow(graph)
     }
 
     fun onDeleteGraphSqliteExposedPressed(id: Int, graphList: MutableState<List<Triple<Int, Graph<*>, String>>>) {

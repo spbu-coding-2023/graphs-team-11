@@ -29,11 +29,15 @@ class MyApplicationState {
     private val appName = "BDSM Graphs"
 
     init {
-        windows += MyWindowState(appName)
+        openChooseGraphWindow()
+    }
+
+    private fun openChooseGraphWindow() {
+        windows += MyWindowState("Choose Graph")
     }
 
     private fun openNewWindow(graph: Graph<*>?) {
-        windows += MyWindowState("$appName ${windows.size}", graph)
+        windows += MyWindowState(appName, graph)
     }
 
     private fun exit() {
@@ -43,7 +47,13 @@ class MyApplicationState {
     private fun MyWindowState(
         title: String, graph: Graph<*>? = null
     ) = MyWindowState(
-        title, graph, openNewWindow = ::openNewWindow, exit = ::exit, windows::remove
+        title,
+        graph,
+        openNewWindow = ::openNewWindow,
+        exit = ::exit,
+        windows.size,
+        windows::remove,
+        openChooseGraphWindow = ::openChooseGraphWindow
     )
 }
 
@@ -52,9 +62,20 @@ class MyWindowState(
     val graph: Graph<*>? = null,
     val openNewWindow: (Graph<*>?) -> Unit,
     val exit: () -> Unit,
-    private val close: (MyWindowState) -> Unit
+    private val windowCount: Int,
+    private val close: (MyWindowState) -> Unit,
+    val openChooseGraphWindow: () -> Unit,
 ) {
-    fun close() = close(this)
+    fun close() {
+        if (windowCount == 0) {
+            if (title != "Choose Graph") {
+                close(this)
+                openChooseGraphWindow()
+            } else {
+                close(this)
+            }
+        } else close(this)
+    }
 }
 
 @Composable

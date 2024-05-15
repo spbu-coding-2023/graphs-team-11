@@ -1,5 +1,6 @@
 package viewmodel
 
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.snapshots.SnapshotStateMap
@@ -13,12 +14,11 @@ import model.graph_model.Graph
 import ui.theme.Theme
 
 class MainVM<D>(
-    passedGraph: Graph<D>?
+    passedGraph: Graph<D>?,
+    var isSettingMenuOpen: MutableState<Boolean>,
 ) {
     private val isMac = System.getProperty("os.name").lowercase().contains("mac")
-    val appTheme = mutableStateOf(Theme.LIGHT)
     val changedAlgo = mutableStateOf(false)
-    val isSettingMenuOpen = mutableStateOf(false)
     val isSavedGraphsOpen = mutableStateOf(false)
     val isSelectNameWindowOpen = mutableStateOf(false)
     val graphName = mutableStateOf("")

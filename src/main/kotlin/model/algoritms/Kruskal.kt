@@ -7,7 +7,7 @@ import model.graph_model.graph_model_actions.NodeViewUpdate
 import model.graph_model.graph_model_actions.Update
 import model.graph_model.graph_model_actions.VertViewUpdate
 
-class Kruskal: Algoritm {
+class Kruskal: Algoritm(null) {
     override fun <D> alogRun(graph: Graph<D>, selected: SnapshotStateMap<D, Int>): Update<D> {
         val vertes: MutableList<Pair<Float, Pair<D, D>>> = mutableListOf()
 

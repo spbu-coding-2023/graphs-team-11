@@ -22,6 +22,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.AlertDialog
+import androidx.compose.material.Button
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
@@ -33,7 +35,6 @@ import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.Stable
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.Alignment
@@ -81,6 +82,22 @@ fun <D> LeftMenu(
             contentDescription = "Menu",
             modifier = Modifier.size(30.dp).clickable { viewModel.toggleMenu() })
     }
+    if (viewModel.isException.value) {
+        AlertDialog(
+            title = { Text("Exception!") },
+            text = { Text(viewModel.exceptionMessage.value) },
+            onDismissRequest = { viewModel.isException.value = false},
+            confirmButton = {
+                Button(
+                    onClick = {
+                        viewModel.isException.value = false
+                    }
+                ) {
+                    Text("Confirm")
+                }
+            },
+        )
+    }
 }
 
 @Composable
@@ -99,8 +116,6 @@ fun <D> AlgoritmList(
         Pair("Minimal Tree", Kruskal())
     )
 
-    val expanded = mutableStateOf(false)
-
     Column(
         modifier = Modifier.fillMaxSize().background(MaterialTheme.colors.surface).padding(8.dp)
             .verticalScroll(rememberScrollState()),
@@ -109,6 +124,11 @@ fun <D> AlgoritmList(
         Divider(color = Color.Black, modifier = Modifier.fillMaxWidth(0.3f))
         for (algorithm in algoList) {
             Text(text = algorithm.first, modifier = Modifier.clickable(onClick = {
+                if (selected.size != algorithm.second.selectedSizeRequired
+                    && algorithm.second.selectedSizeRequired != null) {
+                    viewModel.isException.value = true
+                    viewModel.exceptionMessage.value = "Required " + algorithm.second.selectedSizeRequired.toString() + " selected nodes!"
+                }
                 viewModel.runAlgorithm(algorithm.second, graphViewClass, changedAlgo, selected)
             }).offset(10.dp))
         }

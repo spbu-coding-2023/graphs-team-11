@@ -9,7 +9,7 @@ import model.graph_model.graph_model_actions.VertViewUpdate
 import java.awt.Component
 import kotlin.random.Random
 
-class ConnectivityСomponent: Algoritm {
+class ConnectivityСomponent: Algoritm(null) {
     override fun <D> alogRun(graph: Graph<D>, selected: SnapshotStateMap<D, Int>): Update<D> {
         val reversed = graph.reverse()
 

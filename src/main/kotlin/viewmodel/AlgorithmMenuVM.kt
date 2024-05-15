@@ -12,6 +12,9 @@ class AlgorithmMenuVM {
 
     val isMenuVisible = mutableStateOf(true)
 
+    val isException = mutableStateOf(false)
+    val exceptionMessage = mutableStateOf("")
+
     fun toggleMenu() {
         isMenuVisible.value = !isMenuVisible.value
     }

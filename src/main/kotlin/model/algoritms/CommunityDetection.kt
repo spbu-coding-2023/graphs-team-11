@@ -8,7 +8,7 @@ import model.graph_model.graph_model_actions.Update
 import model.graph_model.graph_model_actions.VertViewUpdate
 import kotlin.random.Random
 
-class LeidenToRun : Algoritm {
+class LeidenToRun : Algoritm(null) {
     override fun <D> alogRun(graph: Graph<D>, selected: SnapshotStateMap<D, Int>): Update<D> {
         val leidenAlgorithm = LeidenAlgorithm<D>(graph)
         val communities = leidenAlgorithm.detectCommunities()

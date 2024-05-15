@@ -65,7 +65,7 @@ class GraphViewClass<D>(
             for ((j, weight) in verts) {
                 vertViews[i]!!.set(
                     j, VertView(
-                        start = nodesViews[i]!!, end = nodesViews[j]!!, color = vertColor, alpha = 0.5f, weight = weight
+                        start = nodesViews[i]!!, end = nodesViews[j]!!, color = vertColor, alpha = 1f, weight = weight
                     )
                 )
             }
@@ -94,12 +94,12 @@ class GraphViewClass<D>(
             this.graph.addVertice(oneValue, twoValue)
             if (oneValue in this.vertViews) {
                 this.vertViews[oneValue]!!.set(twoValue, VertView(
-                    start = nodesViews[oneValue]!!, end = nodesViews[twoValue]!!, color = vertColor, alpha = 0.5f
+                    start = nodesViews[oneValue]!!, end = nodesViews[twoValue]!!, color = vertColor, alpha = 1f
                 ))
             } else {
                 this.vertViews[oneValue] = mutableMapOf()
                 this.vertViews[oneValue]!!.set(twoValue, VertView(
-                    start = nodesViews[oneValue]!!, end = nodesViews[twoValue]!!, color = vertColor, alpha = 0.5f
+                    start = nodesViews[oneValue]!!, end = nodesViews[twoValue]!!, color = vertColor, alpha = 1f
                 ))
             }
         }

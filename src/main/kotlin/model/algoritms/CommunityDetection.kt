@@ -1,5 +1,6 @@
 package model.algoritms
 
+import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.graphics.Color
 import model.graph_model.Graph
 import model.graph_model.graph_model_actions.NodeViewUpdate
@@ -8,7 +9,7 @@ import model.graph_model.graph_model_actions.VertViewUpdate
 import kotlin.random.Random
 
 class LeidenToRun : Algoritm {
-    override fun <D> alogRun(graph: Graph<D>): Update<D> {
+    override fun <D> alogRun(graph: Graph<D>, selected: SnapshotStateMap<D, Int>): Update<D> {
         val leidenAlgorithm = LeidenAlgorithm<D>(graph)
         val communities = leidenAlgorithm.detectCommunities()
 

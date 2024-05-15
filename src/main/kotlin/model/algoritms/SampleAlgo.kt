@@ -1,5 +1,6 @@
 package model.algoritms
 
+import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.graphics.Color
 import model.graph_model.Graph
 import model.graph_model.graph_model_actions.NodeViewUpdate
@@ -7,7 +8,7 @@ import model.graph_model.graph_model_actions.Update
 import model.graph_model.graph_model_actions.VertViewUpdate
 
 class SampleAlgo : Algoritm {
-    override fun <D> alogRun(graph: Graph<D>): Update<D> {
+    override fun <D> alogRun(graph: Graph<D>, selected: SnapshotStateMap<D, Int>): Update<D> {
         val updateNode: MutableMap<D, NodeViewUpdate<D>> = mutableMapOf()
         val updateVert: MutableMap<D, MutableMap<D, VertViewUpdate<D>>> = mutableMapOf()
         for (i in graph.vertices) {

@@ -1,5 +1,6 @@
 package model.algoritms
 
+import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.graphics.Color
 import model.graph_model.Graph
 import model.graph_model.graph_model_actions.NodeViewUpdate
@@ -7,7 +8,7 @@ import model.graph_model.graph_model_actions.Update
 import model.graph_model.graph_model_actions.VertViewUpdate
 
 class Kruskal: Algoritm {
-    override fun <D> alogRun(graph: Graph<D>): Update<D> {
+    override fun <D> alogRun(graph: Graph<D>, selected: SnapshotStateMap<D, Int>): Update<D> {
         val vertes: MutableList<Pair<Float, Pair<D, D>>> = mutableListOf()
 
         for ((node1, neighbourhood) in graph.vertices) {
@@ -26,6 +27,8 @@ class Kruskal: Algoritm {
         treeVerts.add(sortedVerts[0])
         visited.add(sortedVerts[0].second.first)
         visited.add(sortedVerts[0].second.second)
+
+        println(vertes)
 
         for (i in sortedVerts) {
             if ((i.second.first in visited).xor((i.second.second in visited))) {

@@ -73,7 +73,7 @@ fun <D> LeftMenu(
                 modifier = Modifier.width(viewModel.menuWidth).fillMaxHeight(),
                 shape = RoundedCornerShape(topEnd = 12.dp, bottomEnd = 12.dp)
             ) {
-                AlgoritmList(graphViewClass, changedAlgo, viewModel)
+                AlgoritmList(graphViewClass, changedAlgo, viewModel, selected)
             }
         }
         Icon(imageVector = if (isMenuVisible) Icons.AutoMirrored.Filled.KeyboardArrowLeft
@@ -86,7 +86,10 @@ fun <D> LeftMenu(
 @Composable
 @Stable
 fun <D> AlgoritmList(
-    graphViewClass: GraphViewClass<D>, changedAlgo: MutableState<Boolean>, viewModel: AlgorithmMenuVM
+    graphViewClass: GraphViewClass<D>,
+    changedAlgo: MutableState<Boolean>,
+    viewModel: AlgorithmMenuVM,
+    selected: SnapshotStateMap<D, Int>
 ) {
     val algoList = mutableListOf(
         Pair("Detect Communities", LeidenToRun()),
@@ -106,7 +109,7 @@ fun <D> AlgoritmList(
         Divider(color = Color.Black, modifier = Modifier.fillMaxWidth(0.3f))
         for (algorithm in algoList) {
             Text(text = algorithm.first, modifier = Modifier.clickable(onClick = {
-                viewModel.runAlgorithm(algorithm.second, graphViewClass, changedAlgo)
+                viewModel.runAlgorithm(algorithm.second, graphViewClass, changedAlgo, selected)
             }).offset(10.dp))
         }
     }

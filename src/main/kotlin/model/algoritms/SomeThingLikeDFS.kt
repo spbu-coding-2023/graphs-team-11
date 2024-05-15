@@ -1,12 +1,13 @@
 package model.algoritms
 
+import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.graphics.Color
 import model.graph_model.Graph
 import model.graph_model.graph_model_actions.Update
 import model.graph_model.graph_model_actions.VertViewUpdate
 
 class SomeThingLikeDFS : Algoritm {
-    override fun <D> alogRun(graph: Graph<D>): Update<D> {
+    override fun <D> alogRun(graph: Graph<D>, selected: SnapshotStateMap<D, Int>): Update<D> {
         var vertUpdate: MutableMap<D, MutableMap<D, VertViewUpdate<D>>> = mutableMapOf()
         var visited: MutableSet<D> = mutableSetOf()
         for ((i, verts) in graph.vertices) {

@@ -1,7 +1,9 @@
 package ui
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -15,6 +17,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.MenuBar
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.rememberWindowState
+import model.graph_model.Graph
 import ui.components.MyWindowState
 import ui.theme.BdsmAppTheme
 import ui.theme.Theme
@@ -34,10 +37,6 @@ fun IntroWindowView(
             Menu("BDSM Graphs") {
                 Item("Settings", onClick = { viewModel.onSettingsPressed() })
             }
-
-            Menu("SQLite Exposed") {
-                Item("View Graphs", onClick = { viewModel.onSQLEViewGraphsPressed() })
-            }
         }
 
         IntroView(viewModel, state, appTheme)
@@ -48,11 +47,6 @@ fun IntroWindowView(
                 appTheme,
             )
         }
-        if (viewModel.isSavedGraphsOpen.value) {
-            SavedGraphsView(
-                onClose = { viewModel.isSavedGraphsOpen.value = false }, appTheme, viewModel.graphList, state
-            )
-        }
     }
 }
 
@@ -61,7 +55,7 @@ fun IntroView(viewModel: IntroWindowVM, state: MyWindowState, appTheme: MutableS
     BdsmAppTheme(appTheme = appTheme.value) {
         val expanded = remember { mutableStateOf(false) }
         val selectedGraphKeyType = remember { mutableStateOf(IntroWindowVM.GraphKeyType.INT) }
-        val chosenGraph = remember { mutableStateOf("Manual") }
+        val chosenGraph = remember { mutableStateOf("Saved") }
         val graphSize = remember { mutableStateOf("") }
         val chosenGenerator = remember { mutableStateOf("Random Tree") }
 
@@ -72,39 +66,11 @@ fun IntroView(viewModel: IntroWindowVM, state: MyWindowState, appTheme: MutableS
         ) {
 
             Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text("Choose Graph Type: ", fontSize = 22.sp)
-                    Divider(modifier = Modifier.width(10.dp))
-                    Column {
-                        Button(
-                            onClick = { expanded.value = true },
-                            modifier = Modifier.widthIn(min = 100.dp),
-                            colors = ButtonDefaults.buttonColors(MaterialTheme.colors.surface)
-                        ) {
-                            Text(selectedGraphKeyType.value.name)
-                        }
-                        DropdownMenu(
-                            expanded = expanded.value,
-                            onDismissRequest = { expanded.value = false },
-                        ) {
-                            IntroWindowVM.GraphKeyType.entries.forEach { graphKeyType ->
-                                DropdownMenuItem(onClick = {
-                                    selectedGraphKeyType.value = graphKeyType
-                                    expanded.value = false
-                                }) {
-                                    Text(graphKeyType.name)
-                                }
-                            }
-                        }
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(10.dp))
 
                 Row(
                     verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(20.dp)
                 ) {
-                    listOf("Manual", "Generate", "Empty").forEach { graphType ->
+                    listOf("Saved", "Manual", "Generate", "Empty").forEach { graphType ->
                         Row(Modifier.padding(vertical = 4.dp), verticalAlignment = Alignment.CenterVertically) {
                             RadioButton(
                                 selected = (chosenGraph.value == graphType),
@@ -121,7 +87,39 @@ fun IntroView(viewModel: IntroWindowVM, state: MyWindowState, appTheme: MutableS
                     }
                 }
 
-                Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(10.dp))
+
+                if (chosenGraph.value != "Saved") {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text("Choose Graph Type: ", fontSize = 22.sp)
+                        Divider(modifier = Modifier.width(10.dp))
+                        Column {
+                            Button(
+                                onClick = { expanded.value = true },
+                                modifier = Modifier.widthIn(min = 100.dp),
+                                colors = ButtonDefaults.buttonColors(MaterialTheme.colors.surface)
+                            ) {
+                                Text(selectedGraphKeyType.value.name)
+                            }
+                            DropdownMenu(
+                                expanded = expanded.value,
+                                onDismissRequest = { expanded.value = false },
+                            ) {
+                                IntroWindowVM.GraphKeyType.entries.forEach { graphKeyType ->
+                                    DropdownMenuItem(onClick = {
+                                        selectedGraphKeyType.value = graphKeyType
+                                        expanded.value = false
+                                    }) {
+                                        Text(graphKeyType.name)
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(20.dp))
+                }
+
                 if (chosenGraph.value != "Empty") {
                     Box(
                         modifier = Modifier.fillMaxWidth().padding(horizontal = 40.dp).heightIn(min = 200.dp)
@@ -129,6 +127,10 @@ fun IntroView(viewModel: IntroWindowVM, state: MyWindowState, appTheme: MutableS
                         contentAlignment = Alignment.Center
                     ) {
                         when (chosenGraph.value) {
+                            "Saved" -> {
+                                SavedGraphsList(viewModel.graphList, viewModel, state)
+                            }
+
                             "Manual" -> {
                                 IntTextField(graphSize)
                             }
@@ -178,8 +180,30 @@ fun IntroView(viewModel: IntroWindowVM, state: MyWindowState, appTheme: MutableS
                         Text("Create Graph")
                     }
                 }
+
+                else -> return@Column
             }
 
+        }
+    }
+}
+
+@Composable
+fun SavedGraphsList(
+    graphList: MutableState<List<Triple<Int, Graph<*>, String>>>,
+    viewModel: IntroWindowVM,
+    state: MyWindowState
+) {
+    LazyColumn(
+        modifier = Modifier.background(MaterialTheme.colors.background).fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        graphList.value.forEach { (id, graph, name) ->
+            item {
+                SavedGraphItem(graph, name, onUsePressed = {
+                    viewModel.onUseGraphSqliteExposedPressed(state, graph)
+                }, onDeletePressed = { viewModel.onDeleteGraphSqliteExposedPressed(id, graphList) })
+            }
         }
     }
 }

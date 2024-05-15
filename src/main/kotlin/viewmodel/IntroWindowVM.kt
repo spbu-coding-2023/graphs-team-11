@@ -3,20 +3,25 @@ package viewmodel
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import data.db.sqlite_exposed.connect
+import data.db.sqlite_exposed.deleteGraph
 import data.db.sqlite_exposed.getAllGraphs
 import data.tools.graphGenerators.flowerSnark
 import data.tools.graphGenerators.randomTree
 import data.tools.graphGenerators.starDirected
 import data.tools.graphGenerators.starUndirected
 import model.graph_model.Graph
+import ui.components.MyWindowState
 import ui.components.generateStringNodeNames
 
 class IntroWindowVM(
     var isSettingMenuOpen: MutableState<Boolean>,
 ) {
-    val isSavedGraphsOpen = mutableStateOf(false)
-    private var sqliteDBConnected = false
-    var graphList: List<Triple<Int, Graph<*>, String>> = emptyList()
+    var graphList: MutableState<List<Triple<Int, Graph<*>, String>>>
+
+    init {
+        connect()
+        graphList = mutableStateOf(getAllGraphs())
+    }
 
     enum class GraphKeyType {
         INT, STRING, FLOAT, CHAR,
@@ -26,17 +31,14 @@ class IntroWindowVM(
         isSettingMenuOpen.value = true
     }
 
-    fun onSQLEViewGraphsPressed() {
-        if (!sqliteDBConnected) {
-            initSQLiteExposed()
-        }
-        graphList = getAllGraphs()
-        isSavedGraphsOpen.value = true
+    fun onUseGraphSqliteExposedPressed(state: MyWindowState, graph: Graph<*>) {
+        state.close()
+        state.openNewWindow(graph)
     }
 
-    private fun initSQLiteExposed() {
-        connect()
-        sqliteDBConnected = true
+    fun onDeleteGraphSqliteExposedPressed(id: Int, graphList: MutableState<List<Triple<Int, Graph<*>, String>>>) {
+        deleteGraph(id)
+        graphList.value = graphList.value.filter { it.first != id }
     }
 
     fun generateGraph(graphSize: Int, chosenGenerator: String, graphType: GraphKeyType): Graph<*> {

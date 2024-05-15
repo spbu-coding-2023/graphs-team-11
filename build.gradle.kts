@@ -30,6 +30,9 @@ dependencies {
 
     // Logging
     implementation("org.slf4j", "slf4j-simple", "2.0.13")
+
+    // File Picker
+    implementation("com.darkrockstudios:mpfilepicker:3.1.0")
 }
 
 compose.desktop {

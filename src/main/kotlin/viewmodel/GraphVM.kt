@@ -1,6 +1,7 @@
 package viewmodel
 
 import androidx.compose.foundation.gestures.calculateCentroid
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -10,12 +11,12 @@ import androidx.compose.ui.unit.IntSize
 import kotlin.math.sign
 import kotlin.properties.Delegates
 
+@Stable
 class GraphVM {
     var height by mutableStateOf(100)
     private var width by mutableStateOf(100)
     var mainOffset by mutableStateOf(Offset(x = 0f, y = 0f))
     val scaleFactor = mutableStateOf(1f)
-
 
     var padding by Delegates.notNull<Int>()
 

@@ -33,6 +33,9 @@ dependencies {
 
     // File Picker
     implementation("com.darkrockstudios:mpfilepicker:3.1.0")
+
+    // XML Serialization
+    implementation("io.github.pdvrieze.xmlutil:serialization:0.86.3")
 }
 
 compose.desktop {

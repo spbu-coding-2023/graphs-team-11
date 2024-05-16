@@ -38,6 +38,8 @@ class MainVM<D>(
 
     val graphView = GraphViewClass(graph)
 
+    val fileFormatFilter = listOf("graphml")
+
     fun onUndoPressed() {
         changedAlgo.value = true
         graphView.comeBack()

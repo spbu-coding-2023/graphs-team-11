@@ -7,12 +7,12 @@ import ui.components.MyWindowState
 
 class SavedGraphsVM {
 
-    fun onUseGraphSqliteExposedPressed(state: MyWindowState, graph: Graph<*>) {
+    fun onGraphLoad(state: MyWindowState, graph: Graph<*>) {
         state.close()
         state.openNewWindow(graph)
     }
 
-    fun onDeleteGraphSqliteExposedPressed(id: Int, graphList: MutableState<List<Triple<Int, Graph<*>, String>>>) {
+    fun onGraphDelete(id: Int, graphList: MutableState<List<Triple<Int, Graph<*>, String>>>) {
         deleteGraph(id)
         graphList.value = graphList.value.filter { it.first != id }
     }

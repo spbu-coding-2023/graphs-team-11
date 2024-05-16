@@ -70,7 +70,7 @@ fun <D> NodeView(
         color = nodeView.color,
         shape = CircleShape,
 
-    ).size((nodeView.radius * scaleFactor).dp).pointerInput(Unit) {
+    ).size((nodeView.radius).dp).pointerInput(Unit) {
         detectDragGestures { change, dragAmount ->
             change.consume()
             // there is a problem with the offset calculation

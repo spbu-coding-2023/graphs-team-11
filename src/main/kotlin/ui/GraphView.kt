@@ -75,6 +75,7 @@ fun <D> GrahpView(
 
         }.onPointerEvent(PointerEventType.Scroll) {
             viewModel.onMouseScroll(it)
+            changedAlgo.value = true
 
         }.onPointerEvent(PointerEventType.Press) {
             selected.forEach { print(Pair(it.key, it.value))}
@@ -144,8 +145,8 @@ fun <D> GrahpView(
                 NodeView(
                     nodeView = i.value,
                     mainOffset = viewModel.mainOffset,
-                    toAbsoluteOffset = toAbsoluteOffset,
-                    toNotAbsoluteOffset = toNotAbsoluteOffset,
+                    toAbsoluteOffset = viewModel.toAbsoluteOffset,
+                    toNotAbsoluteOffset = viewModel.toNotAbsoluteOffset,
                     selected = selected,
                     isShifted = isShifted,
                     scaleFactor = viewModel.scaleFactor.value
@@ -164,8 +165,8 @@ fun <D> GrahpView(
                 NodeView(
                     nodeView = i,
                     mainOffset = viewModel.mainOffset,
-                    toAbsoluteOffset = toAbsoluteOffset,
-                    toNotAbsoluteOffset = toNotAbsoluteOffset,
+                    toAbsoluteOffset = viewModel.toAbsoluteOffset,
+                    toNotAbsoluteOffset = viewModel.toNotAbsoluteOffset,
                     selected = selected,
                     isShifted = isShifted,
                     scaleFactor = viewModel.scaleFactor.value

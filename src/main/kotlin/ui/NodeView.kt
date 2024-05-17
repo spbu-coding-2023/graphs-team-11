@@ -20,6 +20,7 @@ import androidx.compose.material.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -55,7 +56,7 @@ fun <D> NodeView(
 ) {
     var offset by remember { mutableStateOf(toAbsoluteOffset(nodeView.offset)) }
 
-    // println(Pair(mainOffset, offset))
+    println(offset)
 
     Box(Modifier.offset {
         IntOffset(
@@ -70,7 +71,7 @@ fun <D> NodeView(
         color = nodeView.color,
         shape = CircleShape,
 
-    ).size((nodeView.radius * scaleFactor).dp).pointerInput(Unit) {
+    ).size((nodeView.radius).dp).pointerInput(Unit) {
         detectDragGestures { change, dragAmount ->
             change.consume()
             // there is a problem with the offset calculation

@@ -1,6 +1,7 @@
 package model.graph_model
 
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -16,6 +17,7 @@ import kotlin.math.min
 import kotlin.math.sqrt
 import kotlin.random.Random
 
+@Stable
 data class NodeViewClass<D>(
     var offset: Offset,
     var radius: Float,

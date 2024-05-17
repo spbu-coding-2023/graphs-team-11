@@ -19,8 +19,11 @@ class MainVM<D>(
 ) {
     private val isMac = System.getProperty("os.name").lowercase().contains("mac")
     val changedAlgo = mutableStateOf(false)
+
     val isSavedGraphsOpen = mutableStateOf(false)
     val isSelectNameWindowOpen = mutableStateOf(false)
+    val isFileLoaderOpen = mutableStateOf(false)
+
     val graphName = mutableStateOf("")
     val selected: SnapshotStateMap<D, Int> = mutableStateMapOf()
 
@@ -34,6 +37,8 @@ class MainVM<D>(
     var graph: Graph<D> = passedGraph ?: Graph()
 
     val graphView = GraphViewClass(graph)
+
+    val fileFormatFilter = listOf("graphml")
 
     fun onUndoPressed() {
         changedAlgo.value = true

@@ -2,6 +2,7 @@ package ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.*
@@ -71,7 +72,10 @@ fun IntroView(viewModel: IntroWindowVM, state: MyWindowState, appTheme: MutableS
                     verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(20.dp)
                 ) {
                     listOf("Saved", "Manual", "Generate", "Empty").forEach { graphType ->
-                        Row(Modifier.padding(vertical = 4.dp), verticalAlignment = Alignment.CenterVertically) {
+                        Row(Modifier
+                            .padding(vertical = 4.dp)
+                            .clickable {chosenGraph.value = graphType},
+                            verticalAlignment = Alignment.CenterVertically) {
                             RadioButton(
                                 selected = (chosenGraph.value == graphType),
                                 onClick = { chosenGraph.value = graphType },

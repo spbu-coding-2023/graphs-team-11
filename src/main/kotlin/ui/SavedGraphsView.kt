@@ -57,8 +57,8 @@ fun SavedGraphsView(
                 graphList.value.forEach { (id, graph, name) ->
                     item {
                         SavedGraphItem(graph, name, onUsePressed = {
-                            viewModel.onUseGraphSqliteExposedPressed(state, graph)
-                        }, onDeletePressed = { viewModel.onDeleteGraphSqliteExposedPressed(id, graphList) })
+                            viewModel.onGraphLoad(state, graph)
+                        }, onDeletePressed = { viewModel.onGraphDelete(id, graphList) })
                     }
                 }
             }

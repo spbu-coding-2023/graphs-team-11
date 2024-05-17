@@ -56,7 +56,7 @@ fun <D> NodeView(
 ) {
     var offset by remember { mutableStateOf(toAbsoluteOffset(nodeView.offset)) }
 
-    println(Pair(mainOffset, offset))
+    println(offset)
 
     Box(Modifier.offset {
         IntOffset(

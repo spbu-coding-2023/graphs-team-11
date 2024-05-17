@@ -98,15 +98,16 @@ fun <D> GrahpView(
             for ((i, verts) in gv.vertViews) {
                 for ((j, view) in verts) {
                     val arrow = Path()
-
-
-                    val start = (toAbsoluteOffset(view.start.offset) + Offset(
+                    val start = (viewModel.toAbsoluteOffset(view.start.offset) + Offset(
                         x = view.start.radius, y = view.start.radius
-                    ) * 0.5f - viewModel.mainOffset) * viewModel.scaleFactor.value
+                    ) * 0.5f - viewModel.mainOffset)
 
-                    val end = (toAbsoluteOffset(view.end.offset) + Offset(
+                    val end = (viewModel.toAbsoluteOffset(view.end.offset) + Offset(
                         x = view.end.radius, y = view.end.radius
-                    ) * 0.5f - viewModel.mainOffset) * viewModel.scaleFactor.value
+                    ) * 0.5f - viewModel.mainOffset)
+
+                    println(Pair(start, end))
+
 
                     val d = - (end - start) / abs(end - start)
 

@@ -16,13 +16,13 @@ fun randomTree(n: Int, type: IntroWindowVM.GraphKeyType): Graph<*> = when (type)
 private fun randomTreeInt(n: Int): Graph<Int> {
     val graph = Graph<Int>()
 
-    graph.addNode(0)
     graph.addNode(1)
-    graph.addVertice(0, 1)
+    graph.addNode(2)
+    graph.addVertice(1, 2)
 
-    for (i in 2..n) {
+    for (i in 3..n) {
         graph.addNode(i)
-        graph.addVertice(Random.nextInt(0, i - 1), i)
+        graph.addVertice(Random.nextInt(1, i - 1), i)
     }
 
     return graph
@@ -51,13 +51,13 @@ private fun randomTreeString(n: Int): Graph<String> {
 private fun randomTreeFloat(n: Int): Graph<Float> {
     val graph = Graph<Float>()
 
-    graph.addNode(0f)
     graph.addNode(1f)
-    graph.addVertice(0f, 1f)
+    graph.addNode(2f)
+    graph.addVertice(1f, 2f)
 
-    for (i in 2..n) {
+    for (i in 3..n) {
         graph.addNode(i.toFloat())
-        graph.addVertice(Random.nextFloat() * (i - 1), i.toFloat())
+        graph.addVertice(Random.nextInt(1, i - 1).toFloat(), i.toFloat())
     }
 
     return graph

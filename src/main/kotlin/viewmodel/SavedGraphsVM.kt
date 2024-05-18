@@ -8,8 +8,7 @@ import ui.components.MyWindowState
 class SavedGraphsVM {
 
     fun onGraphLoad(state: MyWindowState, graph: Graph<*>) {
-        state.close()
-        state.openNewWindow(graph)
+        state.reloadWindow(graph)
     }
 
     fun onGraphDelete(id: Int, graphList: MutableState<List<Triple<Int, Graph<*>, String>>>) {

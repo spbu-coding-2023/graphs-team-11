@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material.Card
-import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -14,7 +13,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.MenuBar
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.rememberWindowState
-import com.darkrockstudios.libraries.mpfilepicker.DirectoryPicker
 import com.darkrockstudios.libraries.mpfilepicker.FilePicker
 import data.graph_save.GraphLoaderUnified
 import model.graph_model.Graph
@@ -32,16 +30,15 @@ fun MyWindow(
     isSettingMenuOpen: MutableState<Boolean>,
     appTheme: MutableState<Theme>
 ) {
-    val viewModel = MainVM(state.graph, isSettingMenuOpen)
+    val viewModel = state.mainVM
     val windowState = rememberWindowState(size = DpSize(1200.dp, 760.dp))
 
     Window(onCloseRequest = state::close, title = state.title, state = windowState) {
         window.minimumSize = Dimension(800, 600)
         MenuBar {
             Menu("Window") {
-                Item("New window", onClick = { state.openChooseGraphWindow() })
+                Item("New window", onClick = state.openChooseGraphWindow)
                 Item("Exit", onClick = state.exit)
-                Item("Load from file", onClick = {viewModel.isFileLoaderOpen.value = true})
             }
             Menu("Edit") {
                 Item("Undo", shortcut = viewModel.undoShortcut, onClick = { viewModel.onUndoPressed() })
@@ -50,7 +47,8 @@ fun MyWindow(
             }
 
             Menu(state.title) {
-                Item("Settings", onClick = { viewModel.onSettingsPressed() })
+                Item("Settings", onClick = { isSettingMenuOpen.value = true })
+                Item("Load from file", onClick = { viewModel.isFileLoaderOpen.value = true })
             }
 
             Menu("SQLite Exposed") {
@@ -60,7 +58,7 @@ fun MyWindow(
 
         }
         App(viewModel, viewModel.changedAlgo, appTheme)
-        if (viewModel.isSettingMenuOpen.value) {
+        if (isSettingMenuOpen.value) {
             SettingsView(
                 onClose = { isSettingMenuOpen.value = false },
                 appTheme,

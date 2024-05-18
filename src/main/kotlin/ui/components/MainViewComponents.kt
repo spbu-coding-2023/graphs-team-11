@@ -13,6 +13,7 @@ import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
@@ -22,6 +23,7 @@ import androidx.compose.ui.window.Window
 import model.graph_model.Graph
 import ui.theme.BdsmAppTheme
 import ui.theme.Theme
+import viewmodel.MainVM
 import java.awt.Dimension
 
 class MyApplicationState {
@@ -51,8 +53,7 @@ class MyApplicationState {
         graph,
         openNewWindow = ::openNewWindow,
         exit = ::exit,
-        windows.size,
-        windows::remove,
+        windows,
         openChooseGraphWindow = ::openChooseGraphWindow
     )
 }
@@ -62,19 +63,26 @@ class MyWindowState(
     val graph: Graph<*>? = null,
     val openNewWindow: (Graph<*>?) -> Unit,
     val exit: () -> Unit,
-    private val windowCount: Int,
-    private val close: (MyWindowState) -> Unit,
+    private val windows: SnapshotStateList<MyWindowState>,
     val openChooseGraphWindow: () -> Unit,
 ) {
+    val mainVM = MainVM(graph)
+
     fun close() {
-        if (windowCount == 0) {
+        val closeWindow = windows::remove
+        if (windows.size == 1) {
             if (title != "Choose Graph") {
-                close(this)
+                closeWindow(this)
                 openChooseGraphWindow()
             } else {
-                close(this)
+                closeWindow(this)
             }
-        } else close(this)
+        } else closeWindow(this)
+    }
+
+    fun reloadWindow(graph: Graph<*>?) {
+        windows.remove(this)
+        openNewWindow(graph)
     }
 }
 

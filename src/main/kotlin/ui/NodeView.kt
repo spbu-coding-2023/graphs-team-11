@@ -56,7 +56,6 @@ fun <D> NodeView(
 ) {
     var offset by remember { mutableStateOf(toAbsoluteOffset(nodeView.offset)) }
 
-    println(offset)
 
     Box(Modifier.offset {
         IntOffset(
@@ -81,7 +80,6 @@ fun <D> NodeView(
     }.onPlaced { offset = toAbsoluteOffset(nodeView.offset) }
         .selectable(selected.getOrDefault(nodeView.value, -1) >= 0) {
             if (nodeView.value != null) {
-                println(nodeView.value)
                 val value = nodeView.value!!
                 if (!isShifted.value) {
                     selected.forEach { selected.remove(it.key) }
@@ -112,17 +110,14 @@ fun <D> NodeView(
                 onValueChange = { text ->
                     if (!text.endsWith("\n")) {
                         newValue.value = text
-                        println(newValue.value)
                     }
                     else {
                         try {
                             nodeView.value = newValue.value as D
                         } catch (classCastException: ClassCastException) {
-                            println("Не строчке")
                             try {
                                 nodeView.value = newValue.value.toInt() as D
                             } catch (classCastException: ClassCastException) {
-                                println("И не цели")
                             }
                         }
                     }

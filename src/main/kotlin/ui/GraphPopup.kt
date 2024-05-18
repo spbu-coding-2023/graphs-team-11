@@ -44,11 +44,9 @@ fun <D> GraphPopup(
         onDismissRequest = {enabled.value = false},
         offset = DpOffset(x = pressOffset.x.dp, y = pressOffset.y.dp - graphVM.height.dp)
     ) {
-        // println(DpOffset(x = pressOffset.x.dp, y = pressOffset.y.dp - graphVM.height.dp))
         DropdownMenuItem(
             onClick = {
                 alert = AlertType.CREATENODE
-                println(alert)
             }
         ) {
             Text("Create Node")
@@ -64,7 +62,6 @@ fun <D> GraphPopup(
             Text("Delete Vert")
         }
     }
-    println(alert)
 
     if (alert != AlertType.UNABLED) {
             AlertDialog(

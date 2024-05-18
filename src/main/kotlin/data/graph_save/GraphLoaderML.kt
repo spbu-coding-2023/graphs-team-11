@@ -17,12 +17,10 @@ class GraphLoaderML(path: String) : Graph<String>() {
                 val weight = it.split(">")[1].split("<")[0].toFloat()
                 var sourse = ""
                 var target = ""
-                println(saveSplit)
                 for (i in saveSplit.indices) {
                     if (saveSplit[i].endsWith("source=")) sourse = saveSplit[i + 1]
                     if (saveSplit[i].endsWith("target=")) target = saveSplit[i + 1]
                 }
-                println(Pair(Pair(sourse, target), weight))
                 graph.addVertice(sourse, target, weight = weight)
 
                 cheakNext = false
@@ -49,7 +47,6 @@ class GraphLoaderML(path: String) : Graph<String>() {
                     ("<edge " in it) -> {
                         val splitedEdge = it.split("\"")
                         if (!weighted) {
-                            println(splitedEdge)
                             var sourse = ""
                             var target = ""
                             for (i in splitedEdge.indices) {

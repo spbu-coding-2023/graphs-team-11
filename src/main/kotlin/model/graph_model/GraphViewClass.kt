@@ -138,7 +138,6 @@ class GraphViewClass<D>(
     }
 
     fun comeBack() {
-        returnStack.forEach { println(it.nodeViewUpdate) }
         if (this.returnStack.size > 0) this.applyUpdate(this.returnStack.pop(), isNotReUpdate = false)
     }
 
@@ -207,8 +206,6 @@ class GraphViewClass<D>(
             ymax = max(ymax, 1 + v.value.y)
             ymin = min(ymin, 1 + v.value.y)
         }
-        println(Pair(xmin, xmax))
-        println(Pair(ymin, ymax))
 
         val xdelta = xmax - xmin
         val ydelta = ymax - ymin

@@ -42,7 +42,6 @@ fun ColorPick(cosVM: CosmeticVM) {
             Slider(value = red, valueRange = 0f..1f, steps = 256, onValueChange = {
                 red = it
                 model.color = Color(red, green, blue)
-                println(model.color)
             })
         }
         Row {
@@ -50,7 +49,6 @@ fun ColorPick(cosVM: CosmeticVM) {
             Slider(value = green, valueRange = 0f..1f, steps = 256, onValueChange = {
                 green = it
                 model.color = Color(red, green, blue)
-                println(model.color)
             })
         }
         Row {
@@ -58,7 +56,6 @@ fun ColorPick(cosVM: CosmeticVM) {
             Slider(value = blue, valueRange = 0f..1f, steps = 256, onValueChange = {
                 blue = it
                 model.color = Color(red, green, blue)
-                println(model.color)
             })
         }
     }

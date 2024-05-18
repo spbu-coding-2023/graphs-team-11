@@ -28,8 +28,6 @@ class Kruskal: Algoritm(null) {
         visited.add(sortedVerts[0].second.first)
         visited.add(sortedVerts[0].second.second)
 
-        println(vertes)
-
         for (i in sortedVerts) {
             if ((i.second.first in visited).xor((i.second.second in visited))) {
                 visited.add(i.second.first)
@@ -38,8 +36,6 @@ class Kruskal: Algoritm(null) {
                 treeVerts.add(i)
             }
         }
-
-        println(treeVerts)
 
         return getViewByTreeVert(treeVerts, graph)
     }
@@ -54,12 +50,10 @@ class Kruskal: Algoritm(null) {
                 updateVert[i]!![j] = VertViewUpdate(alpha = 0.1f)
             }
         }
-        println(graph.vertices)
         for ((weight, nodePair) in treeVerts) {
             if (nodePair.first !in updateVert) updateVert[nodePair.first] = mutableMapOf()
             updateVert[nodePair.first]!![nodePair.second] = VertViewUpdate(alpha = 1f)
         }
-        println(updateVert)
         return Update(nodeViewUpdate = updateNode, vertViewUpdate = updateVert)
     }
 }

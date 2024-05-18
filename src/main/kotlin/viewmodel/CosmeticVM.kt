@@ -20,7 +20,6 @@ class CosmeticVM {
         var update: Update<D> = Update()
         for (cosVM in cosmeticWidgetsViewModels) {
             update += cosVM.getUpdate(graph = grahpView.graph)
-            println(update)
         }
         grahpView.applyUpdate(update)
     }

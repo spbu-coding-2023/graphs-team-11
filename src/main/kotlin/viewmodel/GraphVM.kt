@@ -1,6 +1,5 @@
 package viewmodel
 
-import androidx.compose.foundation.gestures.calculateCentroid
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -63,7 +62,6 @@ class GraphVM {
 
     fun onMouseScroll(pointerEvent: PointerEvent) {
         val change = pointerEvent.changes.first()
-        val where = toNotAbsoluteOffset(change.position)
         val delta = change.scrollDelta.y.toInt().sign
         val zoomVal = scaleFactor.value + delta * 0.1f
         if (zoomVal < 0.001f || zoomVal > 300.0f) return

@@ -13,7 +13,6 @@ import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.input.key.isShiftPressed
 import androidx.compose.ui.input.key.onKeyEvent
@@ -47,7 +46,6 @@ fun <D> GrahpView(
         changedAlgo.value = false
     }
 
-    val toAbsoluteOffset = viewModel.toAbsoluteOffset
     val toNotAbsoluteOffset = viewModel.toNotAbsoluteOffset
     val sensitivity by mutableStateOf(0.2f)
 
@@ -78,8 +76,6 @@ fun <D> GrahpView(
             changedAlgo.value = true
 
         }.onPointerEvent(PointerEventType.Press) {
-            selected.forEach { print(Pair(it.key, it.value))}
-            println()
             val selectedList = mutableMapOf<Int, D>()
             for ((i, isSel) in selected) {
                 selectedList[isSel] = i
@@ -105,9 +101,6 @@ fun <D> GrahpView(
                     val end = (viewModel.toAbsoluteOffset(view.end.offset) + Offset(
                         x = view.end.radius, y = view.end.radius
                     ) * 0.5f - viewModel.mainOffset)
-
-                    println(Pair(start, end))
-
 
                     val d = - (end - start) / abs(end - start)
 

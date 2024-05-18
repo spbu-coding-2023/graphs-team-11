@@ -13,14 +13,11 @@ class ConnectivityСomponent: Algoritm(null) {
     override fun <D> alogRun(graph: Graph<D>, selected: SnapshotStateMap<D, Int>): Update<D> {
         val reversed = graph.reverse()
 
-        println(reversed.vertices)
-
         var visited: MutableSet<D> = mutableSetOf()
         val exitTime = mutableListOf<D>()
 
         fun DFSFirst(parent: D, grahp: Graph<D>) {
             visited.add(parent)
-            // println(Pair(visited, exitTime))
             for ((node, _) in grahp.vertices.getOrDefault(parent, mutableSetOf())) {
                 if (node !in visited) {
                     visited.add(node)
@@ -37,10 +34,7 @@ class ConnectivityСomponent: Algoritm(null) {
         }
 
         visited = mutableSetOf()
-        println(exitTime)
         fun DFSSecond(parent: D, grahp: Graph<D>, stack: MutableSet<D>) {
-            // println(Pair(parent, stack))
-            // println(visited)
             if (parent !in stack && parent !in visited) {
                 visited.add(parent)
                 stack.add(parent)
@@ -54,15 +48,11 @@ class ConnectivityСomponent: Algoritm(null) {
 
         for (i in exitTime.reversed()) {
             if (i !in visited) {
-                // println()
                 val component = mutableSetOf<D>()
                 DFSSecond(i, graph, component)
-                // println(component)
                 components.add(component)
             }
         }
-        println(components)
-
         return getViewByComponents(components, graph)
     }
 

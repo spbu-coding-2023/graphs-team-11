@@ -10,7 +10,7 @@ import java.awt.Component
 import kotlin.random.Random
 
 class ConnectivityСomponent: Algoritm(null) {
-    override fun <D> alogRun(graph: Graph<D>, selected: SnapshotStateMap<D, Int>): Update<D> {
+    override fun <D> algoRun(graph: Graph<D>, selected: SnapshotStateMap<D, Int>): Update<D> {
         val reversed = graph.reverse()
 
         var visited: MutableSet<D> = mutableSetOf()

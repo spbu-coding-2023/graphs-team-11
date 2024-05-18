@@ -25,7 +25,7 @@ class AlgorithmMenuVM {
         changedAlgo: MutableState<Boolean>,
         selected: SnapshotStateMap<D, Int>
     ) {
-        val update = algorithm.alogRun(graphViewClass.graph, selected)
+        val update = algorithm.algoRun(graphViewClass.graph, selected)
         graphViewClass.applyUpdate(update)
         changedAlgo.value = true
     }

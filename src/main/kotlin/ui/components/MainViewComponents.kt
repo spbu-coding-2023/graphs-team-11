@@ -20,6 +20,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Window
+import com.darkrockstudios.libraries.mpfilepicker.FilePicker
+import data.Constants.APP_NAME
+import data.Constants.CHOOSE_GRAPH_WINDOW_TITLE
+import data.Constants.FILE_FORMAT_FILTER
+import data.graph_save.GraphLoaderUnified
 import model.graph_model.Graph
 import ui.theme.BdsmAppTheme
 import ui.theme.Theme
@@ -28,18 +33,17 @@ import java.awt.Dimension
 
 class MyApplicationState {
     val windows = mutableStateListOf<MyWindowState>()
-    private val appName = "BDSM Graphs"
 
     init {
         openChooseGraphWindow()
     }
 
     private fun openChooseGraphWindow() {
-        windows += MyWindowState("Choose Graph")
+        windows += MyWindowState(CHOOSE_GRAPH_WINDOW_TITLE)
     }
 
     private fun openNewWindow(graph: Graph<*>?) {
-        windows += MyWindowState(appName, graph)
+        windows += MyWindowState(APP_NAME, graph)
     }
 
     private fun exit() {
@@ -71,7 +75,7 @@ class MyWindowState(
     fun close() {
         val closeWindow = windows::remove
         if (windows.size == 1) {
-            if (title != "Choose Graph") {
+            if (title != CHOOSE_GRAPH_WINDOW_TITLE) {
                 closeWindow(this)
                 openChooseGraphWindow()
             } else {
@@ -126,6 +130,18 @@ fun SelectNameWindow(
                     Text("Save", color = MaterialTheme.colors.onPrimary)
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun GraphFilePicker(isFileLoaderOpen: MutableState<Boolean>, state: MyWindowState) {
+    FilePicker(
+        isFileLoaderOpen.value, fileExtensions = FILE_FORMAT_FILTER
+    ) { path ->
+        if (path != null) {
+            val loadedGraph: Graph<String> = GraphLoaderUnified(path.path).graph
+            state.reloadWindow(loadedGraph)
         }
     }
 }

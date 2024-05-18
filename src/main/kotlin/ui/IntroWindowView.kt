@@ -18,7 +18,9 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.MenuBar
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.rememberWindowState
+import data.Constants.APP_NAME
 import model.graph_model.Graph
+import ui.components.GraphFilePicker
 import ui.components.MyWindowState
 import ui.theme.BdsmAppTheme
 import ui.theme.Theme
@@ -35,7 +37,7 @@ fun IntroWindowView(
     Window(onCloseRequest = state::close, title = state.title, state = windowState) {
         window.minimumSize = Dimension(700, 600)
         MenuBar {
-            Menu("BDSM Graphs") {
+            Menu(APP_NAME) {
                 Item("Settings", onClick = { viewModel.onSettingsPressed() })
             }
         }
@@ -72,10 +74,10 @@ fun IntroView(viewModel: IntroWindowVM, state: MyWindowState, appTheme: MutableS
                     verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(20.dp)
                 ) {
                     listOf("Saved", "Manual", "Generate", "Empty").forEach { graphType ->
-                        Row(Modifier
-                            .padding(vertical = 4.dp)
-                            .clickable {chosenGraph.value = graphType},
-                            verticalAlignment = Alignment.CenterVertically) {
+                        Row(
+                            Modifier.padding(vertical = 4.dp).clickable { chosenGraph.value = graphType },
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
                             RadioButton(
                                 selected = (chosenGraph.value == graphType),
                                 onClick = { chosenGraph.value = graphType },
@@ -155,8 +157,7 @@ fun IntroView(viewModel: IntroWindowVM, state: MyWindowState, appTheme: MutableS
                         val graph = viewModel.createGraphWithoutEdges(
                             selectedGraphKeyType.value, graphSize.value.toInt()
                         )
-                        state.close()
-                        state.openNewWindow(graph)
+                        state.reloadWindow(graph)
                     }
                 }
 
@@ -165,8 +166,7 @@ fun IntroView(viewModel: IntroWindowVM, state: MyWindowState, appTheme: MutableS
                         val graph = viewModel.generateGraph(
                             graphSize.value.toInt(), chosenGenerator.value, selectedGraphKeyType.value
                         )
-                        state.close()
-                        state.openNewWindow(graph)
+                        state.reloadWindow(graph)
                     }
                 }
 
@@ -174,8 +174,7 @@ fun IntroView(viewModel: IntroWindowVM, state: MyWindowState, appTheme: MutableS
                     Button(
                         onClick = {
                             val graph = viewModel.createEmptyGraph(selectedGraphKeyType.value)
-                            state.close()
-                            state.openNewWindow(graph)
+                            state.reloadWindow(graph)
                         }, modifier = Modifier.padding(bottom = 20.dp), colors = ButtonDefaults.buttonColors(
                             backgroundColor = MaterialTheme.colors.surface,
                             disabledBackgroundColor = MaterialTheme.colors.onSurface.copy(alpha = 0.12f),
@@ -194,19 +193,33 @@ fun IntroView(viewModel: IntroWindowVM, state: MyWindowState, appTheme: MutableS
 
 @Composable
 fun SavedGraphsList(
-    graphList: MutableState<List<Triple<Int, Graph<*>, String>>>,
-    viewModel: IntroWindowVM,
-    state: MyWindowState
+    graphList: MutableState<List<Triple<Int, Graph<*>, String>>>, viewModel: IntroWindowVM, state: MyWindowState
 ) {
-    LazyColumn(
+    Column(
         modifier = Modifier.background(MaterialTheme.colors.background).fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        graphList.value.forEach { (id, graph, name) ->
-            item {
-                SavedGraphItem(graph, name, onUsePressed = {
-                    viewModel.onUseGraphSqliteExposedPressed(state, graph)
-                }, onDeletePressed = { viewModel.onDeleteGraphSqliteExposedPressed(id, graphList) })
+        Button(
+            onClick = {
+                viewModel.isFileLoaderOpen.value = true
+            }, modifier = Modifier.padding(10.dp), colors = ButtonDefaults.buttonColors(
+                backgroundColor = MaterialTheme.colors.surface,
+                disabledBackgroundColor = MaterialTheme.colors.onSurface.copy(alpha = 0.12f),
+            )
+        ) {
+            Text("Load Graph from file")
+        }
+        GraphFilePicker(viewModel.isFileLoaderOpen, state)
+        LazyColumn(
+            modifier = Modifier.background(MaterialTheme.colors.background).fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            graphList.value.forEach { (id, graph, name) ->
+                item {
+                    SavedGraphItem(graph, name, onUsePressed = {
+                        viewModel.onUseGraphSqliteExposedPressed(state, graph)
+                    }, onDeletePressed = { viewModel.onDeleteGraphSqliteExposedPressed(id, graphList) })
+                }
             }
         }
     }
@@ -234,14 +247,8 @@ fun CreateGraphButtonWithCharCheck(
                 backgroundColor = MaterialTheme.colors.surface,
                 disabledBackgroundColor = MaterialTheme.colors.onSurface.copy(alpha = 0.12f),
             ),
-            enabled =
-            if (chosenGenerator.value == "Flower Snark")
-                (graphSize.value.isNotEmpty() && graphSize.value.toIntOrNull() != null)
-                        && !((selectedGraphKeyType.value == IntroWindowVM.GraphKeyType.CHAR)
-                        && (graphSize.value.toInt() > 5))
-            else (graphSize.value.isNotEmpty() && graphSize.value.toIntOrNull() != null)
-                    && !((selectedGraphKeyType.value == IntroWindowVM.GraphKeyType.CHAR)
-                    && (graphSize.value.toInt() > 26))
+            enabled = if (chosenGenerator.value == "Flower Snark") (graphSize.value.isNotEmpty() && graphSize.value.toIntOrNull() != null) && !((selectedGraphKeyType.value == IntroWindowVM.GraphKeyType.CHAR) && (graphSize.value.toInt() > 5))
+            else (graphSize.value.isNotEmpty() && graphSize.value.toIntOrNull() != null) && !((selectedGraphKeyType.value == IntroWindowVM.GraphKeyType.CHAR) && (graphSize.value.toInt() > 26))
 
         ) {
             Text("Create Graph")

@@ -1,5 +1,6 @@
 package data.db.sqlite_exposed
 
+import data.Constants.SQLITE_DB
 import data.db.sqlite_exposed.edge.Edges
 import data.db.sqlite_exposed.graph.Graphs
 import model.graph_model.Graph
@@ -22,7 +23,7 @@ import kotlin.collections.set
 import kotlin.collections.toMutableSet
 
 fun connect() {
-    Database.connect("jdbc:sqlite:sqlite_exposed_graph.db", driver = "org.sqlite.JDBC")
+    Database.connect("jdbc:sqlite:${SQLITE_DB}", driver = "org.sqlite.JDBC")
     transaction {
         SchemaUtils.create(Graphs, Edges)
     }

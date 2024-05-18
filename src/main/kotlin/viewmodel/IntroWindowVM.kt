@@ -17,6 +17,7 @@ class IntroWindowVM(
     var isSettingMenuOpen: MutableState<Boolean>,
 ) {
     var graphList: MutableState<List<Triple<Int, Graph<*>, String>>>
+    val isFileLoaderOpen = mutableStateOf(false)
 
     init {
         connect()
@@ -32,8 +33,7 @@ class IntroWindowVM(
     }
 
     fun onUseGraphSqliteExposedPressed(state: MyWindowState, graph: Graph<*>) {
-        state.close()
-        state.openNewWindow(graph)
+        state.reloadWindow(graph)
     }
 
     fun onDeleteGraphSqliteExposedPressed(id: Int, graphList: MutableState<List<Triple<Int, Graph<*>, String>>>) {
@@ -98,5 +98,4 @@ class IntroWindowVM(
         }
 
     }
-
 }

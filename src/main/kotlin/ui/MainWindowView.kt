@@ -13,9 +13,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.MenuBar
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.rememberWindowState
-import com.darkrockstudios.libraries.mpfilepicker.FilePicker
-import data.graph_save.GraphLoaderUnified
-import model.graph_model.Graph
+import ui.components.GraphFilePicker
 import ui.components.MyWindowState
 import ui.components.SelectNameWindow
 import ui.components.cosmetic.CommeticsMenu
@@ -76,13 +74,8 @@ fun MyWindow(
                 viewModel.saveSQLiteGraph(viewModel.graph)
             })
         }
-        FilePicker(viewModel.isFileLoaderOpen.value, fileExtensions = viewModel.fileFormatFilter) { path ->
-            if (path != null) {
-                val loadedGraph: Graph<String> = GraphLoaderUnified(path.path).graph
-                state.close()
-                state.openNewWindow(loadedGraph)
-            }
-        }
+
+        GraphFilePicker(viewModel.isFileLoaderOpen, state)
     }
 }
 

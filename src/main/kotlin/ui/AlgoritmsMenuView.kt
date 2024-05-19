@@ -109,6 +109,7 @@ fun <D> AlgoritmList(
         Pair("Kosaraju", ConnectivityСomponent()),
         Pair("Minimal Tree", Kruskal()),
         Pair("Shortest Path Detection", ShortestPathDetection()),
+        Pair("Find Bridges", BridgeFinding()),
     )
 
     Column(

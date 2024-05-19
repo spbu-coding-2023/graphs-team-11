@@ -13,6 +13,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.MenuBar
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.rememberWindowState
+import data.Constants.LOAD_FROM_FILE_SHORTCUT
+import data.Constants.NEW_WINDOW_SHORTCUT
+import data.Constants.REDO_SHORTCUT
+import data.Constants.SAVE_EXPOSED_SHORTCUT
+import data.Constants.SETTINGS_SHORTCUT
+import data.Constants.UNDO_SHORTCUT
+import data.Constants.VIEW_EXPOSED_SHORTCUT
 import ui.components.GraphFilePicker
 import ui.components.MyWindowState
 import ui.components.SelectNameWindow
@@ -24,9 +31,7 @@ import java.awt.Dimension
 
 @Composable
 fun MyWindow(
-    state: MyWindowState,
-    isSettingMenuOpen: MutableState<Boolean>,
-    appTheme: MutableState<Theme>
+    state: MyWindowState, isSettingMenuOpen: MutableState<Boolean>, appTheme: MutableState<Theme>
 ) {
     val viewModel = state.mainVM
     val windowState = rememberWindowState(size = DpSize(1200.dp, 760.dp))
@@ -35,23 +40,26 @@ fun MyWindow(
         window.minimumSize = Dimension(800, 600)
         MenuBar {
             Menu("Window") {
-                Item("New window", onClick = state.openChooseGraphWindow)
+                Item("New window", shortcut = NEW_WINDOW_SHORTCUT, onClick = state.openChooseGraphWindow)
                 Item("Exit", onClick = state.exit)
             }
             Menu("Edit") {
-                Item("Undo", shortcut = viewModel.undoShortcut, onClick = { viewModel.onUndoPressed() })
-                Item("Redo", shortcut = viewModel.redoShortcut, onClick = {})
-                Item("Copy", shortcut = viewModel.copyShortcut, onClick = {})
+                Item("Undo", shortcut = UNDO_SHORTCUT, onClick = { viewModel.onUndoPressed() })
+                Item("Redo", shortcut = REDO_SHORTCUT, onClick = {})
             }
 
             Menu(state.title) {
-                Item("Settings", onClick = { isSettingMenuOpen.value = true })
-                Item("Load from file", onClick = { viewModel.isFileLoaderOpen.value = true })
+                Item("Settings", shortcut = SETTINGS_SHORTCUT, onClick = { isSettingMenuOpen.value = true })
+                Item("Load from file",
+                    shortcut = LOAD_FROM_FILE_SHORTCUT,
+                    onClick = { viewModel.isFileLoaderOpen.value = true })
             }
 
             Menu("SQLite Exposed") {
-                Item("Save Graph", onClick = { viewModel.isSelectNameWindowOpen.value = true })
-                Item("View Graphs", onClick = { viewModel.onSQLEViewGraphsPressed() })
+                Item("Save Graph",
+                    shortcut = SAVE_EXPOSED_SHORTCUT,
+                    onClick = { viewModel.isSelectNameWindowOpen.value = true })
+                Item("View Graphs", shortcut = VIEW_EXPOSED_SHORTCUT, onClick = { viewModel.onSQLEViewGraphsPressed() })
             }
 
         }
@@ -81,9 +89,7 @@ fun MyWindow(
 
 @Composable
 fun <D> App(
-    viewModel: MainVM<D>,
-    changedAlgo: MutableState<Boolean>,
-    appTheme: MutableState<Theme>
+    viewModel: MainVM<D>, changedAlgo: MutableState<Boolean>, appTheme: MutableState<Theme>
 ) {
     BdsmAppTheme(appTheme = appTheme.value) {
         Row {

@@ -19,6 +19,7 @@ import androidx.compose.ui.window.MenuBar
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.rememberWindowState
 import data.Constants.APP_NAME
+import data.Constants.SETTINGS_SHORTCUT
 import model.graph_model.Graph
 import ui.components.GraphFilePicker
 import ui.components.MyWindowState
@@ -38,7 +39,7 @@ fun IntroWindowView(
         window.minimumSize = Dimension(700, 600)
         MenuBar {
             Menu(APP_NAME) {
-                Item("Settings", onClick = { viewModel.onSettingsPressed() })
+                Item("Settings", shortcut = SETTINGS_SHORTCUT, onClick = { viewModel.onSettingsPressed() })
             }
         }
 

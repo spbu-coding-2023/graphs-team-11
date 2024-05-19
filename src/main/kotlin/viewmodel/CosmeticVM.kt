@@ -7,7 +7,7 @@ import model.graph_model.graph_model_actions.Update
 import viewmodel.cosmetics.CosmeticWidgetsMV
 
 class CosmeticVM {
-    val menuWidth = 200.dp
+    val menuWidth = 250.dp
 
     val isMenuVisible = mutableStateOf(true)
     val cosmeticWidgetsViewModels: MutableList<CosmeticWidgetsMV> = mutableListOf()

@@ -62,6 +62,7 @@ fun IntroView(viewModel: IntroWindowVM, state: MyWindowState, appTheme: MutableS
         val chosenGraph = remember { mutableStateOf("Saved") }
         val graphSize = remember { mutableStateOf("") }
         val chosenGenerator = remember { mutableStateOf("Random Tree") }
+        val weightMax = remember { mutableStateOf("1") }
 
         Column(
             modifier = Modifier.fillMaxSize().padding(10.dp),
@@ -143,7 +144,7 @@ fun IntroView(viewModel: IntroWindowVM, state: MyWindowState, appTheme: MutableS
                             }
 
                             "Generate" -> {
-                                GenerateGraphSettings(graphSize, chosenGenerator)
+                                GenerateGraphSettings(graphSize, chosenGenerator, weightMax)
                             }
 
                             else -> return@Box
@@ -164,8 +165,9 @@ fun IntroView(viewModel: IntroWindowVM, state: MyWindowState, appTheme: MutableS
 
                 "Generate" -> {
                     CreateGraphButtonWithCharCheck(selectedGraphKeyType, chosenGenerator, graphSize) {
+                        val maxWeight = weightMax.value.toIntOrNull()?.coerceIn(1, 100) ?: 1
                         val graph = viewModel.generateGraph(
-                            graphSize.value.toInt(), chosenGenerator.value, selectedGraphKeyType.value
+                            graphSize.value.toInt(), chosenGenerator.value, selectedGraphKeyType.value, maxWeight
                         )
                         state.reloadWindow(graph)
                     }
@@ -259,7 +261,9 @@ fun CreateGraphButtonWithCharCheck(
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun GenerateGraphSettings(graphSize: MutableState<String>, chosenGenerator: MutableState<String>) {
+fun GenerateGraphSettings(
+    graphSize: MutableState<String>, chosenGenerator: MutableState<String>, weightMax: MutableState<String>
+) {
 
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -267,6 +271,21 @@ fun GenerateGraphSettings(graphSize: MutableState<String>, chosenGenerator: Muta
         verticalArrangement = Arrangement.spacedBy(20.dp),
     ) {
         IntTextField(graphSize)
+
+        if (chosenGenerator.value == "Random Tree") {
+            Row(
+                verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                Text("Max edge weight: ", fontSize = 18.sp)
+                TextField(value = weightMax.value, onValueChange = {
+                    if (it.toIntOrNull() == null && it.isNotEmpty()) {
+                        return@TextField
+                    }
+                    weightMax.value = it
+                }, label = { Text("1 - 100") })
+            }
+
+        }
 
         FlowRow(
             modifier = Modifier.fillMaxWidth(),

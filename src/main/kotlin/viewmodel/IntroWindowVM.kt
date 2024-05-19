@@ -35,9 +35,9 @@ class IntroWindowVM(
         graphList.value = graphList.value.filter { it.first != id }
     }
 
-    fun generateGraph(graphSize: Int, chosenGenerator: String, graphType: GraphKeyType): Graph<*> {
+    fun generateGraph(graphSize: Int, chosenGenerator: String, graphType: GraphKeyType, maxWeight: Int): Graph<*> {
         return when (chosenGenerator) {
-            "Random Tree" -> randomTree(graphSize, graphType)
+            "Random Tree" -> randomTree(graphSize, graphType, maxWeight)
             "Flower Snark" -> flowerSnark(graphSize, graphType)
             "Star Directed" -> starDirected(graphSize, graphType)
             "Star Undirected" -> starUndirected(graphSize, graphType)

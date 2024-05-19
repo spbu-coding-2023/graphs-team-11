@@ -6,10 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.material.Button
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
-import androidx.compose.material.TextField
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateListOf
@@ -122,6 +119,11 @@ fun SelectNameWindow(
                     },
                     label = { Text("Name", color = MaterialTheme.colors.onPrimary) },
                     modifier = Modifier.padding(16.dp),
+                    colors = TextFieldDefaults.textFieldColors(
+                        backgroundColor = MaterialTheme.colors.surface,
+                        focusedIndicatorColor = MaterialTheme.colors.onPrimary,
+                        unfocusedIndicatorColor = MaterialTheme.colors.onPrimary
+                    )
                 )
                 Button(onClick = {
                     onSave()

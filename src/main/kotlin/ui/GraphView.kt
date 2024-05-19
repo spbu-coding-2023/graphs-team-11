@@ -68,7 +68,7 @@ fun <D> GrahpView(
         Canvas(modifier = Modifier.fillMaxSize().pointerInput(Unit) {
             detectDragGestures { change, dragAmount ->
                 change.consume()
-                    viewModel.mainOffset -= dragAmount * sensitivity
+                viewModel.mainOffset -= dragAmount * sensitivity
             }
 
         }.onPointerEvent(PointerEventType.Scroll) {
@@ -89,8 +89,7 @@ fun <D> GrahpView(
                     changedAlgo.value = true
                 }
             }
-        }
-        ) {
+        }) {
             for ((i, verts) in gv.vertViews) {
                 for ((j, view) in verts) {
                     val arrow = Path()
@@ -102,13 +101,22 @@ fun <D> GrahpView(
                         x = view.end.radius, y = view.end.radius
                     ) * 0.5f - viewModel.mainOffset)
 
-                    val d = - (end - start) / abs(end - start)
+                    val d = -(end - start) / abs(end - start)
 
                     // Algebra Time!!!
                     arrow.moveTo((end + d * (view.end.radius / 2f + 10f)).x, (end + d * (view.end.radius / 2f + 10f)).y)
-                    arrow.lineTo((end + d * (view.end.radius / 2f + 10f)).x + 10f * d.y, (end + d * (view.end.radius / 2f + 10f)).y - 10f * d.x)
-                    arrow.lineTo((end + d * (view.end.radius / 2f + 10f)).x - 10f * d.x, (end + d * (view.end.radius / 2f + 10f)).y - 10f * d.y)
-                    arrow.lineTo((end + d * (view.end.radius / 2f + 10f)).x - 10f * d.y , (end + d * (view.end.radius / 2f + 10f)).y + 10f * d.x)
+                    arrow.lineTo(
+                        (end + d * (view.end.radius / 2f + 10f)).x + 10f * d.y,
+                        (end + d * (view.end.radius / 2f + 10f)).y - 10f * d.x
+                    )
+                    arrow.lineTo(
+                        (end + d * (view.end.radius / 2f + 10f)).x - 10f * d.x,
+                        (end + d * (view.end.radius / 2f + 10f)).y - 10f * d.y
+                    )
+                    arrow.lineTo(
+                        (end + d * (view.end.radius / 2f + 10f)).x - 10f * d.y,
+                        (end + d * (view.end.radius / 2f + 10f)).y + 10f * d.x
+                    )
                     arrow.close()
 
                     drawPath(arrow, color = view.color, alpha = view.alpha)
@@ -120,14 +128,17 @@ fun <D> GrahpView(
                         alpha = view.alpha,
                     )
 
-                    if (view.weight != 1f) {
+                    val textPosition = (start + end) / 2f
+
+                    if ((view.weight != 1f) && (textPosition.x > 0) && (textPosition.y > 0)
+                        && (textPosition.x < size.width) && (textPosition.y < size.height)) {
                         drawText(
                             textMeasurer,
                             text = view.weight.toString(),
-                            topLeft = (start + end) / 2f,
+                            topLeft = textPosition,
+                            softWrap = false,
                             style = TextStyle(
-                                fontSize = 16.sp,
-                                color = view.color
+                                fontSize = 16.sp, color = view.color
                             )
                         )
                     }

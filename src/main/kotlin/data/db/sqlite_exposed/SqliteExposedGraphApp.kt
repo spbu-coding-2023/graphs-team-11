@@ -22,9 +22,12 @@ import kotlin.collections.mutableMapOf
 import kotlin.collections.set
 import kotlin.collections.toMutableSet
 
+val graphDatabase by lazy {
+    Database.connect("jdbc:sqlite:$SQLITE_DB", driver = "org.sqlite.JDBC")
+}
+
 fun connect() {
-    Database.connect("jdbc:sqlite:${SQLITE_DB}", driver = "org.sqlite.JDBC")
-    transaction {
+    transaction(graphDatabase) {
         SchemaUtils.create(Graphs, Edges)
     }
 }

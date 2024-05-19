@@ -33,7 +33,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -43,6 +42,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Window
+import data.db.sqlite_exposed.setTheme
 import ui.theme.BdsmAppTheme
 import ui.theme.Theme
 import java.awt.Dimension
@@ -51,7 +51,6 @@ import javax.sound.sampled.AudioSystem
 
 @Composable
 fun SettingsView(onClose: () -> Unit, appTheme: MutableState<Theme>) {
-    val goldenMode = remember { mutableStateOf(false) }
     val showSberIcon = mutableStateOf(false)
     Window(
         title = "Settings",
@@ -71,8 +70,8 @@ fun SettingsView(onClose: () -> Unit, appTheme: MutableState<Theme>) {
                         tint = Color(0xFF21a038),
                         modifier = Modifier.fillMaxSize().clickable(onClick = {
                             showSberIcon.value = false
-                            goldenMode.value = true
                             appTheme.value = Theme.GOLDEN
+                            setTheme(Theme.GOLDEN)
                         })
                     )
                     playSound("src/main/resources/sounds/paid.wav")
@@ -83,7 +82,7 @@ fun SettingsView(onClose: () -> Unit, appTheme: MutableState<Theme>) {
                         verticalArrangement = Arrangement.Center
                     ) {
                         darkModeToggle(appTheme)
-                        if (goldenMode.value) {
+                        if (appTheme.value == Theme.GOLDEN) {
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.Center,
@@ -93,18 +92,18 @@ fun SettingsView(onClose: () -> Unit, appTheme: MutableState<Theme>) {
                                 Spacer(modifier = Modifier.width(30.dp))
                                 Checkbox(
                                     checked = appTheme.value == Theme.GOLDEN, onCheckedChange = {
-                                        goldenMode.value = false
                                         appTheme.value = Theme.LIGHT
+                                        setTheme(Theme.LIGHT)
                                     }, modifier = Modifier.size(40.dp), colors = CheckboxDefaults.colors(
-                                        checkedColor = MaterialTheme.colors.primary,
-                                        uncheckedColor = MaterialTheme.colors.secondary
+                                        checkedColor = MaterialTheme.colors.secondary,
+                                        uncheckedColor = MaterialTheme.colors.primary
                                     )
                                 )
                             }
                         }
                     }
 
-                    if (!goldenMode.value) {
+                    if (appTheme.value != Theme.GOLDEN) {
                         Column(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalAlignment = Alignment.CenterHorizontally,
@@ -145,8 +144,10 @@ fun darkModeToggle(appTheme: MutableState<Theme>) {
             ) {
                 if (appTheme.value == Theme.DARK) {
                     appTheme.value = Theme.LIGHT
+                    setTheme(Theme.LIGHT)
                 } else {
                     appTheme.value = Theme.DARK
+                    setTheme(Theme.DARK)
                 }
             }.background(
                 if (appTheme.value == Theme.GOLDEN) Color.LightGray else MaterialTheme.colors.surface.copy(
@@ -160,7 +161,7 @@ fun darkModeToggle(appTheme: MutableState<Theme>) {
                         if (appTheme.value == Theme.DARK) MaterialTheme.colors.primary
                         else MaterialTheme.colors.secondary
                     )
-            ) {}
+            )
             Row(
                 modifier = Modifier.border(
                     border = BorderStroke(

@@ -2,7 +2,6 @@ package viewmodel
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
-import data.db.sqlite_exposed.connect
 import data.db.sqlite_exposed.deleteGraph
 import data.db.sqlite_exposed.getAllGraphs
 import data.tools.graphGenerators.flowerSnark
@@ -16,13 +15,8 @@ import ui.components.generateStringNodeNames
 class IntroWindowVM(
     var isSettingMenuOpen: MutableState<Boolean>,
 ) {
-    var graphList: MutableState<List<Triple<Int, Graph<*>, String>>>
+    var graphList: MutableState<List<Triple<Int, Graph<*>, String>>> = mutableStateOf(getAllGraphs())
     val isFileLoaderOpen = mutableStateOf(false)
-
-    init {
-        connect()
-        graphList = mutableStateOf(getAllGraphs())
-    }
 
     enum class GraphKeyType {
         INT, STRING, FLOAT, CHAR,

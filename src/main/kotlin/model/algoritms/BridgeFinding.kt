@@ -13,15 +13,9 @@ class BridgeFinding : Algoritm(null) {
         val updateNode: MutableMap<D, NodeViewUpdate<D>> = mutableMapOf()
         val updateVert: MutableMap<D, MutableMap<D, VertViewUpdate<D>>> = mutableMapOf()
 
-        for ((u, v) in bridges) {
-            if (updateVert[u] == null) {
-                updateVert[u] = mutableMapOf()
-            }
-            if (updateVert[v] == null) {
-                updateVert[v] = mutableMapOf()
-            }
-            updateVert[u]?.set(v, VertViewUpdate(color = Color.Red, alpha = 1f))
-            updateVert[v]?.set(u, VertViewUpdate(color = Color.Red, alpha = 1f))
+        bridges.forEach { (u, v) ->
+            updateVert.computeIfAbsent(u) { mutableMapOf() }[v] = VertViewUpdate(color = Color.Red, alpha = 1f)
+            updateVert.computeIfAbsent(v) { mutableMapOf() }[u] = VertViewUpdate(color = Color.Red, alpha = 1f)
         }
 
         return Update(nodeViewUpdate = updateNode, vertViewUpdate = updateVert)
@@ -60,13 +54,12 @@ class BridgeFinding : Algoritm(null) {
         low[u] = currentTime
         currentTime++
 
-        for (v in graph.vertices[u]?.map { it.first } ?: emptyList()) {
+        for ((v, _) in graph.vertices[u] ?: emptyList()) {
             if (!visited.getValue(v)) {
                 parent[v] = u
                 currentTime = bridgeDFS(graph, v, visited, discovery, low, parent, bridges, currentTime)
 
                 low[u] = minOf(low.getValue(u), low.getValue(v))
-
                 if (low.getValue(v) > discovery.getValue(u)) {
                     bridges.add(Pair(u, v))
                 }

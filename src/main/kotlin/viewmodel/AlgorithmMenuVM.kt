@@ -8,7 +8,7 @@ import model.algoritms.Algoritm
 import model.graph_model.GraphViewClass
 
 class AlgorithmMenuVM {
-    val menuWidth = 200.dp
+    val menuWidth = 250.dp
 
     val isMenuVisible = mutableStateOf(true)
 

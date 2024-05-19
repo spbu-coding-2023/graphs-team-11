@@ -42,11 +42,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
-import model.algoritms.ConnectivityСomponent
-import model.algoritms.Kruskal
-import model.algoritms.LeidenToRun
-import model.algoritms.SampleAlgo
-import model.algoritms.SomeThingLikeDFS
+import model.algoritms.*
 import model.graph_model.GraphViewClass
 import viewmodel.AlgorithmMenuVM
 
@@ -86,13 +82,11 @@ fun <D> LeftMenu(
         AlertDialog(
             title = { Text("Exception!") },
             text = { Text(viewModel.exceptionMessage.value) },
-            onDismissRequest = { viewModel.isException.value = false},
+            onDismissRequest = { viewModel.isException.value = false },
             confirmButton = {
-                Button(
-                    onClick = {
-                        viewModel.isException.value = false
-                    }
-                ) {
+                Button(onClick = {
+                    viewModel.isException.value = false
+                }) {
                     Text("Confirm")
                 }
             },
@@ -113,7 +107,9 @@ fun <D> AlgoritmList(
         Pair("Sample Algorithm", SampleAlgo()),
         Pair("Something like DFS", SomeThingLikeDFS()),
         Pair("Kosaraju", ConnectivityСomponent()),
-        Pair("Minimal Tree", Kruskal())
+        Pair("Minimal Tree", Kruskal()),
+        Pair("Shortest Path Detection", ShortestPathDetection()),
+        Pair("Find Bridges", BridgeFinding()),
     )
 
     Column(
@@ -124,10 +120,10 @@ fun <D> AlgoritmList(
         Divider(color = Color.Black, modifier = Modifier.fillMaxWidth(0.3f))
         for (algorithm in algoList) {
             Text(text = algorithm.first, modifier = Modifier.clickable(onClick = {
-                if (selected.size != algorithm.second.selectedSizeRequired
-                    && algorithm.second.selectedSizeRequired != null) {
+                if (selected.size != algorithm.second.selectedSizeRequired && algorithm.second.selectedSizeRequired != null) {
                     viewModel.isException.value = true
-                    viewModel.exceptionMessage.value = "Required " + algorithm.second.selectedSizeRequired.toString() + " selected nodes!"
+                    viewModel.exceptionMessage.value =
+                        "Required " + algorithm.second.selectedSizeRequired.toString() + " selected nodes!"
                 }
                 viewModel.runAlgorithm(algorithm.second, graphViewClass, changedAlgo, selected)
             }).offset(10.dp))

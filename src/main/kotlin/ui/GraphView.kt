@@ -13,6 +13,8 @@ import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.input.key.isShiftPressed
 import androidx.compose.ui.input.key.onKeyEvent
@@ -24,6 +26,7 @@ import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import model.graph_model.GraphViewClass
 import model.graph_model.NodeViewClass
@@ -36,11 +39,13 @@ fun <D> GrahpView(
     gv: GraphViewClass<D>,
     changedAlgo: MutableState<Boolean>,
     selected: SnapshotStateMap<D, Int>,
-    padding: Int = 30,
+    padding: Int = 100,
     showNodes: Boolean = true
 ) {
     val viewModel = remember { GraphVM() }
     viewModel.padding = padding
+
+    // println(viewModel.toAbsoluteOffset(Offset(-1f, -1f)))
 
     if (changedAlgo.value) {
         changedAlgo.value = false
@@ -94,28 +99,27 @@ fun <D> GrahpView(
                 for ((j, view) in verts) {
                     val arrow = Path()
                     val start = (viewModel.toAbsoluteOffset(view.start.offset) + Offset(
-                        x = view.start.radius, y = view.start.radius
-                    ) * 0.5f - viewModel.mainOffset)
+                        x = view.start.radius.dp.toPx(), y = view.start.radius.dp.toPx()
+                    ) / 2f - viewModel.mainOffset)
 
                     val end = (viewModel.toAbsoluteOffset(view.end.offset) + Offset(
-                        x = view.end.radius, y = view.end.radius
-                    ) * 0.5f - viewModel.mainOffset)
+                        x = view.end.radius.dp.toPx(), y = view.end.radius.dp.toPx()
+                    ) / 2f - viewModel.mainOffset)
 
                     val d = -(end - start) / abs(end - start)
 
-                    // Algebra Time!!!
-                    arrow.moveTo((end + d * (view.end.radius / 2f + 10f)).x, (end + d * (view.end.radius / 2f + 10f)).y)
+                    arrow.moveTo((end + d * (view.end.radius.dp.toPx() / 2f + 10f)).x, (end + d * (view.end.radius.dp.toPx() / 2f + 10f)).y)
                     arrow.lineTo(
-                        (end + d * (view.end.radius / 2f + 10f)).x + 10f * d.y,
-                        (end + d * (view.end.radius / 2f + 10f)).y - 10f * d.x
+                        (end + d * (view.end.radius.dp.toPx() / 2f + 10f)).x + 10f * d.y,
+                        (end + d * (view.end.radius.dp.toPx() / 2f + 10f)).y - 10f * d.x
                     )
                     arrow.lineTo(
-                        (end + d * (view.end.radius / 2f + 10f)).x - 10f * d.x,
-                        (end + d * (view.end.radius / 2f + 10f)).y - 10f * d.y
+                        (end + d * (view.end.radius.dp.toPx() / 2f + 10f)).x - 10f * d.x,
+                        (end + d * (view.end.radius.dp.toPx() / 2f + 10f)).y - 10f * d.y
                     )
                     arrow.lineTo(
-                        (end + d * (view.end.radius / 2f + 10f)).x - 10f * d.y,
-                        (end + d * (view.end.radius / 2f + 10f)).y + 10f * d.x
+                        (end + d * (view.end.radius.dp.toPx() / 2f + 10f)).x - 10f * d.y,
+                        (end + d * (view.end.radius.dp.toPx() / 2f + 10f)).y + 10f * d.x
                     )
                     arrow.close()
 

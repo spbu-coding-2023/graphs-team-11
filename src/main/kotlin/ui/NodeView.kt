@@ -56,6 +56,7 @@ fun <D> NodeView(
 ) {
     var offset by remember { mutableStateOf(toAbsoluteOffset(nodeView.offset)) }
 
+    // println(offset)
 
     Box(Modifier.offset {
         IntOffset(
@@ -64,7 +65,7 @@ fun <D> NodeView(
         )
     }.background(
         MaterialTheme.colors.background,
-        shape = CircleShape
+        shape = CircleShape,
     ).border(
         if (selected.getOrDefault(nodeView.value, -1) >= 0) 4.dp else 2.dp,
         color = nodeView.color,

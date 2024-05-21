@@ -21,7 +21,7 @@ class GraphGeneratorsTest {
     )
 
     @Nested
-    inner class RandomGraphWithWeightOne {
+    inner class GraphWithWeightOne {
 
         @TestFactory
         fun `test Random generator returns graph with right amount of nodes, type and weight one`(): List<DynamicTest> {
@@ -128,6 +128,30 @@ class GraphGeneratorsTest {
 
                         graph.vertices.values.flatten().forEach { (_, weight) ->
                             assertTrue { weight <= maxWeight.toFloat() && weight > 0f }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    @Nested
+    inner class InvariantTests {
+        @TestFactory
+        fun `test generators generate nodes that connected to nodes only from graph`(): List<DynamicTest> {
+            val nodeAmount = 100
+            val generators = listOf(::randomTree, ::flowerSnark, ::starDirected, ::starUndirected)
+            return generators.flatMap { generator ->
+                types.map { type ->
+                    DynamicTest.dynamicTest("Test ${generator.name} and type ${type.name}") {
+                        val graph: Graph<*> = if (generator.name == "randomTree") {
+                            generator.call(nodeAmount, type, 1)
+                        } else {
+                            generator.call(nodeAmount, type)
+                        }
+                        val vertices = graph.vertices.keys.toList()
+                        graph.vertices.values.flatten().forEach { (node, _) ->
+                            assertTrue { vertices.contains(node) }
                         }
                     }
                 }

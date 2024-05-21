@@ -13,19 +13,19 @@ fun starDirected(n: Int, type: IntroWindowVM.GraphKeyType): Graph<*> = when (typ
 
 private fun starDirectedInt(n: Int): Graph<Int> {
     val graph = Graph<Int>()
-    graph.addNode(0)
-    for (i in 1..n) {
+    graph.addNode(1)
+    for (i in 2..n) {
         graph.addNode(i)
-        graph.addVertice(0, i)
+        graph.addVertice(1, i)
     }
     return graph
 }
 
 private fun starDirectedString(n: Int): Graph<String> {
     val graph = Graph<String>()
-    val nodeNames = generateStringNodeNames(n + 1)
+    val nodeNames = generateStringNodeNames(n)
     graph.addNode(nodeNames[0])
-    for (i in 1..n) {
+    for (i in 1..<n) {
         graph.addNode(nodeNames[i])
         graph.addVertice(nodeNames[0], nodeNames[i])
     }
@@ -34,10 +34,10 @@ private fun starDirectedString(n: Int): Graph<String> {
 
 private fun starDirectedFloat(n: Int): Graph<Float> {
     val graph = Graph<Float>()
-    graph.addNode(0f)
-    for (i in 1..n) {
+    graph.addNode(1f)
+    for (i in 2..n) {
         graph.addNode(i.toFloat())
-        graph.addVertice(0f, i.toFloat())
+        graph.addVertice(1f, i.toFloat())
     }
     return graph
 }
@@ -45,7 +45,7 @@ private fun starDirectedFloat(n: Int): Graph<Float> {
 private fun starDirectedChar(n: Int): Graph<Char> {
     val graph = Graph<Char>()
     graph.addNode('A')
-    for (i in 1..n) {
+    for (i in 1..<n) {
         graph.addNode('A' + i)
         graph.addVertice('A', 'A' + i)
     }
@@ -61,20 +61,20 @@ fun starUndirected(n: Int, type: IntroWindowVM.GraphKeyType): Graph<*> = when (t
 
 private fun starUndirectedInt(n: Int): Graph<Int> {
     val graph = Graph<Int>()
-    graph.addNode(0)
-    for (i in 1..n) {
+    graph.addNode(1)
+    for (i in 2..n) {
         graph.addNode(i)
-        graph.addVertice(0, i)
-        graph.addVertice(i, 0)
+        graph.addVertice(1, i)
+        graph.addVertice(i, 1)
     }
     return graph
 }
 
 private fun starUndirectedString(n: Int): Graph<String> {
     val graph = Graph<String>()
-    val nodeNames = generateStringNodeNames(n + 1)
+    val nodeNames = generateStringNodeNames(n)
     graph.addNode(nodeNames[0])
-    for (i in 1..n) {
+    for (i in 1..<n) {
         graph.addNode(nodeNames[i])
         graph.addVertice(nodeNames[0], nodeNames[i])
         graph.addVertice(nodeNames[i], nodeNames[0])
@@ -84,11 +84,11 @@ private fun starUndirectedString(n: Int): Graph<String> {
 
 private fun starUndirectedFloat(n: Int): Graph<Float> {
     val graph = Graph<Float>()
-    graph.addNode(0f)
-    for (i in 1..n) {
+    graph.addNode(1f)
+    for (i in 2..n) {
         graph.addNode(i.toFloat())
-        graph.addVertice(0f, i.toFloat())
-        graph.addVertice(i.toFloat(), 0f)
+        graph.addVertice(1f, i.toFloat())
+        graph.addVertice(i.toFloat(), 1f)
     }
     return graph
 }
@@ -96,7 +96,7 @@ private fun starUndirectedFloat(n: Int): Graph<Float> {
 private fun starUndirectedChar(n: Int): Graph<Char> {
     val graph = Graph<Char>()
     graph.addNode('A')
-    for (i in 1..n) {
+    for (i in 1..<n) {
         graph.addNode('A' + i)
         graph.addVertice('A', 'A' + i)
         graph.addVertice('A' + i, 'A')

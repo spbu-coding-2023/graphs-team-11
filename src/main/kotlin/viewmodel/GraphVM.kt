@@ -8,7 +8,6 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.PointerEvent
 import androidx.compose.ui.unit.IntSize
 import kotlin.math.sign
-import kotlin.properties.Delegates
 
 @Stable
 class GraphVM {
@@ -17,7 +16,7 @@ class GraphVM {
     var mainOffset by mutableStateOf(Offset(x = 0f, y = 0f))
     val scaleFactor = mutableStateOf(1f)
 
-    var padding by Delegates.notNull<Int>()
+    var padding = 100
 
     var toAbsoluteOffset by mutableStateOf(
         { offset: Offset ->

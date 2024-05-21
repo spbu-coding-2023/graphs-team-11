@@ -109,6 +109,10 @@ private fun detectType(input: String): Any {
     val intVal = input.toIntOrNull()
     if (intVal != null) return intVal
 
+    // Try to convert to Float
+    val floatVal = input.toFloatOrNull()
+    if (floatVal != null) return floatVal
+
     // If none of the above, it's a String
     return input
 }

@@ -8,7 +8,6 @@ fun starDirected(n: Int, type: IntroWindowVM.GraphKeyType): Graph<*> = when (typ
     IntroWindowVM.GraphKeyType.INT -> starDirectedInt(n)
     IntroWindowVM.GraphKeyType.STRING -> starDirectedString(n)
     IntroWindowVM.GraphKeyType.FLOAT -> starDirectedFloat(n)
-    IntroWindowVM.GraphKeyType.CHAR -> starDirectedChar(n)
 }
 
 private fun starDirectedInt(n: Int): Graph<Int> {
@@ -42,21 +41,10 @@ private fun starDirectedFloat(n: Int): Graph<Float> {
     return graph
 }
 
-private fun starDirectedChar(n: Int): Graph<Char> {
-    val graph = Graph<Char>()
-    graph.addNode('A')
-    for (i in 1..<n) {
-        graph.addNode('A' + i)
-        graph.addVertice('A', 'A' + i)
-    }
-    return graph
-}
-
 fun starUndirected(n: Int, type: IntroWindowVM.GraphKeyType): Graph<*> = when (type) {
     IntroWindowVM.GraphKeyType.INT -> starUndirectedInt(n)
     IntroWindowVM.GraphKeyType.STRING -> starUndirectedString(n)
     IntroWindowVM.GraphKeyType.FLOAT -> starUndirectedFloat(n)
-    IntroWindowVM.GraphKeyType.CHAR -> starUndirectedChar(n)
 }
 
 private fun starUndirectedInt(n: Int): Graph<Int> {
@@ -89,17 +77,6 @@ private fun starUndirectedFloat(n: Int): Graph<Float> {
         graph.addNode(i.toFloat())
         graph.addVertice(1f, i.toFloat())
         graph.addVertice(i.toFloat(), 1f)
-    }
-    return graph
-}
-
-private fun starUndirectedChar(n: Int): Graph<Char> {
-    val graph = Graph<Char>()
-    graph.addNode('A')
-    for (i in 1..<n) {
-        graph.addNode('A' + i)
-        graph.addVertice('A', 'A' + i)
-        graph.addVertice('A' + i, 'A')
     }
     return graph
 }

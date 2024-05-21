@@ -32,7 +32,7 @@ fun connect() {
     }
 }
 
-fun <D> saveGraph(graph: Graph<D>, name: String): Int {
+fun <D> saveGraph(graph: Graph<D>, name: String) {
     return transaction {
         val graphId = Graphs.insertAndGetId {
             it[Graphs.name] = name
@@ -49,8 +49,6 @@ fun <D> saveGraph(graph: Graph<D>, name: String): Int {
                 }
             }
         }
-
-        graphId
     }
 }
 
@@ -70,7 +68,7 @@ fun deleteGraph(id: Int) {
     }
 }
 
-private fun <D> serializeGraph(graph: Graph<D>): String {
+fun <D> serializeGraph(graph: Graph<D>): String {
     val serializedVertices = graph.vertices.entries.joinToString(separator = "|") { (source, neighbors) ->
         "$source:${neighbors.joinToString(";") { it.toString() }}"
     }
@@ -110,9 +108,6 @@ private fun detectType(input: String): Any {
     // Try to convert to Int
     val intVal = input.toIntOrNull()
     if (intVal != null) return intVal
-
-    // Check if it's a single character
-    if (input.length == 1) return input[0]
 
     // If none of the above, it's a String
     return input

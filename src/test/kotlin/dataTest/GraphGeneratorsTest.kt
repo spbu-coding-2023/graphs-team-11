@@ -18,7 +18,6 @@ class GraphGeneratorsTest {
         IntroWindowVM.GraphKeyType.INT,
         IntroWindowVM.GraphKeyType.STRING,
         IntroWindowVM.GraphKeyType.FLOAT,
-        IntroWindowVM.GraphKeyType.CHAR
     )
 
     @Nested
@@ -36,7 +35,6 @@ class GraphGeneratorsTest {
                             IntroWindowVM.GraphKeyType.INT -> assertTrue(graph.vertices.keys.first() is Int)
                             IntroWindowVM.GraphKeyType.STRING -> assertTrue(graph.vertices.keys.first() is String)
                             IntroWindowVM.GraphKeyType.FLOAT -> assertTrue(graph.vertices.keys.first() is Float)
-                            IntroWindowVM.GraphKeyType.CHAR -> assertTrue(graph.vertices.keys.first() is Char)
                         }
 
                         graph.vertices.values.flatten().forEach { (_, weight) ->
@@ -58,7 +56,6 @@ class GraphGeneratorsTest {
                             IntroWindowVM.GraphKeyType.INT -> assertTrue(graph.vertices.keys.first() is Int)
                             IntroWindowVM.GraphKeyType.STRING -> assertTrue(graph.vertices.keys.first() is String)
                             IntroWindowVM.GraphKeyType.FLOAT -> assertTrue(graph.vertices.keys.first() is Float)
-                            IntroWindowVM.GraphKeyType.CHAR -> assertTrue(graph.vertices.keys.first() is Char)
                         }
 
                         graph.vertices.values.flatten().forEach { (_, weight) ->
@@ -80,7 +77,6 @@ class GraphGeneratorsTest {
                             IntroWindowVM.GraphKeyType.INT -> assertTrue(graph.vertices.keys.first() is Int)
                             IntroWindowVM.GraphKeyType.STRING -> assertTrue(graph.vertices.keys.first() is String)
                             IntroWindowVM.GraphKeyType.FLOAT -> assertTrue(graph.vertices.keys.first() is Float)
-                            IntroWindowVM.GraphKeyType.CHAR -> assertTrue(graph.vertices.keys.first() is Char)
                         }
 
                         graph.vertices.values.flatten().forEach { (_, weight) ->
@@ -102,7 +98,6 @@ class GraphGeneratorsTest {
                             IntroWindowVM.GraphKeyType.INT -> assertTrue(graph.vertices.keys.first() is Int)
                             IntroWindowVM.GraphKeyType.STRING -> assertTrue(graph.vertices.keys.first() is String)
                             IntroWindowVM.GraphKeyType.FLOAT -> assertTrue(graph.vertices.keys.first() is Float)
-                            IntroWindowVM.GraphKeyType.CHAR -> assertTrue(graph.vertices.keys.first() is Char)
                         }
 
                         graph.vertices.values.flatten().forEach { (_, weight) ->
@@ -129,7 +124,6 @@ class GraphGeneratorsTest {
                             IntroWindowVM.GraphKeyType.INT -> assertTrue(graph.vertices.keys.first() is Int)
                             IntroWindowVM.GraphKeyType.STRING -> assertTrue(graph.vertices.keys.first() is String)
                             IntroWindowVM.GraphKeyType.FLOAT -> assertTrue(graph.vertices.keys.first() is Float)
-                            IntroWindowVM.GraphKeyType.CHAR -> assertTrue(graph.vertices.keys.first() is Char)
                         }
 
                         graph.vertices.values.flatten().forEach { (_, weight) ->

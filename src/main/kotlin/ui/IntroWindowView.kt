@@ -155,7 +155,7 @@ fun IntroView(viewModel: IntroWindowVM, state: MyWindowState, appTheme: MutableS
 
             when (chosenGraph.value) {
                 "Manual" -> {
-                    CreateGraphButtonWithCharCheck(selectedGraphKeyType, chosenGenerator, graphSize) {
+                    CreateGraphButtonWithCharCheck(chosenGenerator, graphSize) {
                         val graph = viewModel.createGraphWithoutEdges(
                             selectedGraphKeyType.value, graphSize.value.toInt()
                         )
@@ -164,7 +164,7 @@ fun IntroView(viewModel: IntroWindowVM, state: MyWindowState, appTheme: MutableS
                 }
 
                 "Generate" -> {
-                    CreateGraphButtonWithCharCheck(selectedGraphKeyType, chosenGenerator, graphSize) {
+                    CreateGraphButtonWithCharCheck(chosenGenerator, graphSize) {
                         val maxWeight = weightMax.value.toIntOrNull()?.coerceIn(1, 100) ?: 1
                         val graph = viewModel.generateGraph(
                             graphSize.value.toInt(), chosenGenerator.value, selectedGraphKeyType.value, maxWeight
@@ -230,19 +230,9 @@ fun SavedGraphsList(
 
 @Composable
 fun CreateGraphButtonWithCharCheck(
-    selectedGraphKeyType: MutableState<IntroWindowVM.GraphKeyType>,
-    chosenGenerator: MutableState<String>,
-    graphSize: MutableState<String>,
-    onClick: () -> Unit
+    chosenGenerator: MutableState<String>, graphSize: MutableState<String>, onClick: () -> Unit
 ) {
     Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-        if (chosenGenerator.value == "Flower Snark" && (selectedGraphKeyType.value == IntroWindowVM.GraphKeyType.CHAR) && (graphSize.value.isNotEmpty() && graphSize.value.toIntOrNull() != null) && (graphSize.value.toInt() > 5)) {
-            Text("Char Graph size should be less than 5 for Flower Snark", color = MaterialTheme.colors.error)
-            Spacer(modifier = Modifier.height(10.dp))
-        } else if ((selectedGraphKeyType.value == IntroWindowVM.GraphKeyType.CHAR) && (graphSize.value.isNotEmpty() && graphSize.value.toIntOrNull() != null) && (graphSize.value.toInt() > 26)) {
-            Text("Char Graph size should be less than 26", color = MaterialTheme.colors.error)
-            Spacer(modifier = Modifier.height(10.dp))
-        }
         Button(
             onClick = onClick,
             modifier = Modifier.padding(bottom = 20.dp),
@@ -250,8 +240,8 @@ fun CreateGraphButtonWithCharCheck(
                 backgroundColor = MaterialTheme.colors.surface,
                 disabledBackgroundColor = MaterialTheme.colors.onSurface.copy(alpha = 0.12f),
             ),
-            enabled = if (chosenGenerator.value == "Flower Snark") (graphSize.value.isNotEmpty() && graphSize.value.toIntOrNull() != null) && !((selectedGraphKeyType.value == IntroWindowVM.GraphKeyType.CHAR) && (graphSize.value.toInt() > 5))
-            else (graphSize.value.isNotEmpty() && graphSize.value.toIntOrNull() != null) && !((selectedGraphKeyType.value == IntroWindowVM.GraphKeyType.CHAR) && (graphSize.value.toInt() > 26))
+            enabled = if (chosenGenerator.value == "Flower Snark") (graphSize.value.isNotEmpty() && graphSize.value.toIntOrNull() != null)
+            else (graphSize.value.isNotEmpty() && graphSize.value.toIntOrNull() != null)
 
         ) {
             Text("Create Graph")

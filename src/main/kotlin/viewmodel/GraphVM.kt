@@ -8,7 +8,6 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.PointerEvent
 import androidx.compose.ui.unit.IntSize
 import kotlin.math.sign
-import kotlin.properties.Delegates
 
 @Stable
 class GraphVM {

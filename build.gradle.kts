@@ -4,6 +4,7 @@ import org.jetbrains.kotlin.ir.backend.js.compile
 plugins {
     kotlin("jvm")
     id("org.jetbrains.compose")
+    jacoco
 }
 
 group = "org.team11.bdsm.graphs"
@@ -40,6 +41,44 @@ dependencies {
     implementation("io.github.pdvrieze.xmlutil:serialization:0.86.3")
 
     implementation("org.gephi", "gephi-toolkit", "0.10.1", classifier = "all")
+
+    testImplementation("org.jetbrains.kotlin:kotlin-test")
+}
+
+tasks.test {
+    useJUnitPlatform()
+
+    testLogging {
+        events("skipped", "failed")
+        afterSuite(
+            // spell
+            KotlinClosure2({ desc: TestDescriptor, result: TestResult ->
+                // Only execute on the outermost suite
+                if (desc.parent == null) {
+                    println(" **** Result: ${result.resultType} ****")
+                    println("  >    Tests: ${result.testCount}")
+                    println("  >   Passed: ${result.successfulTestCount}")
+                    println("  >   Failed: ${result.failedTestCount}")
+                    println("  >  Skipped: ${result.skippedTestCount}")
+                }
+            }),
+        )
+    }
+
+    reports {
+        junitXml.required = true
+    }
+
+    finalizedBy(tasks.jacocoTestReport)
+}
+
+tasks.named<JacocoReport>("jacocoTestReport") {
+    dependsOn(tasks.test)
+    reports {
+        csv.required = true
+        xml.required = false
+        html.outputLocation = layout.buildDirectory.dir("jacocoHtml")
+    }
 }
 
 compose.desktop {

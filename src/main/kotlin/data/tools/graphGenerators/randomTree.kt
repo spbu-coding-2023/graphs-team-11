@@ -9,7 +9,6 @@ fun randomTree(n: Int, type: IntroWindowVM.GraphKeyType, maxWeight: Int): Graph<
     IntroWindowVM.GraphKeyType.INT -> randomTreeInt(n, maxWeight)
     IntroWindowVM.GraphKeyType.STRING -> randomTreeString(n, maxWeight)
     IntroWindowVM.GraphKeyType.FLOAT -> randomTreeFloat(n, maxWeight)
-    IntroWindowVM.GraphKeyType.CHAR -> randomTreeChar(n, maxWeight)
 }
 
 
@@ -83,34 +82,6 @@ private fun randomTreeFloat(n: Int, maxWeight: Int): Graph<Float> {
         for (i in 3..n) {
             graph.addNode(i.toFloat())
             graph.addVertice(Random.nextInt(1, i - 1).toFloat(), i.toFloat())
-        }
-    }
-
-    return graph
-}
-
-private fun randomTreeChar(n: Int, maxWeight: Int): Graph<Char> {
-    val graph = Graph<Char>()
-
-    graph.addNode('A')
-    graph.addNode('B')
-    if (maxWeight > 1) {
-        graph.addVertice('A', 'B', Random.nextInt(1, maxWeight).toFloat())
-    } else {
-        graph.addVertice('A', 'B')
-    }
-
-    for (i in 2..<n) {
-        graph.addNode('A' + i)
-    }
-
-    if (maxWeight > 1) {
-        for (i in 2..<n) {
-            graph.addVertice('A' + Random.nextInt(0, i - 1), 'A' + i, Random.nextInt(1, maxWeight).toFloat())
-        }
-    } else {
-        for (i in 2..<n) {
-            graph.addVertice('A' + Random.nextInt(0, i - 1), 'A' + i)
         }
     }
 

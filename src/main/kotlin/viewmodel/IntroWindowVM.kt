@@ -19,7 +19,7 @@ class IntroWindowVM(
     val isFileLoaderOpen = mutableStateOf(false)
 
     enum class GraphKeyType {
-        INT, STRING, FLOAT, CHAR,
+        INT, STRING, FLOAT,
     }
 
     fun onSettingsPressed() {
@@ -50,7 +50,6 @@ class IntroWindowVM(
             GraphKeyType.INT -> Graph<Int>()
             GraphKeyType.STRING -> Graph<String>()
             GraphKeyType.FLOAT -> Graph<Float>()
-            GraphKeyType.CHAR -> Graph<Char>()
         }
     }
 
@@ -78,14 +77,6 @@ class IntroWindowVM(
                 val graph = Graph<Float>()
                 for (i in 0 until size) {
                     graph.addNode(i.toFloat())
-                }
-                graph
-            }
-
-            GraphKeyType.CHAR -> {
-                val graph = Graph<Char>()
-                for (i in 0 until size) {
-                    graph.addNode('A' + i)
                 }
                 graph
             }

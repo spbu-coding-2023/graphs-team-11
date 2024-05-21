@@ -8,7 +8,6 @@ fun flowerSnark(n: Int, type: IntroWindowVM.GraphKeyType): Graph<*> = when (type
     IntroWindowVM.GraphKeyType.INT -> flowerSnarkInt(n)
     IntroWindowVM.GraphKeyType.STRING -> flowerSnarkString(n)
     IntroWindowVM.GraphKeyType.FLOAT -> flowerSnarkFloat(n)
-    IntroWindowVM.GraphKeyType.CHAR -> flowerSnarkChar(n)
 }
 
 private fun flowerSnarkInt(n: Int): Graph<Int> {
@@ -93,34 +92,6 @@ private fun flowerSnarkFloat(n: Int): Graph<Float> {
         graph.addVertice(i * 4f + 3f, i * 4f + 7f)
     }
     graph.addVertice(4 * n - 1f, 3f)
-
-    return graph
-}
-
-private fun flowerSnarkChar(n: Int): Graph<Char> {
-    val graph = Graph<Char>()
-    for (i in 0 until n) {
-        graph.addNode('A' + i * 4)
-        for (j in 1..3) {
-            graph.addNode('A' + i * 4 + j)
-            graph.addVertice('A' + i * 4 + j, 'A' + i * 4)
-        }
-    }
-
-    for (i in 0 until n - 1) {
-        graph.addVertice('A' + i * 4 + 1, 'A' + i * 4 + 5)
-    }
-    graph.addVertice('A' + 4 * n - 3, 'B')
-
-    for (i in 0 until n - 1) {
-        graph.addVertice('A' + i * 4 + 2, 'A' + i * 4 + 6)
-    }
-    graph.addVertice('A' + 4 * n - 2, 'C')
-
-    for (i in 0 until n - 1) {
-        graph.addVertice('A' + i * 4 + 3, 'A' + i * 4 + 7)
-    }
-    graph.addVertice('A' + 4 * n - 1, 'D')
 
     return graph
 }

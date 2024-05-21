@@ -1,4 +1,5 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
+import org.jetbrains.kotlin.ir.backend.js.compile
 
 plugins {
     kotlin("jvm")
@@ -12,6 +13,7 @@ version = "1.0-SNAPSHOT"
 repositories {
     mavenCentral()
     maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
+    maven("https://raw.github.com/gephi/gephi/mvn-thirdparty-repo/")
     google()
 }
 
@@ -38,7 +40,8 @@ dependencies {
     // XML Serialization
     implementation("io.github.pdvrieze.xmlutil:serialization:0.86.3")
 
-    // tests
+    implementation("org.gephi", "gephi-toolkit", "0.10.1", classifier = "all")
+
     testImplementation("org.jetbrains.kotlin:kotlin-test")
 }
 

@@ -11,11 +11,19 @@ import androidx.compose.ui.graphics.Shape
 import model.graph_model.graph_model_actions.NodeViewUpdate
 import model.graph_model.graph_model_actions.Update
 import model.graph_model.graph_model_actions.VertViewUpdate
+import org.gephi.graph.api.GraphController
+import org.gephi.graph.api.GraphModel
+import org.gephi.graph.api.Node
+import org.gephi.layout.plugin.force.StepDisplacement
+import org.gephi.layout.plugin.force.yifanHu.YifanHuLayout
+import org.gephi.layout.plugin.forceAtlas.ForceAtlasLayout
+import org.gephi.layout.plugin.forceAtlas2.ForceAtlas2LayoutData
+import org.gephi.project.api.ProjectController
+import org.gephi.project.api.Workspace
+import org.openide.util.Lookup
 import java.util.*
-import kotlin.math.max
-import kotlin.math.min
 import kotlin.math.sqrt
-import kotlin.random.Random
+
 
 @Stable
 data class NodeViewClass<D>(
@@ -56,7 +64,7 @@ class GraphViewClass<D>(
     var returnStack by mutableStateOf(Stack<Update<D>>())
 
     init {
-        val positions = FA2Layout()
+        val positions = layout()
         for (i in positions) {
             nodesViews[i.key] = NodeViewClass(
                 offset = positions[i.key]!!, radius = radius, color = nodeColor, value = i.key, shape = baseShape
@@ -142,81 +150,57 @@ class GraphViewClass<D>(
     }
 
     // just for fast not implemented like algoritm
-    private fun FA2Layout(iterations: Int = 2): MutableMap<D, Offset> {
+    private fun layout(maxIter: Int = 1000): MutableMap<D, Offset> {
         val positions: MutableMap<D, Offset> = mutableMapOf()
 
-        var t = 0.4
+        val pc = Lookup.getDefault().lookup(ProjectController::class.java)
+        pc.newProject()
+        val workspace: Workspace = pc.currentWorkspace
 
-        val C = 1 / sqrt(graph.vertices.size.toFloat())
-        val k = C * sqrt(4f / graph.vertices.size)
+        val graphModel: GraphModel = Lookup.getDefault().lookup<GraphController>(
+            GraphController::class.java
+        ).getGraphModel(workspace)
+        val dirGraph = graphModel.getDirectedGraph()
 
-        val atr = { x: Float, y: Float -> -C * y * k * k / x }
-        val retr = { x: Float, y: Float, z: Float -> ((x - k) / y) - atr(x, z) }
-
-        for (i in this.graph.vertices) {
-            // Create different window size
-            positions[i.key] = Offset(x = 1 - 2 * Random.nextFloat(), y = 1 - 2 * Random.nextFloat())
+        val nodes: MutableMap<D, Node> = mutableMapOf()
+        for ((v, _) in graph.vertices) {
+            var node = graphModel.factory().newNode(v.toString())
+            nodes[v] = node
+            dirGraph.addNode(node)
         }
-
-        val oldPos: MutableMap<D, Offset> = mutableMapOf()
-
-        var convered = 0
-
-        while (convered != 1) {
-            convered = 1
-
-            for (u in graph.vertices) oldPos[u.key] = positions[u.key]!!
-
-            for (v in graph.vertices) {
-                var disp = Offset(x = 0f, y = 0f)
-                for (u in graph.vertices) {
-                    if (u != v) {
-                        val delta = positions[u.key]!! - positions[v.key]!!
-                        disp += delta / abs(delta) * atr(abs(delta), abs(positions[u.key]!!))
-                    }
-                }
-                for (u in v.value) {
-                    val delta = positions[u.first]!! - positions[v.key]!!
-                    disp += delta / abs(delta) * retr(
-                        abs(delta), v.value.size.toFloat(), abs(positions[u.first]!!)
-                    )
-                }
-
-                if (!abs(disp).isNaN()) {
-                    positions[v.key] = positions[v.key]!! + disp / abs(disp) * min(abs(disp), t.toFloat())
-
-                    positions[v.key] = Offset(
-                        x = min(1f, max(-1f, positions[v.key]!!.x)), y = min(1f, max(-1f, positions[v.key]!!.y))
-                    )
-                }
-
-                val delta = positions[v.key]!! - oldPos[v.key]!!
-                if (abs(delta) > k * t) convered = 0
+        for ((u, neig) in graph.vertices) {
+            for ((v, _) in neig) {
+                val edge = graphModel.factory().newEdge(nodes[u]!!, nodes[v]!!)
+                dirGraph.addEdge(edge)
             }
-
-            t *= (1 - 1 / iterations)
-        }
-        var xmax = 0f
-        var xmin = 2f
-        var ymax = 0f
-        var ymin = 2f
-        for (v in positions) {
-            xmax = max(xmax, 1 + v.value.x)
-            xmin = min(xmin, 1 + v.value.x)
-            ymax = max(ymax, 1 + v.value.y)
-            ymin = min(ymin, 1 + v.value.y)
         }
 
-        val xdelta = xmax - xmin
-        val ydelta = ymax - ymin
+        val layout = ForceAtlasLayout(null)
+        layout.setGraphModel(graphModel)
+        layout.initAlgo()
+        layout.resetPropertiesValues()
 
-        for (v in positions) {
-            positions[v.key] = Offset(
-                x = (positions[v.key]!!.x - xmin + 1) * 2 / xdelta - 1,
-                y = (positions[v.key]!!.y - ymin + 1) * 2 / ydelta - 1
-            )
+        for (i in 1..maxIter) {
+            if (layout.canAlgo()) layout.goAlgo()
+            else break
         }
-
+        val x = mutableListOf<Float>()
+        val y = mutableListOf<Float>()
+        for ((v, _) in graph.vertices) {
+            x.add(nodes[v]!!.x())
+            y.add(nodes[v]!!.y())
+        }
+        if (x.size > 0) {
+            val (minX, maxX) = Pair(x.min(), x.max())
+            val (minY, maxY) = Pair(y.min(), y.max())
+            for ((v, _) in graph.vertices) {
+                positions[v] = Offset(
+                    x = 1 - 2 * (nodes[v]!!.x() - minX) / (maxX - minX),
+                    y = 1 - 2 * (nodes[v]!!.y() - minY) / (maxY - minY)
+                )
+                // println(positions[v])
+            }
+        }
         return positions
     }
 }

@@ -1,6 +1,7 @@
 package data.tools.graphGenerators
 
 import model.graph_model.Graph
+import model.graph_model.UndirectedGraph
 import ui.components.generateStringNodeNames
 import viewmodel.IntroWindowVM
 
@@ -47,36 +48,33 @@ fun starUndirected(n: Int, type: IntroWindowVM.GraphKeyType): Graph<*> = when (t
     IntroWindowVM.GraphKeyType.FLOAT -> starUndirectedFloat(n)
 }
 
-private fun starUndirectedInt(n: Int): Graph<Int> {
-    val graph = Graph<Int>()
+private fun starUndirectedInt(n: Int): UndirectedGraph<Int> {
+    val graph = UndirectedGraph<Int>()
     graph.addNode(1)
     for (i in 2..n) {
         graph.addNode(i)
         graph.addVertice(1, i)
-        graph.addVertice(i, 1)
     }
     return graph
 }
 
-private fun starUndirectedString(n: Int): Graph<String> {
-    val graph = Graph<String>()
+private fun starUndirectedString(n: Int): UndirectedGraph<String> {
+    val graph = UndirectedGraph<String>()
     val nodeNames = generateStringNodeNames(n)
     graph.addNode(nodeNames[0])
     for (i in 1..<n) {
         graph.addNode(nodeNames[i])
         graph.addVertice(nodeNames[0], nodeNames[i])
-        graph.addVertice(nodeNames[i], nodeNames[0])
     }
     return graph
 }
 
-private fun starUndirectedFloat(n: Int): Graph<Float> {
-    val graph = Graph<Float>()
+private fun starUndirectedFloat(n: Int): UndirectedGraph<Float> {
+    val graph = UndirectedGraph<Float>()
     graph.addNode(1f)
     for (i in 2..n) {
         graph.addNode(i.toFloat())
         graph.addVertice(1f, i.toFloat())
-        graph.addVertice(i.toFloat(), 1f)
     }
     return graph
 }

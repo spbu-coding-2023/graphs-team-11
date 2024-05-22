@@ -12,7 +12,7 @@ open class Graph<D> {
         size++
     }
 
-    fun addVertice(data1: D, data2: D, weight: Float = 1f) {
+    open fun addVertice(data1: D, data2: D, weight: Float = 1f) {
         this.vertices[data1]?.add(Pair(data2, weight))
     }
 
@@ -53,5 +53,4 @@ open class Graph<D> {
 
         return reversedGraph
     }
-
 }

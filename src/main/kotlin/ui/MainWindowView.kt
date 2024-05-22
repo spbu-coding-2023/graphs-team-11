@@ -30,7 +30,7 @@ import viewmodel.MainVM
 import java.awt.Dimension
 
 @Composable
-fun MyWindow(
+fun MainWindow(
     state: MyWindowState, isSettingMenuOpen: MutableState<Boolean>, appTheme: MutableState<Theme>
 ) {
     val viewModel = state.mainVM

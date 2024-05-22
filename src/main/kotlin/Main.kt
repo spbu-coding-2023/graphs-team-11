@@ -7,7 +7,7 @@ import data.db.sqlite_exposed.connect
 import data.db.sqlite_exposed.connectConfig
 import data.db.sqlite_exposed.getTheme
 import ui.IntroWindowView
-import ui.MyWindow
+import ui.MainWindow
 import ui.components.MyApplicationState
 
 import kotlinx.coroutines.*
@@ -30,7 +30,7 @@ fun main() = runBlocking {
                 if (window.title == CHOOSE_GRAPH_WINDOW_TITLE) {
                     IntroWindowView(window, isSettingMenuOpen, appTheme)
                 } else {
-                    MyWindow(window, isSettingMenuOpen, appTheme)
+                    MainWindow(window, isSettingMenuOpen, appTheme)
                 }
             }
         }

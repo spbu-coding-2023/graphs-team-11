@@ -1,12 +1,13 @@
 package data.graph_save
 
 import model.graph_model.Graph
+import model.graph_model.UndirectedGraph
 import nl.adaptivity.xmlutil.serialization.XML
 import java.io.File
 import java.util.Stack
 
 class GraphLoaderML(path: String) : Graph<String>() {
-    val graph: Graph<String> = Graph()
+    var graph: Graph<String> = Graph()
 
     init {
         val idToKey: MutableMap<String, String> = mutableMapOf()
@@ -20,6 +21,21 @@ class GraphLoaderML(path: String) : Graph<String>() {
             val tag = striped[0]
 
             when {
+                tag.startsWith("<graph") -> {
+                    val data = mutableMapOf<String, String>()
+                    it.split(" ").forEach {
+                        if ("=" in it) {
+                            data[it.split("=")[0]] =
+                                it.split("=")[1]
+                                    .trim('>')
+                                    .trim('/')
+                                    .trim('"')
+                        }
+                    }
+                    if (data["edgedefault"] == "undirected") {
+                        graph = UndirectedGraph<String>()
+                    }
+                }
                 tag.startsWith("<key") -> {
                     val data = mutableMapOf<String, String>()
                     it.split(" ").forEach {

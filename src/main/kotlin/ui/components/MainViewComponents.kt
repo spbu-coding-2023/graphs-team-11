@@ -6,9 +6,13 @@ import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -16,13 +20,22 @@ import androidx.compose.ui.window.Window
 import com.darkrockstudios.libraries.mpfilepicker.FilePicker
 import data.Constants.APP_NAME
 import data.Constants.CHOOSE_GRAPH_WINDOW_TITLE
-import data.Constants.FILE_FORMAT_FILTER
+import data.Constants.FILE_LOAD_FORMAT_FILTER
+import data.Constants.FILE_SAVE_FORMAT_FILTER
+import data.Constants.RESOURCE_DIR
 import data.graph_save.graphLoadUnified
 import model.graph_model.Graph
 import ui.theme.BdsmAppTheme
 import ui.theme.Theme
 import viewmodel.MainVM
 import java.awt.Dimension
+import java.awt.FileDialog
+import java.awt.Frame
+import java.io.File
+import java.nio.file.InvalidPathException
+import kotlin.io.path.absolutePathString
+import kotlin.io.path.isRegularFile
+import kotlin.io.path.listDirectoryEntries
 
 class MyApplicationState {
     val windows = mutableStateListOf<MyWindowState>()
@@ -152,17 +165,17 @@ fun GraphFilePicker(
     fileLoaderException: MutableState<String?>,
     state: MyWindowState) {
     FilePicker(
-        isFileLoaderOpen.value, fileExtensions = FILE_FORMAT_FILTER
+        isFileLoaderOpen.value, fileExtensions = FILE_LOAD_FORMAT_FILTER
     ) { path ->
         if (path != null) {
             try {
                 val loadedGraph: Graph<String> = graphLoadUnified(path.path)
                 state.reloadWindow(loadedGraph)
             } catch (e: NullPointerException) {
-                isFileLoaderOpen.value = false
                 fileLoaderException.value = e.message
             }
         }
+        isFileLoaderOpen.value = false
     }
     if (fileLoaderException.value != null) {
         AlertDialog(

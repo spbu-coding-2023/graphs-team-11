@@ -18,6 +18,7 @@ class MainVM<D>(
     val isSelectNameWindowOpen = mutableStateOf(false)
     val isFileLoaderOpen = mutableStateOf(false)
     val fileLoaderException: MutableState<String?> = mutableStateOf(null)
+    val isFileSaverOpen = mutableStateOf(false)
 
     private val graphNamesList = mutableListOf<String>()
     val isGraphNameAvailable = mutableStateOf(true)

@@ -17,9 +17,11 @@ import data.Constants.LOAD_FROM_FILE_SHORTCUT
 import data.Constants.NEW_WINDOW_SHORTCUT
 import data.Constants.REDO_SHORTCUT
 import data.Constants.SAVE_EXPOSED_SHORTCUT
+import data.Constants.SAVE_TO_FILE_SHORTCUT
 import data.Constants.SETTINGS_SHORTCUT
 import data.Constants.UNDO_SHORTCUT
 import data.Constants.VIEW_EXPOSED_SHORTCUT
+import data.graph_save.onSaveFilePressed
 import ui.components.GraphFilePicker
 import ui.components.MyWindowState
 import ui.components.SelectNameWindow
@@ -53,6 +55,9 @@ fun MainWindow(
                 Item("Load from file",
                     shortcut = LOAD_FROM_FILE_SHORTCUT,
                     onClick = { viewModel.isFileLoaderOpen.value = true })
+                Item("Save to file",
+                    shortcut = SAVE_TO_FILE_SHORTCUT,
+                    onClick = { onSaveFilePressed(state.graph!!) })
             }
 
             Menu("SQLite Exposed") {

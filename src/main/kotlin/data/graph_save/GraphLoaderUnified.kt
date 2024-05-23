@@ -2,12 +2,18 @@ package data.graph_save
 
 import model.graph_model.Graph
 
-class GraphLoaderUnified(val path: String) {
+fun graphLoadUnified(path: String): Graph<String> {
 
     var graph: Graph<String> = Graph()
-    init {
+    try {
         when {
-            path.endsWith(".graphml") -> {graph = GraphLoaderML(path).graph}
+            path.endsWith(".graphml") -> {
+                graph = loadGraphML(path)
+            }
         }
+    } catch (e: NullPointerException) {
+        throw e
     }
+
+    return graph
 }

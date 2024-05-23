@@ -2,23 +2,23 @@ package data.graph_save
 
 import model.graph_model.Graph
 import model.graph_model.UndirectedGraph
-import nl.adaptivity.xmlutil.serialization.XML
 import java.io.File
-import java.util.Stack
+import kotlin.IndexOutOfBoundsException
 
-class GraphLoaderML(path: String) : Graph<String>() {
+fun loadGraphML(path: String): Graph<String> {
     var graph: Graph<String> = Graph()
 
-    init {
-        val idToKey: MutableMap<String, String> = mutableMapOf()
-        var curData: MutableMap<String, String> = mutableMapOf()
+    val idToKey: MutableMap<String, String> = mutableMapOf()
+    var curData: MutableMap<String, String> = mutableMapOf()
 
-        var mainKeyId: String? = null
-        var weightId: String? = null
+    var mainKeyId: String? = null
+    var weightId: String? = null
 
-        File(path).forEachLine {
-            val striped = it.strip().split(" ")
-            val tag = striped[0]
+    File(path).forEachLine {
+        val striped = it.strip().split(" ")
+        val tag = striped[0]
+
+        try {
 
             when {
                 tag.startsWith("<graph") -> {
@@ -36,6 +36,7 @@ class GraphLoaderML(path: String) : Graph<String>() {
                         graph = UndirectedGraph<String>()
                     }
                 }
+
                 tag.startsWith("<key") -> {
                     val data = mutableMapOf<String, String>()
                     it.split(" ").forEach {
@@ -48,33 +49,45 @@ class GraphLoaderML(path: String) : Graph<String>() {
                         }
                     }
                     if (data["attr.type"] == "string" && data["for"] == "node" && mainKeyId == null) {
-                        mainKeyId = data["id"]!!
+                        mainKeyId = data.getOrDefault("id", null)
                     }
                     if (data["for"] == "edge" && data["attr.type"] == "double") {
-                        println("HUI")
-                        weightId = data["id"]!!
-                        println(weightId)
+                        weightId = data.getOrDefault("id", null)
                     }
                 }
+
                 tag.startsWith("<node") -> {
                     curData["id"] = it.split("\"")[1]
-
                     if ("/" in it) {
-                        idToKey[curData["id"]!!] = curData["id"]!!
-                        graph.addNode(curData["id"]!!)
-                        curData = mutableMapOf()
+                        try {
+                            idToKey[curData["id"]!!] = curData["id"]!!
+                            graph.addNode(curData["id"]!!)
+                            curData = mutableMapOf()
+                        } catch (e: NullPointerException) {
+                            throw NullPointerException("Invalid File Format: No node id\nProblem in line \"$it\"")
+                        }
                     }
                 }
+
                 tag.startsWith("</node") -> {
                     if ("key" in curData) {
-                        idToKey[curData["id"]!!] = curData["key"]!!
-                        graph.addNode(curData["key"]!!)
+                        try {
+                            idToKey[curData["id"]!!] = curData["key"]!!
+                            graph.addNode(curData["key"]!!)
+                        } catch (e: NullPointerException) {
+                            throw NullPointerException("Invalid File Format: No node id or key\nProblem in line \"$it\"")
+                        }
                     } else {
-                        idToKey[curData["id"]!!] = curData["id"]!!
-                        graph.addNode(curData["id"]!!)
+                        try {
+                            idToKey[curData["id"]!!] = curData["id"]!!
+                            graph.addNode(curData["id"]!!)
+                        } catch (e: NullPointerException) {
+                            throw NullPointerException("Invalid File Format: No node id\nProblem in line \"$it\"")
+                        }
                     }
                     curData = mutableMapOf()
                 }
+
                 tag.startsWith("<data") -> {
                     val id = it.split("\"")[1]
                     if (mainKeyId == null) {
@@ -91,6 +104,7 @@ class GraphLoaderML(path: String) : Graph<String>() {
                     }
 
                 }
+
                 tag.startsWith("<edge") -> {
                     val data = mutableMapOf<String, String>()
                     it.split(" ").forEach {
@@ -104,34 +118,57 @@ class GraphLoaderML(path: String) : Graph<String>() {
 
                         }
                     }
-                    println(data)
-                    println(idToKey)
-                    curData["source"] = data["source"]!!
-                    curData["target"] = data["target"]!!
+                    try {
+                        curData["source"] = data["source"]!!
+                        curData["target"] = data["target"]!!
+                    } catch (e: NullPointerException) {
+                        throw NullPointerException("Invalid File Format: No edge source or target\nProblem in line \"$it\"")
+                    }
                     if ("/" in it) {
-                        graph.addVertice(
-                            idToKey[curData["source"]!!]!!,
-                            idToKey[curData["target"]!!]!!
-                        )
+                        try {
+                            graph.addVertice(
+                                idToKey[curData["source"]!!]!!,
+                                idToKey[curData["target"]!!]!!
+                            )
+                        } catch (e: NullPointerException) {
+                            throw NullPointerException("Invalid File Format: No edge source or target\nProblem in line \"$it\"")
+                        }
                         curData = mutableMapOf()
                     }
                 }
+
                 tag.startsWith("</edge") -> {
                     println(curData)
                     if ("weight" in curData) {
-                        graph.addVertice(
-                            idToKey[curData["source"]!!]!!,
-                            idToKey[curData["target"]!!]!!,
-                            weight = curData["weight"]!!.toFloat())
+                        try {
+                            graph.addVertice(
+                                idToKey[curData["source"]!!]!!,
+                                idToKey[curData["target"]!!]!!,
+                                weight = curData["weight"]!!.toFloat()
+                            )
+                        } catch (e: NullPointerException) {
+                            throw NullPointerException(
+                                "Invalid File Format: No edge source, target or weight\nProblem in line \"$it\""
+                            )
+                        }
                     } else {
-                        graph.addVertice(
-                            idToKey[curData["source"]!!]!!,
-                            idToKey[curData["target"]!!]!!
-                        )
+                        try {
+                            graph.addVertice(
+                                idToKey[curData["source"]!!]!!,
+                                idToKey[curData["target"]!!]!!
+                            )
+                        } catch (e: NullPointerException) {
+                            throw NullPointerException(
+                                "Invalid File Format: No edge source or target\nProblem in line \"$it\""
+                            )
+                        }
                     }
                     curData = mutableMapOf()
                 }
             }
+        } catch (e: IndexOutOfBoundsException) {
+            throw NullPointerException("Invalid File Format: No needed data\nProblem in line \"$it\"")
         }
     }
+    return graph
 }

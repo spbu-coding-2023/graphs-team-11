@@ -1,5 +1,6 @@
 package viewmodel
 
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.snapshots.SnapshotStateMap
@@ -16,6 +17,7 @@ class MainVM<D>(
     val isSavedGraphsOpen = mutableStateOf(false)
     val isSelectNameWindowOpen = mutableStateOf(false)
     val isFileLoaderOpen = mutableStateOf(false)
+    val fileLoaderException: MutableState<String?> = mutableStateOf(null)
 
     val graphName = mutableStateOf("")
     val selected: SnapshotStateMap<D, Int> = mutableStateMapOf()

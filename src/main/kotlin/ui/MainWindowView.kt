@@ -83,7 +83,7 @@ fun MyWindow(
             })
         }
 
-        GraphFilePicker(viewModel.isFileLoaderOpen, state)
+        GraphFilePicker(viewModel.isFileLoaderOpen, viewModel.fileLoaderException, state)
     }
 }
 

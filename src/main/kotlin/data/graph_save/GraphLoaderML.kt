@@ -138,7 +138,6 @@ fun loadGraphML(path: String): Graph<String> {
                 }
 
                 tag.startsWith("</edge") -> {
-                    println(curData)
                     if ("weight" in curData) {
                         try {
                             graph.addVertice(

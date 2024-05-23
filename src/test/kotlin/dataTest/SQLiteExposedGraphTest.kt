@@ -2,12 +2,14 @@ package dataTest
 
 import data.db.sqlite_exposed.*
 import model.graph_model.Graph
-import org.junit.jupiter.api.*
-
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.DynamicTest
+import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.TestFactory
+import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-@TestMethodOrder(MethodOrderer.Alphanumeric::class)
 class SQLiteExposedGraphTest {
 
     companion object {
@@ -81,9 +83,9 @@ class SQLiteExposedGraphTest {
     )
 
     @TestFactory
-    fun `test Save and Get graphs`(): List<DynamicTest> {
+    fun `test Save, Get then Delete graphs`(): List<DynamicTest> {
         return graphs.map { (graph, name) ->
-            DynamicTest.dynamicTest("Test save and get graph with name $name") {
+            DynamicTest.dynamicTest("Test save and get then delete graph with name $name") {
                 saveGraph(graph, name)
                 val savedGraphs = getAllGraphs()
                 val savedGraph = savedGraphs.find { it.third == name } ?: run {
@@ -100,18 +102,7 @@ class SQLiteExposedGraphTest {
                         assertTrue(savedGraphData.vertices[node.key]?.contains(neighbor) == true)
                     }
                 }
-            }
-        }
-    }
-
-    @TestFactory
-    fun `test Delete graphs`(): List<DynamicTest> {
-        return graphs.map { (_, name) ->
-            DynamicTest.dynamicTest("Test delete graph with name $name") {
-                val savedGraphs = getAllGraphs()
-                val savedGraph = savedGraphs.find { it.third == name } ?: run {
-                    throw AssertionError("Graph with name $name not found")
-                }
+                // deleting the graph.
                 val savedGraphId = savedGraph.first
                 deleteGraph(savedGraphId)
                 val graphsAfterDelete = getAllGraphs()
@@ -120,5 +111,4 @@ class SQLiteExposedGraphTest {
             }
         }
     }
-
 }

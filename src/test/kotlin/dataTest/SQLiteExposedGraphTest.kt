@@ -2,15 +2,12 @@ package dataTest
 
 import data.db.sqlite_exposed.*
 import model.graph_model.Graph
+import org.junit.jupiter.api.*
 
-import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.DynamicTest
-import org.junit.jupiter.api.Nested
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestFactory
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
+@TestMethodOrder(MethodOrderer.Alphanumeric::class)
 class SQLiteExposedGraphTest {
 
     companion object {
@@ -58,24 +55,21 @@ class SQLiteExposedGraphTest {
         @Test
         fun `test serializeGraph function with Int`() {
             val serializedGraph = serializeGraph(intGraph)
-            val expectedSerializedGraph =
-                "1:(2, 1.0)|2:(3, 1.0)|3:(4, 1.0)|4::4"
+            val expectedSerializedGraph = "1:(2, 1.0)|2:(3, 1.0)|3:(4, 1.0)|4::4"
             assertEquals(expectedSerializedGraph, serializedGraph)
         }
 
         @Test
         fun `test serializeGraph function with String`() {
             val serializedGraph = serializeGraph(stringGraph)
-            val expectedSerializedGraph =
-                "A:(B, 1.0);(D, 1.0)|B:(C, 1.0)|C:|D::4"
+            val expectedSerializedGraph = "A:(B, 1.0);(D, 1.0)|B:(C, 1.0)|C:|D::4"
             assertEquals(expectedSerializedGraph, serializedGraph)
         }
 
         @Test
         fun `test serializeGraph function with Float`() {
             val serializedGraph = serializeGraph(floatGraph)
-            val expectedSerializedGraph =
-                "1.0:(2.0, 1.0)|2.0:(3.0, 1.0)|3.0:(4.0, 1.0)|4.0::4"
+            val expectedSerializedGraph = "1.0:(2.0, 1.0)|2.0:(3.0, 1.0)|3.0:(4.0, 1.0)|4.0::4"
             assertEquals(expectedSerializedGraph, serializedGraph)
         }
     }

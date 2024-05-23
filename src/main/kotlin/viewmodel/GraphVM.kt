@@ -7,6 +7,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.PointerEvent
 import androidx.compose.ui.unit.IntSize
+import java.awt.Toolkit
 import kotlin.math.sign
 
 @Stable
@@ -18,38 +19,34 @@ class GraphVM {
 
     var padding = 100
 
-    var toAbsoluteOffset by mutableStateOf(
-        { offset: Offset ->
+    var toAbsoluteOffset by mutableStateOf({ offset: Offset ->
+        Offset(
+            x = padding + offset.x * scaleFactor.value * (width - 2 * padding) / 2 + (width - 2 * padding) / 2,
+            y = padding + offset.y * scaleFactor.value * (height - 2 * padding) / 2 + (height - 2 * padding) / 2
+        )
+    })
+
+    var toNotAbsoluteOffset by mutableStateOf({ offset: Offset ->
+        Offset(
+            x = (offset.x - padding - (width - 2 * padding) / 2) / (width - 2 * padding) * 2 / scaleFactor.value,
+            y = (offset.y - padding - (height - 2 * padding) / 2) / (height - 2 * padding) * 2 / scaleFactor.value
+        )
+    })
+
+    private fun recalc() {
+        toAbsoluteOffset = { offset: Offset ->
             Offset(
                 x = padding + offset.x * scaleFactor.value * (width - 2 * padding) / 2 + (width - 2 * padding) / 2,
                 y = padding + offset.y * scaleFactor.value * (height - 2 * padding) / 2 + (height - 2 * padding) / 2
             )
         }
-    )
 
-    var toNotAbsoluteOffset by mutableStateOf(
-        { offset: Offset ->
+        toNotAbsoluteOffset = { offset: Offset ->
             Offset(
                 x = (offset.x - padding - (width - 2 * padding) / 2) / (width - 2 * padding) * 2 / scaleFactor.value,
                 y = (offset.y - padding - (height - 2 * padding) / 2) / (height - 2 * padding) * 2 / scaleFactor.value
             )
         }
-    )
-
-    fun recalc() {
-        toAbsoluteOffset = { offset: Offset ->
-                Offset(
-                    x = padding + offset.x * scaleFactor.value * (width - 2 * padding) / 2 + (width - 2 * padding) / 2,
-                    y = padding + offset.y * scaleFactor.value * (height - 2 * padding) / 2 + (height - 2 * padding) / 2
-                )
-            }
-
-        toNotAbsoluteOffset = { offset: Offset ->
-                Offset(
-                    x = (offset.x - padding - (width - 2 * padding) / 2) / (width - 2 * padding) * 2 / scaleFactor.value,
-                    y = (offset.y - padding - (height - 2 * padding) / 2) / (height - 2 * padding) * 2 / scaleFactor.value
-                )
-            }
     }
 
     fun onBoxSizeChanged(coordinates: IntSize) {
@@ -62,11 +59,24 @@ class GraphVM {
     fun onMouseScroll(pointerEvent: PointerEvent) {
         val change = pointerEvent.changes.first()
         val delta = change.scrollDelta.y.toInt().sign
-        val zoomVal = scaleFactor.value + delta * 0.1f
-        if (zoomVal < 0.001f || zoomVal > 300.0f) return
-        scaleFactor.value = zoomVal
+        val oldZoom = scaleFactor.value
+        val newZoom = (scaleFactor.value - delta * 0.05f).coerceIn(0.3f, 3.0f)
+        scaleFactor.value = newZoom
 
-        this.recalc()
+        val (mouseX, mouseY) = change.position
+        val screenSize = Toolkit.getDefaultToolkit().screenSize
+        val (width, height) = screenSize.getWidth() to screenSize.getHeight()
+
+        val pixelsDifferenceW = (width / oldZoom) - (width / newZoom)
+        val sideRatioX = (mouseX - (width / 2)) / width
+        val newMainOffsetX = mainOffset.x + pixelsDifferenceW * sideRatioX
+
+        val pixelsDifferenceH = (height / oldZoom) - (height / newZoom)
+        val sideRatioY = (mouseY - (height / 2)) / height
+        val newMainOffsetY = mainOffset.y + pixelsDifferenceH * sideRatioY
+
+        mainOffset = Offset(newMainOffsetX.toFloat(), newMainOffsetY.toFloat())
+
+        recalc()
     }
-
 }

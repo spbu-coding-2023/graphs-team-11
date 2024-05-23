@@ -7,23 +7,31 @@ import data.db.sqlite_exposed.connect
 import data.db.sqlite_exposed.connectConfig
 import data.db.sqlite_exposed.getTheme
 import ui.IntroWindowView
-import ui.MyWindow
+import ui.MainWindow
 import ui.components.MyApplicationState
 
-fun main() = application {
-    val applicationState = remember { MyApplicationState() }
+import kotlinx.coroutines.*
 
-    connectConfig()
-    connect()
-    val isSettingMenuOpen = mutableStateOf(false)
-    val appTheme = mutableStateOf(getTheme())
+fun main() = runBlocking {
+    val job = launch(Dispatchers.IO) {
+        connectConfig()
+        connect()
+    }
+    job.join() // wait until child coroutine completes
 
-    for (window in applicationState.windows) {
-        key(window) {
-            if (window.title == CHOOSE_GRAPH_WINDOW_TITLE) {
-                IntroWindowView(window, isSettingMenuOpen, appTheme)
-            } else {
-                MyWindow(window, isSettingMenuOpen, appTheme)
+    application {
+        val applicationState = remember { MyApplicationState() }
+
+        val isSettingMenuOpen = mutableStateOf(false)
+        val appTheme = mutableStateOf(getTheme())
+
+        for (window in applicationState.windows) {
+            key(window) {
+                if (window.title == CHOOSE_GRAPH_WINDOW_TITLE) {
+                    IntroWindowView(window, isSettingMenuOpen, appTheme)
+                } else {
+                    MainWindow(window, isSettingMenuOpen, appTheme)
+                }
             }
         }
     }

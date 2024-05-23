@@ -30,7 +30,7 @@ import viewmodel.MainVM
 import java.awt.Dimension
 
 @Composable
-fun MyWindow(
+fun MainWindow(
     state: MyWindowState, isSettingMenuOpen: MutableState<Boolean>, appTheme: MutableState<Theme>
 ) {
     val viewModel = state.mainVM
@@ -56,9 +56,7 @@ fun MyWindow(
             }
 
             Menu("SQLite Exposed") {
-                Item("Save Graph",
-                    shortcut = SAVE_EXPOSED_SHORTCUT,
-                    onClick = { viewModel.isSelectNameWindowOpen.value = true })
+                Item("Save Graph", shortcut = SAVE_EXPOSED_SHORTCUT, onClick = { viewModel.onSaveGraphPressed() })
                 Item("View Graphs", shortcut = VIEW_EXPOSED_SHORTCUT, onClick = { viewModel.onSQLEViewGraphsPressed() })
             }
 
@@ -76,11 +74,9 @@ fun MyWindow(
             )
         }
         if (viewModel.isSelectNameWindowOpen.value) {
-            SelectNameWindow(onClose = {
+            SelectNameWindow(appTheme, viewModel) {
                 viewModel.isSelectNameWindowOpen.value = false
-            }, appTheme, viewModel.graphName, onSave = {
-                viewModel.saveSQLiteGraph(viewModel.graph)
-            })
+            }
         }
 
         GraphFilePicker(viewModel.isFileLoaderOpen, state)

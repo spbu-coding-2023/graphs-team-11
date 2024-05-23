@@ -212,7 +212,7 @@ fun SavedGraphsList(
         ) {
             Text("Load Graph from file")
         }
-        GraphFilePicker(viewModel.isFileLoaderOpen, state)
+        GraphFilePicker(viewModel.isFileLoaderOpen, viewModel.fileLoaderException, state)
         LazyColumn(
             modifier = Modifier.background(MaterialTheme.colors.background).fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,

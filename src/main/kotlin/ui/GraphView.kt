@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import model.graph_model.GraphViewClass
 import model.graph_model.NodeViewClass
+import model.graph_model.UndirectedGraph
 import model.graph_model.abs
 import viewmodel.GraphVM
 
@@ -104,24 +105,29 @@ fun <D> GrahpView(
                         x = view.end.radius.dp.toPx(), y = view.end.radius.dp.toPx()
                     ) / 2f - viewModel.mainOffset)
 
-                    val d = -(end - start) / abs(end - start)
+                    if (gv.graph !is UndirectedGraph) {
+                        val d = -(end - start) / abs(end - start)
 
-                    arrow.moveTo((end + d * (view.end.radius.dp.toPx() / 2f + 10f)).x, (end + d * (view.end.radius.dp.toPx() / 2f + 10f)).y)
-                    arrow.lineTo(
-                        (end + d * (view.end.radius.dp.toPx() / 2f + 10f)).x + 10f * d.y,
-                        (end + d * (view.end.radius.dp.toPx() / 2f + 10f)).y - 10f * d.x
-                    )
-                    arrow.lineTo(
-                        (end + d * (view.end.radius.dp.toPx() / 2f + 10f)).x - 10f * d.x,
-                        (end + d * (view.end.radius.dp.toPx() / 2f + 10f)).y - 10f * d.y
-                    )
-                    arrow.lineTo(
-                        (end + d * (view.end.radius.dp.toPx() / 2f + 10f)).x - 10f * d.y,
-                        (end + d * (view.end.radius.dp.toPx() / 2f + 10f)).y + 10f * d.x
-                    )
-                    arrow.close()
+                        arrow.moveTo(
+                            (end + d * (view.end.radius.dp.toPx() / 2f + 10f)).x,
+                            (end + d * (view.end.radius.dp.toPx() / 2f + 10f)).y
+                        )
+                        arrow.lineTo(
+                            (end + d * (view.end.radius.dp.toPx() / 2f + 10f)).x + 10f * d.y,
+                            (end + d * (view.end.radius.dp.toPx() / 2f + 10f)).y - 10f * d.x
+                        )
+                        arrow.lineTo(
+                            (end + d * (view.end.radius.dp.toPx() / 2f + 10f)).x - 10f * d.x,
+                            (end + d * (view.end.radius.dp.toPx() / 2f + 10f)).y - 10f * d.y
+                        )
+                        arrow.lineTo(
+                            (end + d * (view.end.radius.dp.toPx() / 2f + 10f)).x - 10f * d.y,
+                            (end + d * (view.end.radius.dp.toPx() / 2f + 10f)).y + 10f * d.x
+                        )
+                        arrow.close()
 
-                    drawPath(arrow, color = view.color, alpha = view.alpha)
+                        drawPath(arrow, color = view.color, alpha = view.alpha)
+                    }
 
                     drawLine(
                         color = view.color,

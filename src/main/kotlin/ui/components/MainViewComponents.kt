@@ -17,7 +17,7 @@ import com.darkrockstudios.libraries.mpfilepicker.FilePicker
 import data.Constants.APP_NAME
 import data.Constants.CHOOSE_GRAPH_WINDOW_TITLE
 import data.Constants.FILE_FORMAT_FILTER
-import data.graph_save.GraphLoaderUnified
+import data.graph_save.graphLoadUnified
 import model.graph_model.Graph
 import ui.theme.BdsmAppTheme
 import ui.theme.Theme
@@ -147,13 +147,35 @@ fun SelectNameWindow(
 }
 
 @Composable
-fun GraphFilePicker(isFileLoaderOpen: MutableState<Boolean>, state: MyWindowState) {
+fun GraphFilePicker(
+    isFileLoaderOpen: MutableState<Boolean>,
+    fileLoaderException: MutableState<String?>,
+    state: MyWindowState) {
     FilePicker(
         isFileLoaderOpen.value, fileExtensions = FILE_FORMAT_FILTER
     ) { path ->
         if (path != null) {
-            val loadedGraph: Graph<String> = GraphLoaderUnified(path.path).graph
-            state.reloadWindow(loadedGraph)
+            try {
+                val loadedGraph: Graph<String> = graphLoadUnified(path.path)
+                state.reloadWindow(loadedGraph)
+            } catch (e: NullPointerException) {
+                isFileLoaderOpen.value = false
+                fileLoaderException.value = e.message
+            }
         }
+    }
+    if (fileLoaderException.value != null) {
+        AlertDialog(
+            title = { Text("Exception!") },
+            text = { Text(fileLoaderException.value!!) },
+            onDismissRequest = { fileLoaderException.value = null },
+            confirmButton = {
+                Button(onClick = {
+                    fileLoaderException.value = null
+                }) {
+                    Text("Confirm")
+                }
+            },
+        )
     }
 }

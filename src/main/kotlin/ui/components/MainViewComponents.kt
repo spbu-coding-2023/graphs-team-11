@@ -1,11 +1,7 @@
 package ui.components
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -89,7 +85,7 @@ class MyWindowState(
 
 @Composable
 fun SelectNameWindow(
-    onClose: () -> Unit, appTheme: MutableState<Theme>, graphName: MutableState<String>, onSave: () -> Unit
+    appTheme: MutableState<Theme>, viewModel: MainVM<*>, onClose: () -> Unit
 ) {
     Window(
         title = "Select Graph Name",
@@ -111,11 +107,9 @@ fun SelectNameWindow(
                     modifier = Modifier.wrapContentSize(unbounded = true)
                 )
                 TextField(
-                    value = graphName.value,
+                    value = viewModel.graphName.value,
                     onValueChange = {
-                        if (it.length <= 40) {
-                            graphName.value = it
-                        }
+                        viewModel.onTextChange(it)
                     },
                     label = { Text("Name", color = MaterialTheme.colors.onPrimary) },
                     modifier = Modifier.padding(16.dp),
@@ -125,11 +119,27 @@ fun SelectNameWindow(
                         unfocusedIndicatorColor = MaterialTheme.colors.onPrimary
                     )
                 )
-                Button(onClick = {
-                    onSave()
-                    onClose()
-                }) {
-                    Text("Save", color = MaterialTheme.colors.onPrimary)
+                Spacer(modifier = Modifier.height(16.dp))
+                if (!viewModel.isGraphNameAvailable.value) {
+                    Text(
+                        text = "Name already exists",
+                        color = MaterialTheme.colors.error,
+                        fontSize = 20.sp,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.wrapContentSize(unbounded = true)
+                    )
+                }
+                Button(
+                    onClick = {
+                        viewModel.saveSQLiteGraph()
+                        onClose()
+                    }, enabled = viewModel.isGraphNameAvailable.value, colors = ButtonDefaults.buttonColors(
+                        backgroundColor = MaterialTheme.colors.primary,
+                        contentColor = MaterialTheme.colors.onPrimary,
+                        disabledBackgroundColor = MaterialTheme.colors.primary.copy(alpha = 0.5f),
+                    )
+                ) {
+                    Text("Save")
                 }
             }
         }

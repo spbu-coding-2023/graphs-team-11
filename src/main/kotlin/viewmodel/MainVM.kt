@@ -19,10 +19,13 @@ class MainVM<D>(
     val isFileLoaderOpen = mutableStateOf(false)
     val fileLoaderException: MutableState<String?> = mutableStateOf(null)
 
+    private val graphNamesList = mutableListOf<String>()
+    val isGraphNameAvailable = mutableStateOf(true)
+
     val graphName = mutableStateOf("")
     val selected: SnapshotStateMap<D, Int> = mutableStateMapOf()
 
-    var graphList: List<Triple<Int, Graph<*>, String>> = emptyList()
+    var graphList: List<Triple<Int, Graph<*>, String>> = getAllGraphs()
 
     var graph: Graph<D> = passedGraph ?: Graph()
 
@@ -33,14 +36,24 @@ class MainVM<D>(
         graphView.comeBack()
     }
 
-    fun saveSQLiteGraph(graph: Graph<*>) {
-        saveGraph(
-            graph, graphName.value.ifEmpty { "Graph " + (getAllGraphs() + 1).size }
-        )
+    fun saveSQLiteGraph() {
+        saveGraph(graph, graphName.value.ifEmpty { "Graph " + graphList.size + 1 })
+        graphList = getAllGraphs()
     }
 
     fun onSQLEViewGraphsPressed() {
-        graphList = getAllGraphs()
         isSavedGraphsOpen.value = true
+    }
+
+    fun onSaveGraphPressed() {
+        isSelectNameWindowOpen.value = true
+        graphNamesList.addAll(graphList.map { it.third })
+    }
+
+    fun onTextChange(text: String) {
+        if (text.length <= 40) {
+            graphName.value = text
+        }
+        isGraphNameAvailable.value = !graphNamesList.contains(text)
     }
 }

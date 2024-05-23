@@ -34,7 +34,7 @@ import viewmodel.GraphVM
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun <D> GrahpView(
+fun <D> GraphView(
     gv: GraphViewClass<D>,
     changedAlgo: MutableState<Boolean>,
     selected: SnapshotStateMap<D, Int>,
@@ -83,8 +83,8 @@ fun <D> GrahpView(
                 selectedList[isSel] = i
             }
             if (it.button == PointerButton.Secondary) {
-                if (selectedList.size == 0) {
-                    gv.addNode(null, toNotAbsoluteOffset(it.changes.first.position))
+                if (selectedList.isEmpty()) {
+                    gv.addNode(null, toNotAbsoluteOffset(it.changes.first().position))
                     changedAlgo.value = true
                 } else if (selectedList.size == 2) {
                     gv.addVert(selectedList[0]!!, selectedList[1]!!)
@@ -92,8 +92,8 @@ fun <D> GrahpView(
                 }
             }
         }) {
-            for ((i, verts) in gv.vertViews) {
-                for ((j, view) in verts) {
+            for ((_, verts) in gv.vertViews) {
+                for ((_, view) in verts) {
                     val arrow = Path()
                     val start = (viewModel.toAbsoluteOffset(view.start.offset) + Offset(
                         x = view.start.radius.dp.toPx(), y = view.start.radius.dp.toPx()

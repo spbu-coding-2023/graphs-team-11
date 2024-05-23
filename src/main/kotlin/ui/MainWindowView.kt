@@ -94,7 +94,7 @@ fun <D> App(
                 CommeticsMenu(viewModel.graphView, changedAlgo, viewModel.selected)
             }
             Card {
-                GrahpView(viewModel.graphView, changedAlgo, viewModel.selected)
+                GraphView(viewModel.graphView, changedAlgo, viewModel.selected)
             }
         }
     }

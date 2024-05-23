@@ -108,7 +108,7 @@ fun <D> NodeView(
                         } catch (classCastException: ClassCastException) {
                             try {
                                 nodeView.value = newValue.value.toInt() as D
-                            } catch (classCastException: ClassCastException) {
+                            } catch (_: ClassCastException) {
                             }
                         }
                     }

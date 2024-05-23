@@ -14,7 +14,7 @@ fun loadGraphML(path: String): Graph<String> {
     var mainKeyId: String? = null
     var weightId: String? = null
 
-    File(path).forEachLine {
+    File(path).forEachLine { it ->
         val striped = it.trim(' ').split(" ")
         val tag = striped[0]
 
@@ -33,7 +33,7 @@ fun loadGraphML(path: String): Graph<String> {
                         }
                     }
                     if (data["edgedefault"] == "undirected") {
-                        graph = UndirectedGraph<String>()
+                        graph = UndirectedGraph()
                     }
                 }
 

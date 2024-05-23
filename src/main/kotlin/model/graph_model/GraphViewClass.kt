@@ -14,10 +14,7 @@ import model.graph_model.graph_model_actions.VertViewUpdate
 import org.gephi.graph.api.GraphController
 import org.gephi.graph.api.GraphModel
 import org.gephi.graph.api.Node
-import org.gephi.layout.plugin.force.StepDisplacement
-import org.gephi.layout.plugin.force.yifanHu.YifanHuLayout
 import org.gephi.layout.plugin.forceAtlas.ForceAtlasLayout
-import org.gephi.layout.plugin.forceAtlas2.ForceAtlas2LayoutData
 import org.gephi.project.api.ProjectController
 import org.gephi.project.api.Workspace
 import org.openide.util.Lookup
@@ -73,10 +70,8 @@ class GraphViewClass<D>(
         for ((i, verts) in graph.vertices) {
             vertViews[i] = mutableMapOf()
             for ((j, weight) in verts) {
-                vertViews[i]!!.set(
-                    j, VertView(
-                        start = nodesViews[i]!!, end = nodesViews[j]!!, color = vertColor, alpha = 1f, weight = weight
-                    )
+                vertViews[i]!![j] = VertView(
+                    start = nodesViews[i]!!, end = nodesViews[j]!!, color = vertColor, alpha = 1f, weight = weight
                 )
             }
         }
@@ -85,7 +80,7 @@ class GraphViewClass<D>(
     fun addNode(value: D?, offset: Offset, color: Color = nodeColor) {
         if (value != null) {
             this.graph.addNode(value)
-            this.nodesViews[value] = NodeViewClass<D>(
+            this.nodesViews[value] = NodeViewClass(
                 offset = offset, radius = radius, color = color, value = value, shape = baseShape
             )
         }
@@ -103,14 +98,14 @@ class GraphViewClass<D>(
         if (oneValue in this.nodesViews && twoValue in this.nodesViews) {
             this.graph.addVertice(oneValue, twoValue)
             if (oneValue in this.vertViews) {
-                this.vertViews[oneValue]!!.set(twoValue, VertView(
+                this.vertViews[oneValue]!![twoValue] = VertView(
                     start = nodesViews[oneValue]!!, end = nodesViews[twoValue]!!, color = vertColor, alpha = 1f
-                ))
+                )
             } else {
                 this.vertViews[oneValue] = mutableMapOf()
-                this.vertViews[oneValue]!!.set(twoValue, VertView(
+                this.vertViews[oneValue]!![twoValue] = VertView(
                     start = nodesViews[oneValue]!!, end = nodesViews[twoValue]!!, color = vertColor, alpha = 1f
-                ))
+                )
             }
         }
     }
@@ -157,14 +152,14 @@ class GraphViewClass<D>(
         pc.newProject()
         val workspace: Workspace = pc.currentWorkspace
 
-        val graphModel: GraphModel = Lookup.getDefault().lookup<GraphController>(
+        val graphModel: GraphModel = Lookup.getDefault().lookup(
             GraphController::class.java
         ).getGraphModel(workspace)
-        val dirGraph = graphModel.getDirectedGraph()
+        val dirGraph = graphModel.directedGraph
 
         val nodes: MutableMap<D, Node> = mutableMapOf()
         for ((v, _) in graph.vertices) {
-            var node = graphModel.factory().newNode(v.toString())
+            val node = graphModel.factory().newNode(v.toString())
             nodes[v] = node
             dirGraph.addNode(node)
         }

@@ -28,9 +28,9 @@ import model.graph_model.Graph
 import ui.theme.BdsmAppTheme
 import ui.theme.Theme
 import viewmodel.MainVM
-import viewmodel.SaverMV
-import viewmodel.SaverStates
 import java.awt.Dimension
+import java.awt.FileDialog
+import java.awt.Frame
 import java.io.File
 import java.nio.file.InvalidPathException
 import kotlin.io.path.absolutePathString
@@ -189,52 +189,6 @@ fun GraphFilePicker(
                     Text("Confirm")
                 }
             },
-        )
-    }
-}
-
-@Composable
-fun GraphFileSaver(
-    isFileSaverOpened: MutableState<Boolean>,
-    state: MyWindowState
-) {
-    if (isFileSaverOpened.value) {
-
-        val viewModel = remember { SaverMV() }
-
-        AlertDialog(
-            title = { Text("Exception!") },
-            text = {
-                when (viewModel.correct.value) {
-                    SaverStates.CORRECT -> Text("Input filename")
-                    SaverStates.FORMAT_ERROR -> Text("Format non supported or invalid", color = Color.Red)
-                    SaverStates.DIR_ERROR -> Text("Invalid directory", color = Color.Red)
-                    SaverStates.FORMAT_DIR_ERROR -> Text("Invalid directory and filename", color = Color.Red)
-                }
-                TextField(
-                    value = viewModel.path.value,
-                    onValueChange = { viewModel.path.value = it.trim('"') },
-                )
-            },
-            onDismissRequest = { isFileSaverOpened.value = false },
-            confirmButton = {
-                Button(onClick = {
-                    viewModel.pathCheck()
-                    if (viewModel.correct.value == SaverStates.CORRECT) {
-                        viewModel.fileSave(state)
-                        isFileSaverOpened.value = false
-                    }
-                }) {
-                    Text("Confirm")
-                }
-            },
-            dismissButton = {
-                Button(onClick = {
-                    isFileSaverOpened.value = false
-                }) {
-                    Text("Dismiss")
-                }
-            }
         )
     }
 }

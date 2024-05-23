@@ -15,7 +15,7 @@ fun loadGraphML(path: String): Graph<String> {
     var weightId: String? = null
 
     File(path).forEachLine {
-        val striped = it.strip().split(" ")
+        val striped = it.trim(' ').split(" ")
         val tag = striped[0]
 
         try {

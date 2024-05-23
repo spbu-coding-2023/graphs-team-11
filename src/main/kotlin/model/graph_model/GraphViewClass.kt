@@ -1,0 +1,211 @@
+package model.graph_model
+
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.runtime.Stable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
+import model.graph_model.graph_model_actions.NodeViewUpdate
+import model.graph_model.graph_model_actions.Update
+import model.graph_model.graph_model_actions.VertViewUpdate
+import org.gephi.graph.api.GraphController
+import org.gephi.graph.api.GraphModel
+import org.gephi.graph.api.Node
+import org.gephi.layout.plugin.force.StepDisplacement
+import org.gephi.layout.plugin.force.yifanHu.YifanHuLayout
+import org.gephi.layout.plugin.forceAtlas.ForceAtlasLayout
+import org.gephi.layout.plugin.forceAtlas2.ForceAtlas2LayoutData
+import org.gephi.project.api.ProjectController
+import org.gephi.project.api.Workspace
+import org.openide.util.Lookup
+import java.util.*
+import kotlin.math.sqrt
+
+
+@Stable
+data class NodeViewClass<D>(
+    var offset: Offset,
+    var radius: Float,
+    var color: Color,
+    var value: D?,
+    var shape: Shape,
+    var alpha: Float = 1f
+)
+
+data class VertView<D>(
+    var start: NodeViewClass<D>,
+    var end: NodeViewClass<D>,
+    var color: Color,
+    var alpha: Float = 1f,
+    var weight: Float = 1f
+)
+
+class GraphViewClass<D>(
+    var graph: Graph<D>,
+    var radius: Float = 30f,
+    var nodeColor: Color = Color.Blue,
+    var vertColor: Color = Color.Blue,
+    var baseShape: Shape = CircleShape,
+    nodesViews: MutableMap<D, NodeViewClass<D>> = mutableMapOf(),
+    vertViews: MutableMap<D, MutableMap<D, VertView<D>>> = mutableMapOf(),
+    newNodes: MutableList<NodeViewClass<D>> = mutableListOf()
+) {
+
+    var nodesViews by mutableStateOf(nodesViews)
+        private set
+    var vertViews by mutableStateOf(vertViews)
+        private set
+    var newNodes by mutableStateOf(newNodes)
+        private set
+
+    var returnStack by mutableStateOf(Stack<Update<D>>())
+
+    init {
+        val positions = layout()
+        for (i in positions) {
+            nodesViews[i.key] = NodeViewClass(
+                offset = positions[i.key]!!, radius = radius, color = nodeColor, value = i.key, shape = baseShape
+            )
+        }
+        for ((i, verts) in graph.vertices) {
+            vertViews[i] = mutableMapOf()
+            for ((j, weight) in verts) {
+                vertViews[i]!!.set(
+                    j, VertView(
+                        start = nodesViews[i]!!, end = nodesViews[j]!!, color = vertColor, alpha = 1f, weight = weight
+                    )
+                )
+            }
+        }
+    }
+
+    fun addNode(value: D?, offset: Offset, color: Color = nodeColor) {
+        if (value != null) {
+            this.graph.addNode(value)
+            this.nodesViews[value] = NodeViewClass<D>(
+                offset = offset, radius = radius, color = color, value = value, shape = baseShape
+            )
+        }
+        else {
+            newNodes.add(
+                NodeViewClass(
+                    offset = offset, radius = radius, color = color, value = null, shape = baseShape
+                )
+            )
+        }
+
+    }
+
+    fun addVert(oneValue: D, twoValue: D) {
+        if (oneValue in this.nodesViews && twoValue in this.nodesViews) {
+            this.graph.addVertice(oneValue, twoValue)
+            if (oneValue in this.vertViews) {
+                this.vertViews[oneValue]!!.set(twoValue, VertView(
+                    start = nodesViews[oneValue]!!, end = nodesViews[twoValue]!!, color = vertColor, alpha = 1f
+                ))
+            } else {
+                this.vertViews[oneValue] = mutableMapOf()
+                this.vertViews[oneValue]!!.set(twoValue, VertView(
+                    start = nodesViews[oneValue]!!, end = nodesViews[twoValue]!!, color = vertColor, alpha = 1f
+                ))
+            }
+        }
+    }
+
+    fun applyUpdate(update: Update<D>, isNotReUpdate: Boolean = true) {
+        val nodeViewReUpdate: MutableMap<D, NodeViewUpdate<D>> = mutableMapOf()
+        val vertViewReUpdate: MutableMap<D, MutableMap<D, VertViewUpdate<D>>> = mutableMapOf()
+        for (v in update.nodeViewUpdate) {
+            if (isNotReUpdate) nodeViewReUpdate[v.key] = NodeViewUpdate(
+                offset = null,
+                radius = nodesViews[v.key]!!.radius,
+                color = nodesViews[v.key]!!.color,
+                shape = nodesViews[v.key]!!.shape,
+                alpha = nodesViews[v.key]!!.alpha
+            )
+            if (v.value.offset != null) nodesViews[v.key]!!.offset = v.value.offset!!
+            if (v.value.radius != null) nodesViews[v.key]!!.radius = v.value.radius!!
+            if (v.value.color != null) nodesViews[v.key]!!.color = v.value.color!!
+            if (v.value.shape != null) nodesViews[v.key]!!.shape = v.value.shape!!
+            if (v.value.alpha != null) nodesViews[v.key]!!.alpha = v.value.alpha!!
+        }
+        for ((v, verts) in update.vertViewUpdate) {
+            vertViewReUpdate[v] = mutableMapOf()
+            for ((u, viewUpdate) in verts) {
+                if (isNotReUpdate) vertViewReUpdate[v]!![u] = VertViewUpdate(
+                    color = vertViews[v]!![u]!!.color, alpha = vertViews[v]!![u]!!.alpha
+                )
+                if (viewUpdate.color != null) vertViews[v]!![u]!!.color = viewUpdate.color
+                if (viewUpdate.alpha != null) vertViews[v]!![u]!!.alpha = viewUpdate.alpha
+            }
+        }
+        if (isNotReUpdate) returnStack.add(Update(nodeViewUpdate = nodeViewReUpdate, vertViewUpdate = vertViewReUpdate))
+    }
+
+    fun comeBack() {
+        if (this.returnStack.size > 0) this.applyUpdate(this.returnStack.pop(), isNotReUpdate = false)
+    }
+
+    // just for fast not implemented like algoritm
+    private fun layout(maxIter: Int = 1000): MutableMap<D, Offset> {
+        val positions: MutableMap<D, Offset> = mutableMapOf()
+
+        val pc = Lookup.getDefault().lookup(ProjectController::class.java)
+        pc.newProject()
+        val workspace: Workspace = pc.currentWorkspace
+
+        val graphModel: GraphModel = Lookup.getDefault().lookup<GraphController>(
+            GraphController::class.java
+        ).getGraphModel(workspace)
+        val dirGraph = graphModel.getDirectedGraph()
+
+        val nodes: MutableMap<D, Node> = mutableMapOf()
+        for ((v, _) in graph.vertices) {
+            var node = graphModel.factory().newNode(v.toString())
+            nodes[v] = node
+            dirGraph.addNode(node)
+        }
+        for ((u, neig) in graph.vertices) {
+            for ((v, _) in neig) {
+                val edge = graphModel.factory().newEdge(nodes[u]!!, nodes[v]!!)
+                dirGraph.addEdge(edge)
+            }
+        }
+
+        val layout = ForceAtlasLayout(null)
+        layout.setGraphModel(graphModel)
+        layout.initAlgo()
+        layout.resetPropertiesValues()
+
+        for (i in 1..maxIter) {
+            if (layout.canAlgo()) layout.goAlgo()
+            else break
+        }
+        val x = mutableListOf<Float>()
+        val y = mutableListOf<Float>()
+        for ((v, _) in graph.vertices) {
+            x.add(nodes[v]!!.x())
+            y.add(nodes[v]!!.y())
+        }
+        if (x.size > 0) {
+            val (minX, maxX) = Pair(x.min(), x.max())
+            val (minY, maxY) = Pair(y.min(), y.max())
+            for ((v, _) in graph.vertices) {
+                positions[v] = Offset(
+                    x = 1 - 2 * (nodes[v]!!.x() - minX) / (maxX - minX),
+                    y = 1 - 2 * (nodes[v]!!.y() - minY) / (maxY - minY)
+                )
+                // println(positions[v])
+            }
+        }
+        return positions
+    }
+}
+
+fun abs(offset: Offset): Float {
+    val t = sqrt(offset.x * offset.x + offset.y * offset.y)
+    return t
+}

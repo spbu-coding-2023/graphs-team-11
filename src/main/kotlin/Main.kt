@@ -1,31 +1,38 @@
-import androidx.compose.desktop.ui.tooling.preview.Preview
-import androidx.compose.material.Button
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
+import data.Constants.CHOOSE_GRAPH_WINDOW_TITLE
+import data.db.sqlite_exposed.connect
+import data.db.sqlite_exposed.connectConfig
+import data.db.sqlite_exposed.getTheme
+import ui.IntroWindowView
+import ui.MainWindow
+import ui.components.MyApplicationState
 
-@Composable
-@Preview
-fun App() {
-    var text by remember { mutableStateOf("Hello, World!") }
+import kotlinx.coroutines.*
 
-    MaterialTheme {
-        Button(onClick = {
-            text = "Hello, Desktop!"
-        }) {
-            Text(text)
-        }
+fun main() = runBlocking {
+    val job = launch(Dispatchers.IO) {
+        connectConfig()
+        connect()
     }
-}
+    job.join() // wait until child coroutine completes
 
-fun main() = application {
-    Window(onCloseRequest = ::exitApplication) {
-        App()
+    application {
+        val applicationState = remember { MyApplicationState() }
+
+        val isSettingMenuOpen = mutableStateOf(false)
+        val appTheme = mutableStateOf(getTheme())
+
+        for (window in applicationState.windows) {
+            key(window) {
+                if (window.title == CHOOSE_GRAPH_WINDOW_TITLE) {
+                    IntroWindowView(window, isSettingMenuOpen, appTheme)
+                } else {
+                    MainWindow(window, isSettingMenuOpen, appTheme)
+                }
+            }
+        }
     }
 }

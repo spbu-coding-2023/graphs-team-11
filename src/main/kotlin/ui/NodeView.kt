@@ -48,8 +48,6 @@ fun <D> NodeView(
 ) {
     var offset by remember { mutableStateOf(toAbsoluteOffset(nodeView.offset)) }
 
-    // println(offset)
-
     Box(Modifier.offset {
         IntOffset(
             ((offset.x - mainOffset.x)).roundToInt(),

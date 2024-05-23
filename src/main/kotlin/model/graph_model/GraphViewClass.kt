@@ -198,7 +198,6 @@ class GraphViewClass<D>(
                     x = 1 - 2 * (nodes[v]!!.x() - minX) / (maxX - minX),
                     y = 1 - 2 * (nodes[v]!!.y() - minY) / (maxY - minY)
                 )
-                // println(positions[v])
             }
         }
         return positions

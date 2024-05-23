@@ -44,8 +44,6 @@ fun <D> GrahpView(
     val viewModel = remember { GraphVM() }
     viewModel.padding = padding
 
-    // println(viewModel.toAbsoluteOffset(Offset(-1f, -1f)))
-
     if (changedAlgo.value) {
         changedAlgo.value = false
     }

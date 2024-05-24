@@ -8,6 +8,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import kotlinx.coroutines.*
 import model.graph_model.graph_model_actions.NodeViewUpdate
 import model.graph_model.graph_model_actions.Update
 import model.graph_model.graph_model_actions.VertViewUpdate
@@ -20,16 +21,12 @@ import org.gephi.project.api.Workspace
 import org.openide.util.Lookup
 import java.util.*
 import kotlin.math.sqrt
+import kotlin.system.measureTimeMillis
 
 
 @Stable
 data class NodeViewClass<D>(
-    var offset: Offset,
-    var radius: Float,
-    var color: Color,
-    var value: D?,
-    var shape: Shape,
-    var alpha: Float = 1f
+    var offset: Offset, var radius: Float, var color: Color, var value: D?, var shape: Shape, var alpha: Float = 1f
 )
 
 data class VertView<D>(
@@ -48,7 +45,8 @@ class GraphViewClass<D>(
     var baseShape: Shape = CircleShape,
     nodesViews: MutableMap<D, NodeViewClass<D>> = mutableMapOf(),
     vertViews: MutableMap<D, MutableMap<D, VertView<D>>> = mutableMapOf(),
-    newNodes: MutableList<NodeViewClass<D>> = mutableListOf()
+    newNodes: MutableList<NodeViewClass<D>> = mutableListOf(),
+    private val scope: CoroutineScope
 ) {
 
     var nodesViews by mutableStateOf(nodesViews)
@@ -61,7 +59,13 @@ class GraphViewClass<D>(
     var returnStack by mutableStateOf(Stack<Update<D>>())
 
     init {
-        val positions = layout()
+        var positions: MutableMap<D, Offset> = mutableMapOf()
+
+        val time1 = measureTimeMillis {
+            positions = layout()
+        }
+        println(time1)
+
         for (i in positions) {
             nodesViews[i.key] = NodeViewClass(
                 offset = positions[i.key]!!, radius = radius, color = nodeColor, value = i.key, shape = baseShape
@@ -83,8 +87,7 @@ class GraphViewClass<D>(
             this.nodesViews[value] = NodeViewClass(
                 offset = offset, radius = radius, color = color, value = value, shape = baseShape
             )
-        }
-        else {
+        } else {
             newNodes.add(
                 NodeViewClass(
                     offset = offset, radius = radius, color = color, value = null, shape = baseShape
@@ -145,7 +148,7 @@ class GraphViewClass<D>(
     }
 
     // just for fast not implemented like algoritm
-    private fun layout(maxIter: Int = 1000): MutableMap<D, Offset> {
+    private fun layout(maxIter: Int = 100): MutableMap<D, Offset> {
         val positions: MutableMap<D, Offset> = mutableMapOf()
 
         val pc = Lookup.getDefault().lookup(ProjectController::class.java)

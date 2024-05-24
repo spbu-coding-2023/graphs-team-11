@@ -8,12 +8,14 @@ import data.tools.graphGenerators.flowerSnark
 import data.tools.graphGenerators.randomTree
 import data.tools.graphGenerators.starDirected
 import data.tools.graphGenerators.starUndirected
+import kotlinx.coroutines.CoroutineScope
 import model.graph_model.Graph
 import ui.components.MyWindowState
 import ui.components.generateStringNodeNames
 
 class IntroWindowVM(
     var isSettingMenuOpen: MutableState<Boolean>,
+    private val scope: CoroutineScope
 ) {
     var graphList: MutableState<List<Triple<Int, Graph<*>, String>>> = mutableStateOf(getAllGraphs())
     val isFileLoaderOpen = mutableStateOf(false)
@@ -28,7 +30,7 @@ class IntroWindowVM(
     }
 
     fun onUseGraphSqliteExposedPressed(state: MyWindowState, graph: Graph<*>) {
-        state.reloadWindow(graph)
+        state.reloadWindow(graph, scope)
     }
 
     fun onDeleteGraphSqliteExposedPressed(id: Int, graphList: MutableState<List<Triple<Int, Graph<*>, String>>>) {

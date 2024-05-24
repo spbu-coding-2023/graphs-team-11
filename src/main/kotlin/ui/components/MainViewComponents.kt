@@ -18,13 +18,15 @@ import data.Constants.APP_NAME
 import data.Constants.CHOOSE_GRAPH_WINDOW_TITLE
 import data.Constants.FILE_FORMAT_FILTER
 import data.graph_save.graphLoadUnified
+import kotlinx.coroutines.CoroutineScope
 import model.graph_model.Graph
 import ui.theme.BdsmAppTheme
 import ui.theme.Theme
 import viewmodel.MainVM
 import java.awt.Dimension
+import kotlin.reflect.KFunction2
 
-class MyApplicationState {
+class MyApplicationState(val scope: CoroutineScope) {
     val windows = mutableStateListOf<MyWindowState>()
 
     init {
@@ -32,11 +34,11 @@ class MyApplicationState {
     }
 
     private fun openChooseGraphWindow() {
-        windows += MyWindowState(CHOOSE_GRAPH_WINDOW_TITLE)
+        windows += MyWindowState(CHOOSE_GRAPH_WINDOW_TITLE, scope = scope)
     }
 
-    private fun openNewWindow(graph: Graph<*>?) {
-        windows += MyWindowState(APP_NAME, graph)
+    private fun openNewWindow(graph: Graph<*>?, scope: CoroutineScope) {
+        windows += MyWindowState(APP_NAME, graph, scope)
     }
 
     private fun exit() {
@@ -44,26 +46,28 @@ class MyApplicationState {
     }
 
     private fun MyWindowState(
-        title: String, graph: Graph<*>? = null
+        title: String, graph: Graph<*>? = null, scope: CoroutineScope
     ) = MyWindowState(
         title,
         graph,
         openNewWindow = ::openNewWindow,
         exit = ::exit,
         windows,
-        openChooseGraphWindow = ::openChooseGraphWindow
+        openChooseGraphWindow = ::openChooseGraphWindow,
+        scope
     )
 }
 
 class MyWindowState(
     val title: String,
     val graph: Graph<*>? = null,
-    val openNewWindow: (Graph<*>?) -> Unit,
+    val openNewWindow: KFunction2<Graph<*>?, CoroutineScope, Unit>,
     val exit: () -> Unit,
     private val windows: SnapshotStateList<MyWindowState>,
     val openChooseGraphWindow: () -> Unit,
+    val scope: CoroutineScope
 ) {
-    val mainVM = MainVM(graph)
+    val mainVM = MainVM(graph, scope)
 
     fun close() {
         val closeWindow = windows::remove
@@ -77,9 +81,9 @@ class MyWindowState(
         } else closeWindow(this)
     }
 
-    fun reloadWindow(graph: Graph<*>?) {
+    fun reloadWindow(graph: Graph<*>?, scope: CoroutineScope) {
         windows.remove(this)
-        openNewWindow(graph)
+        openNewWindow(graph, scope)
     }
 }
 
@@ -157,7 +161,7 @@ fun GraphFilePicker(
         if (path != null) {
             try {
                 val loadedGraph: Graph<String> = graphLoadUnified(path.path)
-                state.reloadWindow(loadedGraph)
+                state.reloadWindow(loadedGraph, state.scope)
             } catch (e: NullPointerException) {
                 isFileLoaderOpen.value = false
                 fileLoaderException.value = e.message

@@ -20,6 +20,7 @@ import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.rememberWindowState
 import data.Constants.APP_NAME
 import data.Constants.SETTINGS_SHORTCUT
+import kotlinx.coroutines.CoroutineScope
 import model.graph_model.Graph
 import ui.components.GraphFilePicker
 import ui.components.MyWindowState
@@ -30,9 +31,9 @@ import java.awt.Dimension
 
 @Composable
 fun IntroWindowView(
-    state: MyWindowState, isSettingMenuOpen: MutableState<Boolean>, appTheme: MutableState<Theme>
+    state: MyWindowState, isSettingMenuOpen: MutableState<Boolean>, appTheme: MutableState<Theme>, scope: CoroutineScope
 ) {
-    val viewModel = IntroWindowVM(isSettingMenuOpen)
+    val viewModel = IntroWindowVM(isSettingMenuOpen, scope)
     val windowState = rememberWindowState(size = DpSize(800.dp, 760.dp))
 
     Window(onCloseRequest = state::close, title = state.title, state = windowState) {
@@ -43,7 +44,7 @@ fun IntroWindowView(
             }
         }
 
-        IntroView(viewModel, state, appTheme)
+        IntroView(viewModel, state, appTheme, scope)
 
         if (viewModel.isSettingMenuOpen.value) {
             SettingsView(
@@ -55,7 +56,7 @@ fun IntroWindowView(
 }
 
 @Composable
-fun IntroView(viewModel: IntroWindowVM, state: MyWindowState, appTheme: MutableState<Theme>) {
+fun IntroView(viewModel: IntroWindowVM, state: MyWindowState, appTheme: MutableState<Theme>, scope: CoroutineScope) {
     BdsmAppTheme(appTheme = appTheme.value) {
         val expanded = remember { mutableStateOf(false) }
         val selectedGraphKeyType = remember { mutableStateOf(IntroWindowVM.GraphKeyType.INT) }
@@ -159,7 +160,7 @@ fun IntroView(viewModel: IntroWindowVM, state: MyWindowState, appTheme: MutableS
                         val graph = viewModel.createGraphWithoutEdges(
                             selectedGraphKeyType.value, graphSize.value.toInt()
                         )
-                        state.reloadWindow(graph)
+                        state.reloadWindow(graph, scope)
                     }
                 }
 
@@ -169,7 +170,7 @@ fun IntroView(viewModel: IntroWindowVM, state: MyWindowState, appTheme: MutableS
                         val graph = viewModel.generateGraph(
                             graphSize.value.toInt(), chosenGenerator.value, selectedGraphKeyType.value, maxWeight
                         )
-                        state.reloadWindow(graph)
+                        state.reloadWindow(graph, scope)
                     }
                 }
 
@@ -177,7 +178,7 @@ fun IntroView(viewModel: IntroWindowVM, state: MyWindowState, appTheme: MutableS
                     Button(
                         onClick = {
                             val graph = viewModel.createEmptyGraph(selectedGraphKeyType.value)
-                            state.reloadWindow(graph)
+                            state.reloadWindow(graph, scope)
                         }, modifier = Modifier.padding(bottom = 20.dp), colors = ButtonDefaults.buttonColors(
                             backgroundColor = MaterialTheme.colors.surface,
                             disabledBackgroundColor = MaterialTheme.colors.onSurface.copy(alpha = 0.12f),

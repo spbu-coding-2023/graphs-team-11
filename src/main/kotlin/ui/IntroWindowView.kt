@@ -8,8 +8,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.DpSize
@@ -21,7 +19,6 @@ import androidx.compose.ui.window.rememberWindowState
 import data.Constants.APP_NAME
 import data.Constants.SETTINGS_SHORTCUT
 import kotlinx.coroutines.CoroutineScope
-import model.graph_model.Graph
 import ui.components.GraphFilePicker
 import ui.components.MyWindowState
 import ui.theme.BdsmAppTheme
@@ -58,12 +55,6 @@ fun IntroWindowView(
 @Composable
 fun IntroView(viewModel: IntroWindowVM, state: MyWindowState, appTheme: MutableState<Theme>, scope: CoroutineScope) {
     BdsmAppTheme(appTheme = appTheme.value) {
-        val expanded = remember { mutableStateOf(false) }
-        val selectedGraphKeyType = remember { mutableStateOf(IntroWindowVM.GraphKeyType.INT) }
-        val chosenGraph = remember { mutableStateOf("Saved") }
-        val graphSize = remember { mutableStateOf("") }
-        val chosenGenerator = remember { mutableStateOf("Random Tree") }
-        val weightMax = remember { mutableStateOf("1") }
 
         Column(
             modifier = Modifier.fillMaxSize().padding(10.dp),
@@ -78,12 +69,12 @@ fun IntroView(viewModel: IntroWindowVM, state: MyWindowState, appTheme: MutableS
                 ) {
                     listOf("Saved", "Manual", "Generate", "Empty").forEach { graphType ->
                         Row(
-                            Modifier.padding(vertical = 4.dp).clickable { chosenGraph.value = graphType },
+                            Modifier.padding(vertical = 4.dp).clickable { viewModel.chosenGraph.value = graphType },
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             RadioButton(
-                                selected = (chosenGraph.value == graphType),
-                                onClick = { chosenGraph.value = graphType },
+                                selected = (viewModel.chosenGraph.value == graphType),
+                                onClick = { viewModel.chosenGraph.value = graphType },
                                 colors = RadioButtonDefaults.colors(selectedColor = MaterialTheme.colors.surface)
                             )
                             Text(
@@ -98,26 +89,26 @@ fun IntroView(viewModel: IntroWindowVM, state: MyWindowState, appTheme: MutableS
 
                 Spacer(modifier = Modifier.height(10.dp))
 
-                if (chosenGraph.value != "Saved") {
+                if (viewModel.chosenGraph.value != "Saved") {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text("Choose Graph Type: ", fontSize = 22.sp)
                         Divider(modifier = Modifier.width(10.dp))
                         Column {
                             Button(
-                                onClick = { expanded.value = true },
+                                onClick = { viewModel.expanded.value = true },
                                 modifier = Modifier.widthIn(min = 100.dp),
                                 colors = ButtonDefaults.buttonColors(MaterialTheme.colors.surface)
                             ) {
-                                Text(selectedGraphKeyType.value.name)
+                                Text(viewModel.selectedGraphKeyType.value.name)
                             }
                             DropdownMenu(
-                                expanded = expanded.value,
-                                onDismissRequest = { expanded.value = false },
+                                expanded = viewModel.expanded.value,
+                                onDismissRequest = { viewModel.expanded.value = false },
                             ) {
                                 IntroWindowVM.GraphKeyType.entries.forEach { graphKeyType ->
                                     DropdownMenuItem(onClick = {
-                                        selectedGraphKeyType.value = graphKeyType
-                                        expanded.value = false
+                                        viewModel.selectedGraphKeyType.value = graphKeyType
+                                        viewModel.expanded.value = false
                                     }) {
                                         Text(graphKeyType.name)
                                     }
@@ -129,23 +120,23 @@ fun IntroView(viewModel: IntroWindowVM, state: MyWindowState, appTheme: MutableS
                     Spacer(modifier = Modifier.height(20.dp))
                 }
 
-                if (chosenGraph.value != "Empty") {
+                if (viewModel.chosenGraph.value != "Empty") {
                     Box(
                         modifier = Modifier.fillMaxWidth().padding(horizontal = 40.dp).heightIn(min = 200.dp)
                             .border(2.dp, MaterialTheme.colors.primary, MaterialTheme.shapes.medium),
                         contentAlignment = Alignment.Center
                     ) {
-                        when (chosenGraph.value) {
+                        when (viewModel.chosenGraph.value) {
                             "Saved" -> {
-                                SavedGraphsList(viewModel.graphList, viewModel, state)
+                                SavedGraphsList(viewModel, state)
                             }
 
                             "Manual" -> {
-                                IntTextField(graphSize)
+                                IntTextField(viewModel.graphSize)
                             }
 
                             "Generate" -> {
-                                GenerateGraphSettings(graphSize, chosenGenerator, weightMax)
+                                GenerateGraphSettings(viewModel)
                             }
 
                             else -> return@Box
@@ -154,21 +145,19 @@ fun IntroView(viewModel: IntroWindowVM, state: MyWindowState, appTheme: MutableS
                 }
             }
 
-            when (chosenGraph.value) {
+            when (viewModel.chosenGraph.value) {
                 "Manual" -> {
-                    CreateGraphButtonWithCharCheck(chosenGenerator, graphSize) {
-                        val graph = viewModel.createGraphWithoutEdges(
-                            selectedGraphKeyType.value, graphSize.value.toInt()
-                        )
+                    CreateGraphButtonWithCharCheck(viewModel) {
+                        val graph = viewModel.createGraphWithoutEdges()
                         state.reloadWindow(graph, scope)
                     }
                 }
 
                 "Generate" -> {
-                    CreateGraphButtonWithCharCheck(chosenGenerator, graphSize) {
-                        val maxWeight = weightMax.value.toIntOrNull()?.coerceIn(1, 100) ?: 1
+                    CreateGraphButtonWithCharCheck(viewModel) {
+                        val maxWeight = viewModel.weightMax.value.toIntOrNull()?.coerceIn(1, 100) ?: 1
                         val graph = viewModel.generateGraph(
-                            graphSize.value.toInt(), chosenGenerator.value, selectedGraphKeyType.value, maxWeight
+                            maxWeight
                         )
                         state.reloadWindow(graph, scope)
                     }
@@ -177,7 +166,7 @@ fun IntroView(viewModel: IntroWindowVM, state: MyWindowState, appTheme: MutableS
                 "Empty" -> {
                     Button(
                         onClick = {
-                            val graph = viewModel.createEmptyGraph(selectedGraphKeyType.value)
+                            val graph = viewModel.createEmptyGraph()
                             state.reloadWindow(graph, scope)
                         }, modifier = Modifier.padding(bottom = 20.dp), colors = ButtonDefaults.buttonColors(
                             backgroundColor = MaterialTheme.colors.surface,
@@ -197,7 +186,7 @@ fun IntroView(viewModel: IntroWindowVM, state: MyWindowState, appTheme: MutableS
 
 @Composable
 fun SavedGraphsList(
-    graphList: MutableState<List<Triple<Int, Graph<*>, String>>>, viewModel: IntroWindowVM, state: MyWindowState
+    viewModel: IntroWindowVM, state: MyWindowState
 ) {
     Column(
         modifier = Modifier.background(MaterialTheme.colors.background).fillMaxSize(),
@@ -218,11 +207,11 @@ fun SavedGraphsList(
             modifier = Modifier.background(MaterialTheme.colors.background).fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            graphList.value.forEach { (id, graph, name) ->
+            viewModel.graphList.value.forEach { (id, graph, name) ->
                 item {
                     SavedGraphItem(graph, name, onUsePressed = {
                         viewModel.onUseGraphSqliteExposedPressed(state, graph)
-                    }, onDeletePressed = { viewModel.onDeleteGraphSqliteExposedPressed(id, graphList) })
+                    }, onDeletePressed = { viewModel.onDeleteGraphSqliteExposedPressed(id) })
                 }
             }
         }
@@ -231,7 +220,7 @@ fun SavedGraphsList(
 
 @Composable
 fun CreateGraphButtonWithCharCheck(
-    chosenGenerator: MutableState<String>, graphSize: MutableState<String>, onClick: () -> Unit
+    viewModel: IntroWindowVM, onClick: () -> Unit
 ) {
     Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
         Button(
@@ -241,8 +230,8 @@ fun CreateGraphButtonWithCharCheck(
                 backgroundColor = MaterialTheme.colors.surface,
                 disabledBackgroundColor = MaterialTheme.colors.onSurface.copy(alpha = 0.12f),
             ),
-            enabled = if (chosenGenerator.value == "Flower Snark") (graphSize.value.isNotEmpty() && graphSize.value.toIntOrNull() != null)
-            else (graphSize.value.isNotEmpty() && graphSize.value.toIntOrNull() != null)
+            enabled = if (viewModel.chosenGenerator.value == "Flower Snark") (viewModel.graphSize.value.isNotEmpty() && viewModel.graphSize.value.toIntOrNull() != null)
+            else (viewModel.graphSize.value.isNotEmpty() && viewModel.graphSize.value.toIntOrNull() != null)
 
         ) {
             Text("Create Graph")
@@ -253,7 +242,7 @@ fun CreateGraphButtonWithCharCheck(
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun GenerateGraphSettings(
-    graphSize: MutableState<String>, chosenGenerator: MutableState<String>, weightMax: MutableState<String>
+    viewModel: IntroWindowVM
 ) {
 
     Column(
@@ -261,18 +250,18 @@ fun GenerateGraphSettings(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(20.dp),
     ) {
-        IntTextField(graphSize)
+        IntTextField(viewModel.graphSize)
 
-        if (chosenGenerator.value == "Random Tree") {
+        if (viewModel.chosenGenerator.value == "Random Tree") {
             Row(
                 verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 Text("Max edge weight: ", fontSize = 18.sp)
-                TextField(value = weightMax.value, onValueChange = {
+                TextField(value = viewModel.weightMax.value, onValueChange = {
                     if (it.toIntOrNull() == null && it.isNotEmpty()) {
                         return@TextField
                     }
-                    weightMax.value = it
+                    viewModel.weightMax.value = it
                 }, label = { Text("1 - 100") })
             }
 
@@ -286,8 +275,8 @@ fun GenerateGraphSettings(
             listOf("Random Tree", "Flower Snark", "Star Directed", "Star Undirected").forEach { graphType ->
                 Row(Modifier.padding(vertical = 4.dp), verticalAlignment = Alignment.CenterVertically) {
                     RadioButton(
-                        selected = (chosenGenerator.value == graphType),
-                        onClick = { chosenGenerator.value = graphType },
+                        selected = (viewModel.chosenGenerator.value == graphType),
+                        onClick = { viewModel.chosenGenerator.value = graphType },
                         colors = RadioButtonDefaults.colors(selectedColor = MaterialTheme.colors.surface)
                     )
                     Text(

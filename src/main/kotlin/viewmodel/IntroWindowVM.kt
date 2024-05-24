@@ -14,12 +14,17 @@ import ui.components.MyWindowState
 import ui.components.generateStringNodeNames
 
 class IntroWindowVM(
-    var isSettingMenuOpen: MutableState<Boolean>,
-    private val scope: CoroutineScope
+    var isSettingMenuOpen: MutableState<Boolean>, private val scope: CoroutineScope
 ) {
     var graphList: MutableState<List<Triple<Int, Graph<*>, String>>> = mutableStateOf(getAllGraphs())
     val isFileLoaderOpen = mutableStateOf(false)
     val fileLoaderException: MutableState<String?> = mutableStateOf(null)
+    val selectedGraphKeyType = mutableStateOf(GraphKeyType.INT)
+    val expanded = mutableStateOf(false)
+    val chosenGraph = mutableStateOf("Saved")
+    val graphSize = mutableStateOf("")
+    val chosenGenerator = mutableStateOf("Random Tree")
+    val weightMax = mutableStateOf("1")
 
     enum class GraphKeyType {
         INT, STRING, FLOAT,
@@ -33,31 +38,33 @@ class IntroWindowVM(
         state.reloadWindow(graph, scope)
     }
 
-    fun onDeleteGraphSqliteExposedPressed(id: Int, graphList: MutableState<List<Triple<Int, Graph<*>, String>>>) {
+    fun onDeleteGraphSqliteExposedPressed(id: Int) {
         deleteGraph(id)
         graphList.value = graphList.value.filter { it.first != id }
     }
 
-    fun generateGraph(graphSize: Int, chosenGenerator: String, graphType: GraphKeyType, maxWeight: Int): Graph<*> {
-        return when (chosenGenerator) {
-            "Random Tree" -> randomTree(graphSize, graphType, maxWeight)
-            "Flower Snark" -> flowerSnark(graphSize, graphType)
-            "Star Directed" -> starDirected(graphSize, graphType)
-            "Star Undirected" -> starUndirected(graphSize, graphType)
-            else -> createEmptyGraph(graphType)
+    fun generateGraph(maxWeight: Int): Graph<*> {
+        val graphSize = graphSize.value.toInt()
+        return when (chosenGenerator.value) {
+            "Random Tree" -> randomTree(graphSize, selectedGraphKeyType.value, maxWeight)
+            "Flower Snark" -> flowerSnark(graphSize, selectedGraphKeyType.value)
+            "Star Directed" -> starDirected(graphSize, selectedGraphKeyType.value)
+            "Star Undirected" -> starUndirected(graphSize, selectedGraphKeyType.value)
+            else -> createEmptyGraph()
         }
     }
 
-    fun createEmptyGraph(type: GraphKeyType): Graph<*> {
-        return when (type) {
+    fun createEmptyGraph(): Graph<*> {
+        return when (selectedGraphKeyType.value) {
             GraphKeyType.INT -> Graph<Int>()
             GraphKeyType.STRING -> Graph<String>()
             GraphKeyType.FLOAT -> Graph<Float>()
         }
     }
 
-    fun createGraphWithoutEdges(type: GraphKeyType, size: Int): Graph<*> {
-        return when (type) {
+    fun createGraphWithoutEdges(): Graph<*> {
+        val size = graphSize.value.toInt()
+        return when (selectedGraphKeyType.value) {
             GraphKeyType.INT -> {
                 val graph = Graph<Int>()
                 for (i in 0 until size) {

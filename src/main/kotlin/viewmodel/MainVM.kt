@@ -6,11 +6,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.snapshots.SnapshotStateMap
 import data.db.sqlite_exposed.getAllGraphs
 import data.db.sqlite_exposed.saveGraph
+import kotlinx.coroutines.CoroutineScope
 import model.graph_model.GraphViewClass
 import model.graph_model.Graph
 
 class MainVM<D>(
-    passedGraph: Graph<D>?,
+    passedGraph: Graph<D>?, scope: CoroutineScope
 ) {
     val changedAlgo = mutableStateOf(false)
 
@@ -18,7 +19,7 @@ class MainVM<D>(
     val isSelectNameWindowOpen = mutableStateOf(false)
     val isFileLoaderOpen = mutableStateOf(false)
     val fileLoaderException: MutableState<String?> = mutableStateOf(null)
-    val isFileSaverOpen = mutableStateOf(false)
+    val graphIsReady = mutableStateOf(false)
 
     private val graphNamesList = mutableListOf<String>()
     val isGraphNameAvailable = mutableStateOf(true)
@@ -30,7 +31,10 @@ class MainVM<D>(
 
     var graph: Graph<D> = passedGraph ?: Graph()
 
-    val graphView = GraphViewClass(graph)
+    val graphView = GraphViewClass(graph, scope = scope){
+        graphIsReady.value = true
+        changedAlgo.value = true
+    }
 
     fun onUndoPressed() {
         changedAlgo.value = true

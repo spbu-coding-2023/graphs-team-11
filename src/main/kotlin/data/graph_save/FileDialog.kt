@@ -1,6 +1,5 @@
 package data.graph_save
 
-import data.Constants.FILE_SAVE_FORMAT_FILTER
 import model.graph_model.Graph
 import java.awt.FileDialog
 import java.awt.Frame

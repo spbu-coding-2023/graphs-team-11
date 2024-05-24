@@ -8,6 +8,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import kotlinx.coroutines.*
 import model.graph_model.graph_model_actions.NodeViewUpdate
 import model.graph_model.graph_model_actions.Update
 import model.graph_model.graph_model_actions.VertViewUpdate
@@ -24,12 +25,7 @@ import kotlin.math.sqrt
 
 @Stable
 data class NodeViewClass<D>(
-    var offset: Offset,
-    var radius: Float,
-    var color: Color,
-    var value: D?,
-    var shape: Shape,
-    var alpha: Float = 1f
+    var offset: Offset, var radius: Float, var color: Color, var value: D?, var shape: Shape, var alpha: Float = 1f
 )
 
 data class VertView<D>(
@@ -48,7 +44,9 @@ class GraphViewClass<D>(
     var baseShape: Shape = CircleShape,
     nodesViews: MutableMap<D, NodeViewClass<D>> = mutableMapOf(),
     vertViews: MutableMap<D, MutableMap<D, VertView<D>>> = mutableMapOf(),
-    newNodes: MutableList<NodeViewClass<D>> = mutableListOf()
+    newNodes: MutableList<NodeViewClass<D>> = mutableListOf(),
+    private val scope: CoroutineScope,
+    afterLayout: (() -> Unit)?
 ) {
 
     var nodesViews by mutableStateOf(nodesViews)
@@ -61,18 +59,41 @@ class GraphViewClass<D>(
     var returnStack by mutableStateOf(Stack<Update<D>>())
 
     init {
-        val positions = layout()
-        for (i in positions) {
-            nodesViews[i.key] = NodeViewClass(
-                offset = positions[i.key]!!, radius = radius, color = nodeColor, value = i.key, shape = baseShape
-            )
-        }
-        for ((i, verts) in graph.vertices) {
-            vertViews[i] = mutableMapOf()
-            for ((j, weight) in verts) {
-                vertViews[i]!![j] = VertView(
-                    start = nodesViews[i]!!, end = nodesViews[j]!!, color = vertColor, alpha = 1f, weight = weight
+        scope.launch {
+            // if graph is empty, add mock nodes and edge to avoid algorithm returning wrong result.
+            if (graph.vertices.isEmpty()) {
+                graph.apply {
+                    addNode(1 as D)
+                    addNode(2 as D)
+                    addVertice(1 as D, 2 as D)
+                }
+            }
+            val positions: MutableMap<D, Offset> = layout()
+
+            for (i in positions) {
+                nodesViews[i.key] = NodeViewClass(
+                    offset = positions[i.key]!!,
+                    radius = radius,
+                    color = nodeColor,
+                    value = i.key,
+                    shape = baseShape
                 )
+            }
+            for ((i, verts) in graph.vertices) {
+                vertViews[i] = mutableMapOf()
+                for ((j, weight) in verts) {
+                    vertViews[i]!![j] = VertView(
+                        start = nodesViews[i]!!,
+                        end = nodesViews[j]!!,
+                        color = vertColor,
+                        alpha = 1f,
+                        weight = weight
+                    )
+                }
+            }
+
+            if (afterLayout != null) {
+                afterLayout()
             }
         }
     }
@@ -83,8 +104,7 @@ class GraphViewClass<D>(
             this.nodesViews[value] = NodeViewClass(
                 offset = offset, radius = radius, color = color, value = value, shape = baseShape
             )
-        }
-        else {
+        } else {
             newNodes.add(
                 NodeViewClass(
                     offset = offset, radius = radius, color = color, value = null, shape = baseShape
@@ -145,57 +165,66 @@ class GraphViewClass<D>(
     }
 
     // just for fast not implemented like algoritm
-    private fun layout(maxIter: Int = 1000): MutableMap<D, Offset> {
+    private suspend fun layout(maxIter: Int = 1000): MutableMap<D, Offset> {
         val positions: MutableMap<D, Offset> = mutableMapOf()
+        return withContext(Dispatchers.Default) {
+            val pc = Lookup.getDefault().lookup(ProjectController::class.java)
+            pc.newProject()
+            val workspace: Workspace = pc.currentWorkspace
 
-        val pc = Lookup.getDefault().lookup(ProjectController::class.java)
-        pc.newProject()
-        val workspace: Workspace = pc.currentWorkspace
+            val graphModel: GraphModel = Lookup.getDefault().lookup(
+                GraphController::class.java
+            ).getGraphModel(workspace)
+            val dirGraph = graphModel.directedGraph
 
-        val graphModel: GraphModel = Lookup.getDefault().lookup(
-            GraphController::class.java
-        ).getGraphModel(workspace)
-        val dirGraph = graphModel.directedGraph
-
-        val nodes: MutableMap<D, Node> = mutableMapOf()
-        for ((v, _) in graph.vertices) {
-            val node = graphModel.factory().newNode(v.toString())
-            nodes[v] = node
-            dirGraph.addNode(node)
-        }
-        for ((u, neig) in graph.vertices) {
-            for ((v, _) in neig) {
-                val edge = graphModel.factory().newEdge(nodes[u]!!, nodes[v]!!)
-                dirGraph.addEdge(edge)
-            }
-        }
-
-        val layout = ForceAtlasLayout(null)
-        layout.setGraphModel(graphModel)
-        layout.initAlgo()
-        layout.resetPropertiesValues()
-
-        for (i in 1..maxIter) {
-            if (layout.canAlgo()) layout.goAlgo()
-            else break
-        }
-        val x = mutableListOf<Float>()
-        val y = mutableListOf<Float>()
-        for ((v, _) in graph.vertices) {
-            x.add(nodes[v]!!.x())
-            y.add(nodes[v]!!.y())
-        }
-        if (x.size > 0) {
-            val (minX, maxX) = Pair(x.min(), x.max())
-            val (minY, maxY) = Pair(y.min(), y.max())
+            val nodes: MutableMap<D, Node> = mutableMapOf()
             for ((v, _) in graph.vertices) {
-                positions[v] = Offset(
-                    x = 1 - 2 * (nodes[v]!!.x() - minX) / (maxX - minX),
-                    y = 1 - 2 * (nodes[v]!!.y() - minY) / (maxY - minY)
-                )
+                val node = graphModel.factory().newNode(v.toString())
+                nodes[v] = node
+                dirGraph.addNode(node)
             }
+            for ((u, neig) in graph.vertices) {
+                for ((v, _) in neig) {
+                    val edge = graphModel.factory().newEdge(nodes[u]!!, nodes[v]!!)
+                    dirGraph.addEdge(edge)
+                }
+            }
+
+            val layout = ForceAtlasLayout(null)
+            layout.setGraphModel(graphModel)
+            layout.initAlgo()
+            layout.resetPropertiesValues()
+
+            val iterations = (1..maxIter).toList().chunked(maxIter / Runtime.getRuntime().availableProcessors())
+            val tasks = iterations.map { iterChunk ->
+                async {
+                    for (i in iterChunk) {
+                        if (layout.canAlgo()) layout.goAlgo()
+                        else break
+                    }
+                }
+            }
+
+            tasks.awaitAll()
+
+            val x = mutableListOf<Float>()
+            val y = mutableListOf<Float>()
+            for ((v, _) in graph.vertices) {
+                x.add(nodes[v]!!.x())
+                y.add(nodes[v]!!.y())
+            }
+            if (x.size > 0) {
+                val (minX, maxX) = Pair(x.min(), x.max())
+                val (minY, maxY) = Pair(y.min(), y.max())
+                for ((v, _) in graph.vertices) {
+                    positions[v] = Offset(
+                        x = 1 - 2 * (nodes[v]!!.x() - minX) / (maxX - minX),
+                        y = 1 - 2 * (nodes[v]!!.y() - minY) / (maxY - minY)
+                    )
+                }
+            }
+            positions
         }
-        return positions
     }
 }
 

@@ -8,7 +8,7 @@ import kotlin.io.path.createFile
 import kotlin.io.path.exists
 
 fun <D> saveGraphML(path: String, graph: Graph<D>) {
-    var pathFile =
+    val pathFile =
         if (!File(path).toPath().exists()) {
             Path(path).createFile().toFile()
         } else {

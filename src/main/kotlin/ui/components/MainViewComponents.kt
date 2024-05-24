@@ -6,13 +6,9 @@ import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -21,23 +17,16 @@ import com.darkrockstudios.libraries.mpfilepicker.FilePicker
 import data.Constants.APP_NAME
 import data.Constants.CHOOSE_GRAPH_WINDOW_TITLE
 import data.Constants.FILE_LOAD_FORMAT_FILTER
-import data.Constants.FILE_SAVE_FORMAT_FILTER
-import data.Constants.RESOURCE_DIR
 import data.graph_save.graphLoadUnified
+import kotlinx.coroutines.CoroutineScope
 import model.graph_model.Graph
 import ui.theme.BdsmAppTheme
 import ui.theme.Theme
 import viewmodel.MainVM
 import java.awt.Dimension
-import java.awt.FileDialog
-import java.awt.Frame
-import java.io.File
-import java.nio.file.InvalidPathException
-import kotlin.io.path.absolutePathString
-import kotlin.io.path.isRegularFile
-import kotlin.io.path.listDirectoryEntries
+import kotlin.reflect.KFunction2
 
-class MyApplicationState {
+class MyApplicationState(val scope: CoroutineScope) {
     val windows = mutableStateListOf<MyWindowState>()
 
     init {
@@ -45,11 +34,11 @@ class MyApplicationState {
     }
 
     private fun openChooseGraphWindow() {
-        windows += MyWindowState(CHOOSE_GRAPH_WINDOW_TITLE)
+        windows += MyWindowState(CHOOSE_GRAPH_WINDOW_TITLE, scope = scope)
     }
 
-    private fun openNewWindow(graph: Graph<*>?) {
-        windows += MyWindowState(APP_NAME, graph)
+    private fun openNewWindow(graph: Graph<*>?, scope: CoroutineScope) {
+        windows += MyWindowState(APP_NAME, graph, scope)
     }
 
     private fun exit() {
@@ -57,26 +46,28 @@ class MyApplicationState {
     }
 
     private fun MyWindowState(
-        title: String, graph: Graph<*>? = null
+        title: String, graph: Graph<*>? = null, scope: CoroutineScope
     ) = MyWindowState(
         title,
         graph,
         openNewWindow = ::openNewWindow,
         exit = ::exit,
         windows,
-        openChooseGraphWindow = ::openChooseGraphWindow
+        openChooseGraphWindow = ::openChooseGraphWindow,
+        scope
     )
 }
 
 class MyWindowState(
     val title: String,
     val graph: Graph<*>? = null,
-    val openNewWindow: (Graph<*>?) -> Unit,
+    val openNewWindow: KFunction2<Graph<*>?, CoroutineScope, Unit>,
     val exit: () -> Unit,
     private val windows: SnapshotStateList<MyWindowState>,
     val openChooseGraphWindow: () -> Unit,
+    val scope: CoroutineScope
 ) {
-    val mainVM = MainVM(graph)
+    val mainVM = MainVM(graph, scope)
 
     fun close() {
         val closeWindow = windows::remove
@@ -90,9 +81,9 @@ class MyWindowState(
         } else closeWindow(this)
     }
 
-    fun reloadWindow(graph: Graph<*>?) {
+    fun reloadWindow(graph: Graph<*>?, scope: CoroutineScope) {
         windows.remove(this)
-        openNewWindow(graph)
+        openNewWindow(graph, scope)
     }
 }
 
@@ -170,7 +161,7 @@ fun GraphFilePicker(
         if (path != null) {
             try {
                 val loadedGraph: Graph<String> = graphLoadUnified(path.path)
-                state.reloadWindow(loadedGraph)
+                state.reloadWindow(loadedGraph, state.scope)
             } catch (e: NullPointerException) {
                 fileLoaderException.value = e.message
             }
@@ -190,5 +181,12 @@ fun GraphFilePicker(
                 }
             },
         )
+    }
+}
+
+@Composable
+fun GraphLoadingView() {
+    Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colors.background), contentAlignment = Alignment.Center) {
+        CircularProgressIndicator(color = MaterialTheme.colors.primary)
     }
 }

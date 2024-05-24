@@ -1,9 +1,7 @@
 package data
 
-import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyShortcut
-import java.io.File
 
 object Constants {
     const val APP_NAME = "BDSM Graphs"
@@ -11,10 +9,7 @@ object Constants {
     const val SQLITE_APP_CONFIG = "sqlite_exposed_app_config.db"
     const val CHOOSE_GRAPH_WINDOW_TITLE = "Choose Graph"
 
-    val RESOURCE_DIR = File("").toPath().toAbsolutePath().toString()
-
     val FILE_LOAD_FORMAT_FILTER = listOf("graphml")
-    val FILE_SAVE_FORMAT_FILTER = listOf(".graphml")
 
     private val isMac = System.getProperty("os.name").lowercase().contains("mac")
     val UNDO_SHORTCUT = if (isMac) KeyShortcut(Key.Z, meta = true) else KeyShortcut(Key.Z, ctrl = true)

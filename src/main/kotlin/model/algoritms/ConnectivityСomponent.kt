@@ -6,10 +6,9 @@ import model.graph_model.Graph
 import model.graph_model.graph_model_actions.NodeViewUpdate
 import model.graph_model.graph_model_actions.Update
 import model.graph_model.graph_model_actions.VertViewUpdate
-import java.awt.Component
 import kotlin.random.Random
 
-class ConnectivityСomponent: Algoritm(null) {
+class ConnectivityСomponent<D>: Algoritm<D>(null) {
     override fun <D> algoRun(graph: Graph<D>, selected: SnapshotStateMap<D, Int>): Update<D> {
         val reversed = graph.reverse()
 

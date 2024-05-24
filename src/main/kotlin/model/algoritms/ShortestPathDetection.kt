@@ -15,7 +15,7 @@ data class NodeDistance<D>(val node: D, val distance: Float) : Comparable<NodeDi
     }
 }
 
-class ShortestPathDetection : Algoritm(2) {
+class ShortestPathDetection<D> : Algoritm<D>(2) {
     override fun <D> algoRun(graph: Graph<D>, selected: SnapshotStateMap<D, Int>): Update<D> {
         val start = selected.keys.first()
         val end = selected.keys.last()

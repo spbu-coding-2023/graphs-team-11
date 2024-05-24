@@ -7,7 +7,7 @@ import model.graph_model.graph_model_actions.NodeViewUpdate
 import model.graph_model.graph_model_actions.Update
 import model.graph_model.graph_model_actions.VertViewUpdate
 
-class SampleAlgo : Algoritm(null) {
+class SampleAlgo<D> : Algoritm<D>(null) {
     override fun <D> algoRun(graph: Graph<D>, selected: SnapshotStateMap<D, Int>): Update<D> {
         val updateNode: MutableMap<D, NodeViewUpdate<D>> = mutableMapOf()
         val updateVert: MutableMap<D, MutableMap<D, VertViewUpdate<D>>> = mutableMapOf()

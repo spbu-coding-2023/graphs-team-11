@@ -14,7 +14,6 @@ class LeidenToRun : Algoritm(null) {
         val communities = leidenAlgorithm.detectCommunities()
 
         val communityMap = mutableMapOf<Int, MutableList<D>>()
-        var communityIndex = 0
         communities.forEach { (node, community) ->
             if (communityMap.containsKey(community)) {
                 communityMap[community]!!.add(node)
@@ -22,10 +21,6 @@ class LeidenToRun : Algoritm(null) {
                 communityMap[community] = mutableListOf(node)
             }
         }
-//        communityMap.forEach { (_, nodes) ->
-//            println("Community $communityIndex: $nodes")
-//            ++communityIndex
-//        }
 
         val colors: MutableMap<Int, Color> = mutableMapOf()
         for ((community, _) in communityMap) {

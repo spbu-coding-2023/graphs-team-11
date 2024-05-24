@@ -1,13 +1,12 @@
 package model.algoritms
 
 import androidx.compose.runtime.snapshots.SnapshotStateMap
-import androidx.compose.ui.graphics.Color
 import model.graph_model.Graph
 import model.graph_model.graph_model_actions.NodeViewUpdate
 import model.graph_model.graph_model_actions.Update
 import model.graph_model.graph_model_actions.VertViewUpdate
 
-class Kruskal: Algoritm(null) {
+class Kruskal<D>: Algoritm<D>(null) {
     override fun <D> algoRun(graph: Graph<D>, selected: SnapshotStateMap<D, Int>): Update<D> {
         val vertes: MutableList<Pair<Float, Pair<D, D>>> = mutableListOf()
 

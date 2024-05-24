@@ -20,7 +20,7 @@ class AlgorithmMenuVM {
     }
 
     fun <D> runAlgorithm(
-        algorithm: Algoritm,
+        algorithm: Algoritm<D>,
         graphViewClass: GraphViewClass<D>,
         changedAlgo: MutableState<Boolean>,
         selected: SnapshotStateMap<D, Int>

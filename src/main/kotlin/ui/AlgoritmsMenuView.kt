@@ -44,6 +44,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import model.algoritms.*
 import model.graph_model.GraphViewClass
+import model.graph_model.UndirectedGraph
 import viewmodel.AlgorithmMenuVM
 
 @Composable
@@ -102,14 +103,14 @@ fun <D> AlgoritmList(
     viewModel: AlgorithmMenuVM,
     selected: SnapshotStateMap<D, Int>
 ) {
-    val algoList = mutableListOf(
-        Pair("Detect Communities", LeidenToRun()),
-        Pair("Sample Algorithm", SampleAlgo()),
-        Pair("Something like DFS", SomeThingLikeDFS()),
-        Pair("Kosaraju", ConnectivityСomponent()),
-        Pair("Minimal Tree", Kruskal()),
-        Pair("Shortest Path Detection", ShortestPathDetection()),
-        Pair("Find Bridges", BridgeFinding()),
+    val algoList = listOf(
+        AlgorithmData<D>("Detect Communities", LeidenToRun(), AlgoritmType.BOTH),
+        AlgorithmData("Sample Algorithm", SampleAlgo(), AlgoritmType.BOTH),
+        AlgorithmData("Something like DFS", SomeThingLikeDFS(), AlgoritmType.BOTH),
+        AlgorithmData("Kosaraju", ConnectivityСomponent(), AlgoritmType.DIRECTED),
+        AlgorithmData("Minimal Tree", Kruskal(), AlgoritmType.UNDIRECTED),
+        AlgorithmData("Shortest Path Detection", ShortestPathDetection(), AlgoritmType.BOTH),
+        AlgorithmData("Find Bridges", BridgeFinding(), AlgoritmType.UNDIRECTED),
     )
 
     Column(
@@ -118,14 +119,19 @@ fun <D> AlgoritmList(
     ) {
         Text(text = "Algorithms")
         Divider(color = Color.Black, modifier = Modifier.fillMaxWidth(0.3f))
-        for (algorithm in algoList) {
-            Text(text = algorithm.first, modifier = Modifier.clickable(onClick = {
-                if (selected.size != algorithm.second.selectedSizeRequired && algorithm.second.selectedSizeRequired != null) {
+        val algorithms = algoList.filter {
+            it.type == AlgoritmType.BOTH ||
+                    (graphViewClass.graph is UndirectedGraph && it.type == AlgoritmType.UNDIRECTED) ||
+                    (graphViewClass.graph !is UndirectedGraph && it.type == AlgoritmType.DIRECTED)
+        }
+        for (algorithm in algorithms) {
+            Text(text = algorithm.name, modifier = Modifier.clickable(onClick = {
+                if (selected.size != algorithm.algo.selectedSizeRequired && algorithm.algo.selectedSizeRequired != null) {
                     viewModel.isException.value = true
                     viewModel.exceptionMessage.value =
-                        "Required " + algorithm.second.selectedSizeRequired.toString() + " selected nodes!"
+                        "Required " + algorithm.algo.selectedSizeRequired.toString() + " selected nodes!"
                 }
-                viewModel.runAlgorithm(algorithm.second, graphViewClass, changedAlgo, selected)
+                viewModel.runAlgorithm(algorithm.algo, graphViewClass, changedAlgo, selected)
             }).offset(10.dp))
         }
     }

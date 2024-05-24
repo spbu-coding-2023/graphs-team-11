@@ -7,7 +7,7 @@ import model.graph_model.graph_model_actions.NodeViewUpdate
 import model.graph_model.graph_model_actions.Update
 import model.graph_model.graph_model_actions.VertViewUpdate
 
-class BridgeFinding : Algoritm(null) {
+class BridgeFinding<D> : Algoritm<D>(null) {
     override fun <D> algoRun(graph: Graph<D>, selected: SnapshotStateMap<D, Int>): Update<D> {
         val bridges = findBridges(graph)
         val updateNode: MutableMap<D, NodeViewUpdate<D>> = mutableMapOf()

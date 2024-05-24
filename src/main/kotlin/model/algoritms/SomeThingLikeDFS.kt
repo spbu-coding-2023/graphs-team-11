@@ -6,10 +6,10 @@ import model.graph_model.Graph
 import model.graph_model.graph_model_actions.Update
 import model.graph_model.graph_model_actions.VertViewUpdate
 
-class SomeThingLikeDFS : Algoritm(null) {
+class SomeThingLikeDFS<D> : Algoritm<D>(null) {
     override fun <D> algoRun(graph: Graph<D>, selected: SnapshotStateMap<D, Int>): Update<D> {
-        var vertUpdate: MutableMap<D, MutableMap<D, VertViewUpdate<D>>> = mutableMapOf()
-        var visited: MutableSet<D> = mutableSetOf()
+        val vertUpdate: MutableMap<D, MutableMap<D, VertViewUpdate<D>>> = mutableMapOf()
+        val visited: MutableSet<D> = mutableSetOf()
         for ((i, verts) in graph.vertices) {
             vertUpdate[i] = mutableMapOf()
             for ((j, _) in verts) {

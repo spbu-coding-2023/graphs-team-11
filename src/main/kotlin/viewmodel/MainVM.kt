@@ -19,6 +19,7 @@ class MainVM<D>(
     val isSelectNameWindowOpen = mutableStateOf(false)
     val isFileLoaderOpen = mutableStateOf(false)
     val fileLoaderException: MutableState<String?> = mutableStateOf(null)
+    val graphIsReady = mutableStateOf(false)
 
     private val graphNamesList = mutableListOf<String>()
     val isGraphNameAvailable = mutableStateOf(true)
@@ -30,7 +31,10 @@ class MainVM<D>(
 
     var graph: Graph<D> = passedGraph ?: Graph()
 
-    val graphView = GraphViewClass(graph, scope = scope)
+    val graphView = GraphViewClass(graph, scope = scope){
+        graphIsReady.value = true
+        changedAlgo.value = true
+    }
 
     fun onUndoPressed() {
         changedAlgo.value = true

@@ -1,8 +1,7 @@
 package ui
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.Card
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -21,6 +20,7 @@ import data.Constants.SETTINGS_SHORTCUT
 import data.Constants.UNDO_SHORTCUT
 import data.Constants.VIEW_EXPOSED_SHORTCUT
 import ui.components.GraphFilePicker
+import ui.components.GraphLoadingView
 import ui.components.MyWindowState
 import ui.components.SelectNameWindow
 import ui.components.cosmetic.CommeticsMenu
@@ -88,14 +88,18 @@ fun <D> App(
     viewModel: MainVM<D>, changedAlgo: MutableState<Boolean>, appTheme: MutableState<Theme>
 ) {
     BdsmAppTheme(appTheme = appTheme.value) {
-        Row {
-            Column(modifier = Modifier.background(MaterialTheme.colors.background)) {
-                LeftMenu(viewModel.graphView, changedAlgo, viewModel.selected)
-                CommeticsMenu(viewModel.graphView, changedAlgo, viewModel.selected)
+        if (viewModel.graphIsReady.value) {
+            Row {
+                Column(modifier = Modifier.background(MaterialTheme.colors.background)) {
+                    LeftMenu(viewModel.graphView, changedAlgo, viewModel.selected)
+                    CommeticsMenu(viewModel.graphView, changedAlgo, viewModel.selected)
+                }
+                Card {
+                    GraphView(viewModel.graphView, changedAlgo, viewModel.selected)
+                }
             }
-            Card {
-                GraphView(viewModel.graphView, changedAlgo, viewModel.selected)
-            }
+        } else {
+            GraphLoadingView()
         }
     }
 }

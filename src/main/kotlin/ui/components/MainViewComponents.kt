@@ -183,3 +183,10 @@ fun GraphFilePicker(
         )
     }
 }
+
+@Composable
+fun GraphLoadingView() {
+    Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colors.background), contentAlignment = Alignment.Center) {
+        CircularProgressIndicator(color = MaterialTheme.colors.primary)
+    }
+}

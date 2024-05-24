@@ -83,9 +83,11 @@ fun <D> GraphView(
                 selectedList[isSel] = i
             }
             if (it.button == PointerButton.Secondary) {
-                if (selectedList.isEmpty()) {
-                    gv.addNode(null, toNotAbsoluteOffset(it.changes.first().position))
-                    changedAlgo.value = true
+                if (selectedList.size < 2) {
+                    if (!gv.newNodes.any { node -> node.value == null }) {
+                        gv.addNode(null, toNotAbsoluteOffset(it.changes.first().position))
+                        changedAlgo.value = true
+                    }
                 } else if (selectedList.size == 2) {
                     gv.addVert(selectedList[0]!!, selectedList[1]!!)
                     changedAlgo.value = true
@@ -136,8 +138,7 @@ fun <D> GraphView(
 
                     val textPosition = (start + end) / 2f
 
-                    if ((view.weight != 1f) && (textPosition.x > 0) && (textPosition.y > 0)
-                        && (textPosition.x < size.width) && (textPosition.y < size.height)) {
+                    if ((view.weight != 1f) && (textPosition.x > 0) && (textPosition.y > 0) && (textPosition.x < size.width) && (textPosition.y < size.height)) {
                         drawText(
                             textMeasurer,
                             text = view.weight.toString(),
@@ -152,15 +153,15 @@ fun <D> GraphView(
             }
         }
         if (showNodes) {
+            val graphNodeKeysList = gv.nodesViews.keys.map { it.toString() }
             for (i in gv.nodesViews) {
                 NodeView(
                     nodeView = i.value,
-                    mainOffset = viewModel.mainOffset,
-                    toAbsoluteOffset = viewModel.toAbsoluteOffset,
-                    toNotAbsoluteOffset = viewModel.toNotAbsoluteOffset,
                     selected = selected,
                     isShifted = isShifted,
-                    scaleFactor = viewModel.scaleFactor.value
+                    viewModel,
+                    graphNodeKeysList,
+                    changedAlgo
                 )
             }
             val toRemove = mutableListOf<NodeViewClass<D>>()
@@ -173,15 +174,11 @@ fun <D> GraphView(
                     toRemove.add(i)
                     continue
                 }
+
                 NodeView(
-                    nodeView = i,
-                    mainOffset = viewModel.mainOffset,
-                    toAbsoluteOffset = viewModel.toAbsoluteOffset,
-                    toNotAbsoluteOffset = viewModel.toNotAbsoluteOffset,
-                    selected = selected,
-                    isShifted = isShifted,
-                    scaleFactor = viewModel.scaleFactor.value
+                    nodeView = i, selected = selected, isShifted = isShifted, viewModel, graphNodeKeysList, changedAlgo
                 )
+
             }
             for (i in toRemove) {
                 gv.newNodes.remove(i)

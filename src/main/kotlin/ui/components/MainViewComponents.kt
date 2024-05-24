@@ -16,7 +16,7 @@ import androidx.compose.ui.window.Window
 import com.darkrockstudios.libraries.mpfilepicker.FilePicker
 import data.Constants.APP_NAME
 import data.Constants.CHOOSE_GRAPH_WINDOW_TITLE
-import data.Constants.FILE_FORMAT_FILTER
+import data.Constants.FILE_LOAD_FORMAT_FILTER
 import data.graph_save.graphLoadUnified
 import kotlinx.coroutines.CoroutineScope
 import model.graph_model.Graph
@@ -156,17 +156,17 @@ fun GraphFilePicker(
     fileLoaderException: MutableState<String?>,
     state: MyWindowState) {
     FilePicker(
-        isFileLoaderOpen.value, fileExtensions = FILE_FORMAT_FILTER
+        isFileLoaderOpen.value, fileExtensions = FILE_LOAD_FORMAT_FILTER
     ) { path ->
         if (path != null) {
             try {
                 val loadedGraph: Graph<String> = graphLoadUnified(path.path)
                 state.reloadWindow(loadedGraph, state.scope)
             } catch (e: NullPointerException) {
-                isFileLoaderOpen.value = false
                 fileLoaderException.value = e.message
             }
         }
+        isFileLoaderOpen.value = false
     }
     if (fileLoaderException.value != null) {
         AlertDialog(

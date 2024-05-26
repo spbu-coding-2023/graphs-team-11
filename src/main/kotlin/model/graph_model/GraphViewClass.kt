@@ -42,6 +42,7 @@ class GraphViewClass<D>(
     var nodeColor: Color = Color.Blue,
     var vertColor: Color = Color.Blue,
     var baseShape: Shape = CircleShape,
+    val isEmpty: Boolean,
     nodesViews: MutableMap<D, NodeViewClass<D>> = mutableMapOf(),
     vertViews: MutableMap<D, MutableMap<D, VertView<D>>> = mutableMapOf(),
     newNodes: MutableList<NodeViewClass<D>> = mutableListOf(),
@@ -61,7 +62,7 @@ class GraphViewClass<D>(
     init {
         scope.launch {
             // if graph is empty, add mock nodes and edge to avoid algorithm returning wrong result.
-            if (graph.vertices.isEmpty()) {
+            if (graph.vertices.isEmpty() && !isEmpty) {
                 graph.apply {
                     addNode(1 as D)
                     addNode(2 as D)

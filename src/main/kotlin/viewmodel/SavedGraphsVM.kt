@@ -3,12 +3,13 @@ package viewmodel
 import androidx.compose.runtime.MutableState
 import data.db.sqlite_exposed.deleteGraph
 import model.graph_model.Graph
+import ui.components.GraphKeyType
 import ui.components.MyWindowState
 
 class SavedGraphsVM {
 
-    fun onGraphLoad(state: MyWindowState, graph: Graph<*>) {
-        state.reloadWindow(graph, state.scope)
+    fun onGraphLoad(state: MyWindowState, graph: Graph<*>, graphKeyType: GraphKeyType) {
+        state.reloadWindow(graph, state.scope, graphKeyType = graphKeyType)
     }
 
     fun onGraphDelete(id: Int, graphList: MutableState<List<Triple<Int, Graph<*>, String>>>) {

@@ -24,7 +24,11 @@ import ui.theme.BdsmAppTheme
 import ui.theme.Theme
 import viewmodel.MainVM
 import java.awt.Dimension
-import kotlin.reflect.KFunction2
+import kotlin.reflect.KFunction4
+
+enum class GraphKeyType {
+    INT, STRING, FLOAT,
+}
 
 class MyApplicationState(val scope: CoroutineScope) {
     val windows = mutableStateListOf<MyWindowState>()
@@ -34,11 +38,11 @@ class MyApplicationState(val scope: CoroutineScope) {
     }
 
     private fun openChooseGraphWindow() {
-        windows += MyWindowState(CHOOSE_GRAPH_WINDOW_TITLE, scope = scope)
+        windows += MyWindowState(CHOOSE_GRAPH_WINDOW_TITLE, scope = scope, isEmptyGraph = false, graphKeyType = GraphKeyType.INT)
     }
 
-    private fun openNewWindow(graph: Graph<*>?, scope: CoroutineScope) {
-        windows += MyWindowState(APP_NAME, graph, scope)
+    private fun openNewWindow(graph: Graph<*>?, scope: CoroutineScope, isEmptyGraph: Boolean, graphKeyType: GraphKeyType) {
+        windows += MyWindowState(APP_NAME, graph, scope, isEmptyGraph, graphKeyType)
     }
 
     private fun exit() {
@@ -46,7 +50,7 @@ class MyApplicationState(val scope: CoroutineScope) {
     }
 
     private fun MyWindowState(
-        title: String, graph: Graph<*>? = null, scope: CoroutineScope
+        title: String, graph: Graph<*>? = null, scope: CoroutineScope, isEmptyGraph: Boolean, graphKeyType: GraphKeyType
     ) = MyWindowState(
         title,
         graph,
@@ -54,20 +58,24 @@ class MyApplicationState(val scope: CoroutineScope) {
         exit = ::exit,
         windows,
         openChooseGraphWindow = ::openChooseGraphWindow,
-        scope
+        scope,
+        isEmptyGraph,
+        graphKeyType
     )
 }
 
 class MyWindowState(
     val title: String,
     val graph: Graph<*>? = null,
-    val openNewWindow: KFunction2<Graph<*>?, CoroutineScope, Unit>,
+    val openNewWindow: KFunction4<Graph<*>?, CoroutineScope, Boolean, GraphKeyType, Unit>,
     val exit: () -> Unit,
     private val windows: SnapshotStateList<MyWindowState>,
     val openChooseGraphWindow: () -> Unit,
-    val scope: CoroutineScope
+    val scope: CoroutineScope,
+    isEmptyGraph: Boolean,
+    val graphKeyType: GraphKeyType
 ) {
-    val mainVM = MainVM(graph, scope)
+    val mainVM = MainVM(graph, scope, isEmptyGraph)
 
     fun close() {
         val closeWindow = windows::remove
@@ -81,9 +89,9 @@ class MyWindowState(
         } else closeWindow(this)
     }
 
-    fun reloadWindow(graph: Graph<*>?, scope: CoroutineScope) {
+    fun reloadWindow(graph: Graph<*>?, scope: CoroutineScope, isEmptyGraph: Boolean = false, graphKeyType: GraphKeyType) {
         windows.remove(this)
-        openNewWindow(graph, scope)
+        openNewWindow(graph, scope, isEmptyGraph, graphKeyType)
     }
 }
 
@@ -154,14 +162,16 @@ fun SelectNameWindow(
 fun GraphFilePicker(
     isFileLoaderOpen: MutableState<Boolean>,
     fileLoaderException: MutableState<String?>,
-    state: MyWindowState) {
+    state: MyWindowState
+) {
     FilePicker(
         isFileLoaderOpen.value, fileExtensions = FILE_LOAD_FORMAT_FILTER
     ) { path ->
         if (path != null) {
             try {
+                // TODO: fix this static String type!
                 val loadedGraph: Graph<String> = graphLoadUnified(path.path)
-                state.reloadWindow(loadedGraph, state.scope)
+                state.reloadWindow(loadedGraph, state.scope, graphKeyType = GraphKeyType.STRING)
             } catch (e: NullPointerException) {
                 fileLoaderException.value = e.message
             }
@@ -186,7 +196,10 @@ fun GraphFilePicker(
 
 @Composable
 fun GraphLoadingView() {
-    Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colors.background), contentAlignment = Alignment.Center) {
+    Box(
+        modifier = Modifier.fillMaxSize().background(MaterialTheme.colors.background),
+        contentAlignment = Alignment.Center
+    ) {
         CircularProgressIndicator(color = MaterialTheme.colors.primary)
     }
 }

@@ -2,13 +2,13 @@ package data.tools.graphGenerators
 
 import model.graph_model.Graph
 import model.graph_model.UndirectedGraph
+import ui.components.GraphKeyType
 import ui.components.generateStringNodeNames
-import viewmodel.IntroWindowVM
 
-fun starDirected(n: Int, type: IntroWindowVM.GraphKeyType): Graph<*> = when (type) {
-    IntroWindowVM.GraphKeyType.INT -> starDirectedInt(n)
-    IntroWindowVM.GraphKeyType.STRING -> starDirectedString(n)
-    IntroWindowVM.GraphKeyType.FLOAT -> starDirectedFloat(n)
+fun starDirected(n: Int, type: GraphKeyType): Graph<*> = when (type) {
+    GraphKeyType.INT -> starDirectedInt(n)
+    GraphKeyType.STRING -> starDirectedString(n)
+    GraphKeyType.FLOAT -> starDirectedFloat(n)
 }
 
 private fun starDirectedInt(n: Int): Graph<Int> {
@@ -42,10 +42,10 @@ private fun starDirectedFloat(n: Int): Graph<Float> {
     return graph
 }
 
-fun starUndirected(n: Int, type: IntroWindowVM.GraphKeyType): Graph<*> = when (type) {
-    IntroWindowVM.GraphKeyType.INT -> starUndirectedInt(n)
-    IntroWindowVM.GraphKeyType.STRING -> starUndirectedString(n)
-    IntroWindowVM.GraphKeyType.FLOAT -> starUndirectedFloat(n)
+fun starUndirected(n: Int, type: GraphKeyType): Graph<*> = when (type) {
+    GraphKeyType.INT -> starUndirectedInt(n)
+    GraphKeyType.STRING -> starUndirectedString(n)
+    GraphKeyType.FLOAT -> starUndirectedFloat(n)
 }
 
 private fun starUndirectedInt(n: Int): UndirectedGraph<Int> {

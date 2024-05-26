@@ -30,6 +30,7 @@ import model.graph_model.GraphViewClass
 import model.graph_model.NodeViewClass
 import model.graph_model.UndirectedGraph
 import model.graph_model.abs
+import ui.components.MyWindowState
 import viewmodel.GraphVM
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -39,7 +40,8 @@ fun <D> GraphView(
     changedAlgo: MutableState<Boolean>,
     selected: SnapshotStateMap<D, Int>,
     padding: Int = 100,
-    showNodes: Boolean = true
+    showNodes: Boolean = true,
+    state: MyWindowState
 ) {
     val viewModel = remember { GraphVM() }
     viewModel.padding = padding
@@ -161,7 +163,8 @@ fun <D> GraphView(
                     isShifted = isShifted,
                     viewModel,
                     graphNodeKeysList,
-                    changedAlgo
+                    changedAlgo,
+                    state
                 )
             }
             val toRemove = mutableListOf<NodeViewClass<D>>()
@@ -176,7 +179,7 @@ fun <D> GraphView(
                 }
 
                 NodeView(
-                    nodeView = i, selected = selected, isShifted = isShifted, viewModel, graphNodeKeysList, changedAlgo
+                    nodeView = i, selected = selected, isShifted = isShifted, viewModel, graphNodeKeysList, changedAlgo, state
                 )
 
             }

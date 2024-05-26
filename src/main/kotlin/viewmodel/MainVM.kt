@@ -11,7 +11,7 @@ import model.graph_model.GraphViewClass
 import model.graph_model.Graph
 
 class MainVM<D>(
-    passedGraph: Graph<D>?, scope: CoroutineScope
+    passedGraph: Graph<D>?, scope: CoroutineScope, isEmptyGraph: Boolean
 ) {
     val changedAlgo = mutableStateOf(false)
 
@@ -31,7 +31,7 @@ class MainVM<D>(
 
     var graph: Graph<D> = passedGraph ?: Graph()
 
-    val graphView = GraphViewClass(graph, scope = scope){
+    val graphView = GraphViewClass(graph, scope = scope, isEmpty = isEmptyGraph){
         graphIsReady.value = true
         changedAlgo.value = true
     }

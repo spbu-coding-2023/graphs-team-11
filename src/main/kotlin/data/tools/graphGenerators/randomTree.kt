@@ -1,14 +1,14 @@
 package data.tools.graphGenerators
 
 import model.graph_model.Graph
+import ui.components.GraphKeyType
 import ui.components.generateStringNodeNames
-import viewmodel.IntroWindowVM
 import kotlin.random.Random
 
-fun randomTree(n: Int, type: IntroWindowVM.GraphKeyType, maxWeight: Int): Graph<*> = when (type) {
-    IntroWindowVM.GraphKeyType.INT -> randomTreeInt(n, maxWeight)
-    IntroWindowVM.GraphKeyType.STRING -> randomTreeString(n, maxWeight)
-    IntroWindowVM.GraphKeyType.FLOAT -> randomTreeFloat(n, maxWeight)
+fun randomTree(n: Int, type: GraphKeyType, maxWeight: Int): Graph<*> = when (type) {
+    GraphKeyType.INT -> randomTreeInt(n, maxWeight)
+    GraphKeyType.STRING -> randomTreeString(n, maxWeight)
+    GraphKeyType.FLOAT -> randomTreeFloat(n, maxWeight)
 }
 
 

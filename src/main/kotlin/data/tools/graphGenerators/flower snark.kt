@@ -1,13 +1,13 @@
 package data.tools.graphGenerators
 
 import model.graph_model.Graph
+import ui.components.GraphKeyType
 import ui.components.generateStringNodeNames
-import viewmodel.IntroWindowVM
 
-fun flowerSnark(n: Int, type: IntroWindowVM.GraphKeyType): Graph<*> = when (type) {
-    IntroWindowVM.GraphKeyType.INT -> flowerSnarkInt(n)
-    IntroWindowVM.GraphKeyType.STRING -> flowerSnarkString(n)
-    IntroWindowVM.GraphKeyType.FLOAT -> flowerSnarkFloat(n)
+fun flowerSnark(n: Int, type: GraphKeyType): Graph<*> = when (type) {
+    GraphKeyType.INT -> flowerSnarkInt(n)
+    GraphKeyType.STRING -> flowerSnarkString(n)
+    GraphKeyType.FLOAT -> flowerSnarkFloat(n)
 }
 
 private fun flowerSnarkInt(n: Int): Graph<Int> {

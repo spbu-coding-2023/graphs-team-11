@@ -10,32 +10,30 @@ import data.tools.graphGenerators.starDirected
 import data.tools.graphGenerators.starUndirected
 import kotlinx.coroutines.CoroutineScope
 import model.graph_model.Graph
+import ui.components.GraphKeyType
 import ui.components.MyWindowState
 import ui.components.generateStringNodeNames
 
 class IntroWindowVM(
-    var isSettingMenuOpen: MutableState<Boolean>, private val scope: CoroutineScope
+    var isSettingMenuOpen: MutableState<Boolean>, private val scope: CoroutineScope, graphKeyType: GraphKeyType
 ) {
     var graphList: MutableState<List<Triple<Int, Graph<*>, String>>> = mutableStateOf(getAllGraphs())
     val isFileLoaderOpen = mutableStateOf(false)
     val fileLoaderException: MutableState<String?> = mutableStateOf(null)
-    val selectedGraphKeyType = mutableStateOf(GraphKeyType.INT)
     val expanded = mutableStateOf(false)
     val chosenGraph = mutableStateOf("Saved")
     val graphSize = mutableStateOf("")
     val chosenGenerator = mutableStateOf("Random Tree")
     val weightMax = mutableStateOf("1")
+    val selectedGraphKeyType = mutableStateOf(graphKeyType)
 
-    enum class GraphKeyType {
-        INT, STRING, FLOAT,
-    }
 
     fun onSettingsPressed() {
         isSettingMenuOpen.value = true
     }
 
     fun onUseGraphSqliteExposedPressed(state: MyWindowState, graph: Graph<*>) {
-        state.reloadWindow(graph, scope)
+        state.reloadWindow(graph, scope, graphKeyType = selectedGraphKeyType.value)
     }
 
     fun onDeleteGraphSqliteExposedPressed(id: Int) {

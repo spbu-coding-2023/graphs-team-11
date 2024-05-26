@@ -20,6 +20,7 @@ import data.Constants.APP_NAME
 import data.Constants.SETTINGS_SHORTCUT
 import kotlinx.coroutines.CoroutineScope
 import ui.components.GraphFilePicker
+import ui.components.GraphKeyType
 import ui.components.MyWindowState
 import ui.theme.BdsmAppTheme
 import ui.theme.Theme
@@ -30,7 +31,7 @@ import java.awt.Dimension
 fun IntroWindowView(
     state: MyWindowState, isSettingMenuOpen: MutableState<Boolean>, appTheme: MutableState<Theme>, scope: CoroutineScope
 ) {
-    val viewModel = IntroWindowVM(isSettingMenuOpen, scope)
+    val viewModel = IntroWindowVM(isSettingMenuOpen, scope, state.graphKeyType)
     val windowState = rememberWindowState(size = DpSize(800.dp, 760.dp))
 
     Window(onCloseRequest = state::close, title = state.title, state = windowState) {
@@ -105,7 +106,7 @@ fun IntroView(viewModel: IntroWindowVM, state: MyWindowState, appTheme: MutableS
                                 expanded = viewModel.expanded.value,
                                 onDismissRequest = { viewModel.expanded.value = false },
                             ) {
-                                IntroWindowVM.GraphKeyType.entries.forEach { graphKeyType ->
+                                GraphKeyType.entries.forEach { graphKeyType ->
                                     DropdownMenuItem(onClick = {
                                         viewModel.selectedGraphKeyType.value = graphKeyType
                                         viewModel.expanded.value = false
@@ -147,19 +148,19 @@ fun IntroView(viewModel: IntroWindowVM, state: MyWindowState, appTheme: MutableS
 
             when (viewModel.chosenGraph.value) {
                 "Manual" -> {
-                    CreateGraphButtonWithCharCheck(viewModel) {
+                    CreateGraphButtonWithCheck(viewModel) {
                         val graph = viewModel.createGraphWithoutEdges()
-                        state.reloadWindow(graph, scope)
+                        state.reloadWindow(graph, scope, graphKeyType = viewModel.selectedGraphKeyType.value)
                     }
                 }
 
                 "Generate" -> {
-                    CreateGraphButtonWithCharCheck(viewModel) {
+                    CreateGraphButtonWithCheck(viewModel) {
                         val maxWeight = viewModel.weightMax.value.toIntOrNull()?.coerceIn(1, 100) ?: 1
                         val graph = viewModel.generateGraph(
                             maxWeight
                         )
-                        state.reloadWindow(graph, scope)
+                        state.reloadWindow(graph, scope, graphKeyType = viewModel.selectedGraphKeyType.value)
                     }
                 }
 
@@ -167,7 +168,7 @@ fun IntroView(viewModel: IntroWindowVM, state: MyWindowState, appTheme: MutableS
                     Button(
                         onClick = {
                             val graph = viewModel.createEmptyGraph()
-                            state.reloadWindow(graph, scope)
+                            state.reloadWindow(graph, scope, true, viewModel.selectedGraphKeyType.value)
                         }, modifier = Modifier.padding(bottom = 20.dp), colors = ButtonDefaults.buttonColors(
                             backgroundColor = MaterialTheme.colors.surface,
                             disabledBackgroundColor = MaterialTheme.colors.onSurface.copy(alpha = 0.12f),
@@ -219,7 +220,7 @@ fun SavedGraphsList(
 }
 
 @Composable
-fun CreateGraphButtonWithCharCheck(
+fun CreateGraphButtonWithCheck(
     viewModel: IntroWindowVM, onClick: () -> Unit
 ) {
     Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
@@ -230,8 +231,7 @@ fun CreateGraphButtonWithCharCheck(
                 backgroundColor = MaterialTheme.colors.surface,
                 disabledBackgroundColor = MaterialTheme.colors.onSurface.copy(alpha = 0.12f),
             ),
-            enabled = if (viewModel.chosenGenerator.value == "Flower Snark") (viewModel.graphSize.value.isNotEmpty() && viewModel.graphSize.value.toIntOrNull() != null)
-            else (viewModel.graphSize.value.isNotEmpty() && viewModel.graphSize.value.toIntOrNull() != null)
+            enabled = viewModel.graphSize.value.isNotEmpty() && viewModel.graphSize.value.toIntOrNull() != null && viewModel.graphSize.value.toInt() > 0
 
         ) {
             Text("Create Graph")

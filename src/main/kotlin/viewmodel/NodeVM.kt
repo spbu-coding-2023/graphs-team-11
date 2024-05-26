@@ -4,6 +4,8 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.snapshots.SnapshotStateMap
 import model.graph_model.NodeViewClass
+import ui.components.GraphKeyType
+import ui.components.MyWindowState
 
 class NodeVM<D> {
     val showDuplicateError = mutableStateOf(false)
@@ -31,24 +33,49 @@ class NodeVM<D> {
         graphNodeKeysList: List<String>,
         showDuplicateError: MutableState<Boolean>,
         nodeView: NodeViewClass<D>,
-        changedAlgo: MutableState<Boolean>
+        changedAlgo: MutableState<Boolean>,
+        graphKeyType: GraphKeyType
     ) {
         if (text.contains('\n')) {
             if (newValue.value.isNotBlank()) {
                 try {
-                    nodeView.value = newValue.value as D
+                    nodeView.value = toKeyType(graphKeyType, newValue.value)
                     changedAlgo.value = true
                 } catch (classCastException: ClassCastException) {
-                    try {
-                        nodeView.value = newValue.value.toInt() as D
-                        changedAlgo.value = true
-                    } catch (_: ClassCastException) {
-                    }
+                    println(classCastException.message)
                 }
             }
         } else {
-            showDuplicateError.value = graphNodeKeysList.contains(text)
-            newValue.value = text
+            if (allowChange(text, graphKeyType) || text.isBlank()) {
+                showDuplicateError.value = graphNodeKeysList.contains(text)
+                newValue.value = text
+            }
         }
+    }
+
+    private fun toKeyType(graphKeyType: GraphKeyType, value: String): D {
+        return when (graphKeyType) {
+            GraphKeyType.FLOAT -> value.toFloat() as D
+            GraphKeyType.INT -> value.toInt() as D
+            GraphKeyType.STRING -> value as D
+        }
+    }
+
+    private fun allowChange(text: String, graphKeyType: GraphKeyType): Boolean {
+        return when (graphKeyType) {
+            GraphKeyType.FLOAT -> checkFloat(text)
+            GraphKeyType.INT -> text.toIntOrNull() != null
+            GraphKeyType.STRING -> true
+        }
+    }
+
+    private fun checkFloat(text: String): Boolean {
+        val dotCount = text.count { it == '.' }
+        if (dotCount > 1) return false
+        if (dotCount == 1) {
+            val dotLessText = text.replace(".", "")
+            return dotLessText.toIntOrNull() != null
+        }
+        return text.toIntOrNull() != null
     }
 }

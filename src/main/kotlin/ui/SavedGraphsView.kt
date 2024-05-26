@@ -57,7 +57,7 @@ fun SavedGraphsView(
                 graphList.value.forEach { (id, graph, name) ->
                     item {
                         SavedGraphItem(graph, name, onUsePressed = {
-                            viewModel.onGraphLoad(state, graph)
+                            viewModel.onGraphLoad(state, graph, state.graphKeyType)
                         }, onDeletePressed = { viewModel.onGraphDelete(id, graphList) })
                     }
                 }

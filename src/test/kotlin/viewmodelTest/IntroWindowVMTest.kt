@@ -3,12 +3,15 @@ package viewmodelTest
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import data.db.sqlite_exposed.connect
+import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.TestScope
 import org.junit.jupiter.api.BeforeEach
-import kotlinx.coroutines.test.*
 import model.graph_model.Graph
-import org.junit.jupiter.api.Assertions
 import viewmodel.IntroWindowVM
 import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
+import kotlin.test.assertTrue
 
 class IntroWindowVMTest {
 
@@ -30,7 +33,7 @@ class IntroWindowVMTest {
 
         viewModel.onSettingsPressed()
 
-        Assertions.assertTrue(isSettingMenuOpen.value)
+        assertTrue(isSettingMenuOpen.value)
     }
 
     @Test
@@ -40,8 +43,8 @@ class IntroWindowVMTest {
 
         viewModel.onDeleteGraphSqliteExposedPressed(1)
 
-        Assertions.assertEquals(1, viewModel.graphList.value.size)
-        Assertions.assertEquals(2, viewModel.graphList.value[0].first)
+        assertEquals(1, viewModel.graphList.value.size)
+        assertEquals(2, viewModel.graphList.value[0].first)
     }
 
     @Test
@@ -51,7 +54,7 @@ class IntroWindowVMTest {
 
         val graph = viewModel.generateGraph(10)
 
-        Assertions.assertNotNull(graph)
+        assertNotNull(graph)
     }
 
     @Test
@@ -61,7 +64,7 @@ class IntroWindowVMTest {
 
         val graph = viewModel.generateGraph(10)
 
-        Assertions.assertNotNull(graph)
+        assertNotNull(graph)
     }
 
     @Test
@@ -71,7 +74,7 @@ class IntroWindowVMTest {
 
         val graph = viewModel.generateGraph(10)
 
-        Assertions.assertNotNull(graph)
+        assertNotNull(graph)
     }
 
     @Test
@@ -81,7 +84,7 @@ class IntroWindowVMTest {
 
         val graph = viewModel.generateGraph(10)
 
-        Assertions.assertNotNull(graph)
+        assertNotNull(graph)
     }
 
     @Test
@@ -91,16 +94,16 @@ class IntroWindowVMTest {
 
         val graph = viewModel.generateGraph(10)
 
-        Assertions.assertNotNull(graph)
-        Assertions.assertTrue(graph.vertices.isEmpty())
+        assertNotNull(graph)
+        assertTrue(graph.vertices.isEmpty())
     }
 
     @Test
     fun `createEmptyGraph returns an empty graph`() {
         val graph = viewModel.createEmptyGraph()
 
-        Assertions.assertNotNull(graph)
-        Assertions.assertTrue(graph.vertices.isEmpty())
+        assertNotNull(graph)
+        assertTrue(graph.vertices.isEmpty())
     }
 
     @Test
@@ -109,7 +112,7 @@ class IntroWindowVMTest {
 
         val graph = viewModel.createGraphWithoutEdges()
 
-        Assertions.assertNotNull(graph)
-        Assertions.assertEquals(3, graph.vertices.size)
+        assertNotNull(graph)
+        assertEquals(3, graph.vertices.size)
     }
 }

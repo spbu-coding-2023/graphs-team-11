@@ -10,8 +10,8 @@ import kotlinx.coroutines.CoroutineScope
 import model.graph_model.GraphViewClass
 import model.graph_model.Graph
 
-class MainVM<D>(
-    passedGraph: Graph<D>?, scope: CoroutineScope, isEmptyGraph: Boolean
+class MainVM(
+    passedGraph: Graph?, scope: CoroutineScope, isEmptyGraph: Boolean
 ) {
     val changedAlgo = mutableStateOf(false)
 
@@ -25,11 +25,11 @@ class MainVM<D>(
     val isGraphNameAvailable = mutableStateOf(true)
 
     val graphName = mutableStateOf("")
-    val selected: SnapshotStateMap<D, Int> = mutableStateMapOf()
+    val selected: SnapshotStateMap<String, Int> = mutableStateMapOf()
 
-    var graphList: List<Triple<Int, Graph<*>, String>> = getAllGraphs()
+    var graphList: List<Triple<Int, Graph, String>> = getAllGraphs()
 
-    var graph: Graph<D> = passedGraph ?: Graph()
+    var graph: Graph = passedGraph ?: Graph()
 
     val graphView = GraphViewClass(graph, scope = scope, isEmpty = isEmptyGraph){
         graphIsReady.value = true

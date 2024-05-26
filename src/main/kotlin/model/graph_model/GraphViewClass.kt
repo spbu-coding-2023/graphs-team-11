@@ -24,29 +24,29 @@ import kotlin.math.sqrt
 
 
 @Stable
-data class NodeViewClass<D>(
-    var offset: Offset, var radius: Float, var color: Color, var value: D?, var shape: Shape, var alpha: Float = 1f
+data class NodeViewClass(
+    var offset: Offset, var radius: Float, var color: Color, var value: String?, var shape: Shape, var alpha: Float = 1f
 )
 
-data class VertView<D>(
-    var start: NodeViewClass<D>,
-    var end: NodeViewClass<D>,
+data class VertView(
+    var start: NodeViewClass,
+    var end: NodeViewClass,
     var color: Color,
     var alpha: Float = 1f,
     var weight: Float = 1f
 )
 
-class GraphViewClass<D>(
-    var graph: Graph<D>,
+class GraphViewClass(
+    var graph: Graph,
     var radius: Float = 30f,
     var nodeColor: Color = Color.Blue,
     var vertColor: Color = Color.Blue,
     var baseShape: Shape = CircleShape,
     val isEmpty: Boolean,
-    nodesViews: MutableMap<D, NodeViewClass<D>> = mutableMapOf(),
-    vertViews: MutableMap<D, MutableMap<D, VertView<D>>> = mutableMapOf(),
-    newNodes: MutableList<NodeViewClass<D>> = mutableListOf(),
-    private val scope: CoroutineScope,
+    nodesViews: MutableMap<String, NodeViewClass> = mutableMapOf(),
+    vertViews: MutableMap<String, MutableMap<String, VertView>> = mutableMapOf(),
+    newNodes: MutableList<NodeViewClass> = mutableListOf(),
+    scope: CoroutineScope,
     afterLayout: (() -> Unit)?
 ) {
 
@@ -57,19 +57,19 @@ class GraphViewClass<D>(
     var newNodes by mutableStateOf(newNodes)
         private set
 
-    var returnStack by mutableStateOf(Stack<Update<D>>())
+    var returnStack by mutableStateOf(Stack<Update>())
 
     init {
         scope.launch {
             // if graph is empty, add mock nodes and edge to avoid algorithm returning wrong result.
             if (graph.vertices.isEmpty() && !isEmpty) {
                 graph.apply {
-                    addNode(1 as D)
-                    addNode(2 as D)
-                    addVertice(1 as D, 2 as D)
+                    addNode("1" )
+                    addNode("2" )
+                    addVertice("1", "2")
                 }
             }
-            val positions: MutableMap<D, Offset> = layout()
+            val positions: MutableMap<String, Offset> = layout()
 
             for (i in positions) {
                 nodesViews[i.key] = NodeViewClass(
@@ -99,7 +99,7 @@ class GraphViewClass<D>(
         }
     }
 
-    fun addNode(value: D?, offset: Offset, color: Color = nodeColor) {
+    fun addNode(value: String?, offset: Offset, color: Color = nodeColor) {
         if (value != null) {
             this.graph.addNode(value)
             this.nodesViews[value] = NodeViewClass(
@@ -115,7 +115,7 @@ class GraphViewClass<D>(
 
     }
 
-    fun addVert(oneValue: D, twoValue: D) {
+    fun addVert(oneValue: String, twoValue: String) {
         if (oneValue in this.nodesViews && twoValue in this.nodesViews) {
             this.graph.addVertice(oneValue, twoValue)
             if (oneValue in this.vertViews) {
@@ -131,9 +131,9 @@ class GraphViewClass<D>(
         }
     }
 
-    fun applyUpdate(update: Update<D>, isNotReUpdate: Boolean = true) {
-        val nodeViewReUpdate: MutableMap<D, NodeViewUpdate<D>> = mutableMapOf()
-        val vertViewReUpdate: MutableMap<D, MutableMap<D, VertViewUpdate<D>>> = mutableMapOf()
+    fun applyUpdate(update: Update, isNotReUpdate: Boolean = true) {
+        val nodeViewReUpdate: MutableMap<String, NodeViewUpdate> = mutableMapOf()
+        val vertViewReUpdate: MutableMap<String, MutableMap<String, VertViewUpdate>> = mutableMapOf()
         for (v in update.nodeViewUpdate) {
             if (isNotReUpdate) nodeViewReUpdate[v.key] = NodeViewUpdate(
                 offset = null,
@@ -166,8 +166,8 @@ class GraphViewClass<D>(
     }
 
     // just for fast not implemented like algoritm
-    private suspend fun layout(maxIter: Int = 1000): MutableMap<D, Offset> {
-        val positions: MutableMap<D, Offset> = mutableMapOf()
+    private suspend fun layout(maxIter: Int = 1000): MutableMap<String, Offset> {
+        val positions: MutableMap<String, Offset> = mutableMapOf()
         return withContext(Dispatchers.Default) {
             val pc = Lookup.getDefault().lookup(ProjectController::class.java)
             pc.newProject()
@@ -178,9 +178,9 @@ class GraphViewClass<D>(
             ).getGraphModel(workspace)
             val dirGraph = graphModel.directedGraph
 
-            val nodes: MutableMap<D, Node> = mutableMapOf()
+            val nodes: MutableMap<String, Node> = mutableMapOf()
             for ((v, _) in graph.vertices) {
-                val node = graphModel.factory().newNode(v.toString())
+                val node = graphModel.factory().newNode(v)
                 nodes[v] = node
                 dirGraph.addNode(node)
             }

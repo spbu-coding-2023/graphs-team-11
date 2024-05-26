@@ -29,22 +29,20 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import model.graph_model.NodeViewClass
-import ui.components.MyWindowState
 import viewmodel.GraphVM
 import viewmodel.NodeVM
 import kotlin.math.roundToInt
 
 @Composable
-fun <D> NodeView(
-    nodeView: NodeViewClass<D>,
-    selected: SnapshotStateMap<D, Int>,
+fun NodeView(
+    nodeView: NodeViewClass,
+    selected: SnapshotStateMap<String, Int>,
     isShifted: MutableState<Boolean>,
     graphVM: GraphVM,
     graphNodeKeysList: List<String>,
     changedAlgo: MutableState<Boolean>,
-    state: MyWindowState
 ) {
-    val viewModel = remember { NodeVM<D>() }
+    val viewModel = remember { NodeVM() }
     var offset by remember { mutableStateOf(graphVM.toAbsoluteOffset(nodeView.offset)) }
 
     Column(modifier = Modifier.offset {
@@ -95,7 +93,7 @@ fun <D> NodeView(
                         .widthIn(max = viewModel.textFieldLength.dp),
                     onValueChange = { text ->
                         viewModel.onTextFieldTextChanged(
-                            text, newValue, graphNodeKeysList, viewModel.showDuplicateError, nodeView, changedAlgo, state.graphKeyType
+                            text, newValue, graphNodeKeysList, viewModel.showDuplicateError, nodeView, changedAlgo
                         )
                     },
                     colors = TextFieldDefaults.textFieldColors(

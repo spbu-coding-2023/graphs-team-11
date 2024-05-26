@@ -6,18 +6,18 @@ import model.graph_model.Graph
 import model.graph_model.graph_model_actions.Update
 import model.graph_model.graph_model_actions.VertViewUpdate
 
-class SomeThingLikeDFS<D> : Algoritm<D>(null) {
-    override fun <D> algoRun(graph: Graph<D>, selected: SnapshotStateMap<D, Int>): Update<D> {
-        val vertUpdate: MutableMap<D, MutableMap<D, VertViewUpdate<D>>> = mutableMapOf()
-        val visited: MutableSet<D> = mutableSetOf()
+class SomeThingLikeDFS : Algoritm(null) {
+    override fun algoRun(graph: Graph, selected: SnapshotStateMap<String, Int>): Update {
+        val vertUpdate: MutableMap<String, MutableMap<String, VertViewUpdate>> = mutableMapOf()
+        val visited: MutableSet<String> = mutableSetOf()
         for ((i, verts) in graph.vertices) {
             vertUpdate[i] = mutableMapOf()
             for ((j, _) in verts) {
-                vertUpdate[i]!!.set(j, VertViewUpdate(alpha = 0.5f, color = Color.White))
+                vertUpdate[i]!![j] = VertViewUpdate(alpha = 0.5f, color = Color.White)
             }
         }
 
-        fun DFS(parent: D) {
+        fun DFS(parent: String) {
             for ((node, _) in graph.vertices.getOrDefault(parent, mutableSetOf())) {
                 if (node !in visited) {
                     vertUpdate[parent]!!.set(node, VertViewUpdate(color = Color.Red))
@@ -31,6 +31,6 @@ class SomeThingLikeDFS<D> : Algoritm<D>(null) {
             if (i !in visited) DFS(i)
         }
 
-        return Update<D>(vertViewUpdate = vertUpdate)
+        return Update(vertViewUpdate = vertUpdate)
     }
 }

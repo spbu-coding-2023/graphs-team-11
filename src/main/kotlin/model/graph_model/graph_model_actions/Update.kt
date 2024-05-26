@@ -1,12 +1,12 @@
 package model.graph_model.graph_model_actions
 
-class Update<D>(
-    val nodeViewUpdate: MutableMap<D, NodeViewUpdate<D>> = mutableMapOf(),
-    val vertViewUpdate: MutableMap<D, MutableMap<D, VertViewUpdate<D>>> = mutableMapOf()
+class Update(
+    val nodeViewUpdate: MutableMap<String, NodeViewUpdate> = mutableMapOf(),
+    val vertViewUpdate: MutableMap<String, MutableMap<String, VertViewUpdate>> = mutableMapOf()
 ) {
-    operator fun plus(other: Update<D>): Update<D> {
+    operator fun plus(other: Update): Update {
 
-        val sumUpdate = Update<D>()
+        val sumUpdate = Update()
 
         for ((node, _) in this.nodeViewUpdate) {
             if (node in other.nodeViewUpdate) {

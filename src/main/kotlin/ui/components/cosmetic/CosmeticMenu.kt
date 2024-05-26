@@ -35,7 +35,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -46,8 +45,8 @@ import viewmodel.CosmeticVM
 
 @Composable
 @Preview
-fun <D> CommeticsMenu(
-    graphViewClass: GraphViewClass<D>, changedAlgo: MutableState<Boolean>, selected: SnapshotStateMap<D, Int>
+fun CommeticsMenu(
+    graphViewClass: GraphViewClass, changedAlgo: MutableState<Boolean>
 ) {
     val viewModel = remember { CosmeticVM() }
     val isMenuVisible = viewModel.isMenuVisible.value

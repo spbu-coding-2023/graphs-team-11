@@ -30,18 +30,16 @@ import model.graph_model.GraphViewClass
 import model.graph_model.NodeViewClass
 import model.graph_model.UndirectedGraph
 import model.graph_model.abs
-import ui.components.MyWindowState
 import viewmodel.GraphVM
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun <D> GraphView(
-    gv: GraphViewClass<D>,
+fun GraphView(
+    gv: GraphViewClass,
     changedAlgo: MutableState<Boolean>,
-    selected: SnapshotStateMap<D, Int>,
+    selected: SnapshotStateMap<String, Int>,
     padding: Int = 100,
     showNodes: Boolean = true,
-    state: MyWindowState
 ) {
     val viewModel = remember { GraphVM() }
     viewModel.padding = padding
@@ -80,7 +78,7 @@ fun <D> GraphView(
             changedAlgo.value = true
 
         }.onPointerEvent(PointerEventType.Press) {
-            val selectedList = mutableMapOf<Int, D>()
+            val selectedList = mutableMapOf<Int, String>()
             for ((i, isSel) in selected) {
                 selectedList[isSel] = i
             }
@@ -155,7 +153,7 @@ fun <D> GraphView(
             }
         }
         if (showNodes) {
-            val graphNodeKeysList = gv.nodesViews.keys.map { it.toString() }
+            val graphNodeKeysList = gv.nodesViews.keys.map { it }
             for (i in gv.nodesViews) {
                 NodeView(
                     nodeView = i.value,
@@ -163,11 +161,10 @@ fun <D> GraphView(
                     isShifted = isShifted,
                     viewModel,
                     graphNodeKeysList,
-                    changedAlgo,
-                    state
+                    changedAlgo
                 )
             }
-            val toRemove = mutableListOf<NodeViewClass<D>>()
+            val toRemove = mutableListOf<NodeViewClass>()
             for (i in gv.newNodes) {
                 if (i.value != null) {
                     val value = i.value!!
@@ -179,7 +176,7 @@ fun <D> GraphView(
                 }
 
                 NodeView(
-                    nodeView = i, selected = selected, isShifted = isShifted, viewModel, graphNodeKeysList, changedAlgo, state
+                    nodeView = i, selected = selected, isShifted = isShifted, viewModel, graphNodeKeysList, changedAlgo
                 )
 
             }

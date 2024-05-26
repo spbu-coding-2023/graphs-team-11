@@ -66,7 +66,7 @@ fun MainWindow(
             }
 
         }
-        App(viewModel, viewModel.changedAlgo, appTheme, state)
+        App(viewModel, viewModel.changedAlgo, appTheme)
         if (isSettingMenuOpen.value) {
             SettingsView(
                 onClose = { isSettingMenuOpen.value = false },
@@ -89,18 +89,18 @@ fun MainWindow(
 }
 
 @Composable
-fun <D> App(
-    viewModel: MainVM<D>, changedAlgo: MutableState<Boolean>, appTheme: MutableState<Theme>, state: MyWindowState
+fun App(
+    viewModel: MainVM, changedAlgo: MutableState<Boolean>, appTheme: MutableState<Theme>
 ) {
     BdsmAppTheme(appTheme = appTheme.value) {
         if (viewModel.graphIsReady.value) {
             Row {
                 Column(modifier = Modifier.background(MaterialTheme.colors.background)) {
                     LeftMenu(viewModel.graphView, changedAlgo, viewModel.selected)
-                    CommeticsMenu(viewModel.graphView, changedAlgo, viewModel.selected)
+                    CommeticsMenu(viewModel.graphView, changedAlgo)
                 }
                 Card {
-                    GraphView(viewModel.graphView, changedAlgo, viewModel.selected, state = state)
+                    GraphView(viewModel.graphView, changedAlgo, viewModel.selected)
                 }
             }
         } else {

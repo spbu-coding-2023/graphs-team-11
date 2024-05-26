@@ -27,7 +27,6 @@ class LeidenToRun : Algoritm(null) {
             colors[community] = Color(Random.nextInt(256), Random.nextInt(256), Random.nextInt(256))
         }
 
-
         val updateNode: MutableMap<String, NodeViewUpdate> = mutableMapOf()
         val updateVert: MutableMap<String, MutableMap<String, VertViewUpdate>> = mutableMapOf()
 
@@ -48,7 +47,7 @@ class LeidenToRun : Algoritm(null) {
 }
 
 class LeidenAlgorithm(private val graph: Graph) {
-    private var communities = mutableMapOf<String, Int>()
+    var communities = mutableMapOf<String, Int>()
     private var reversedGraph: Graph
 
     init {
@@ -71,7 +70,7 @@ class LeidenAlgorithm(private val graph: Graph) {
         return communities
     }
 
-    private fun localMovingAlgorithm(): Boolean {
+    fun localMovingAlgorithm(): Boolean {
         var improved = false
         graph.vertices.keys.shuffled().forEach { node ->
             val bestCommunity = findBestCommunity(node)
@@ -83,7 +82,7 @@ class LeidenAlgorithm(private val graph: Graph) {
         return improved
     }
 
-    private fun findBestCommunity(node: String): Int {
+    fun findBestCommunity(node: String): Int {
         val neighborCommunities = mutableSetOf<Int>()
 
         // Add communities of outgoing neighbors

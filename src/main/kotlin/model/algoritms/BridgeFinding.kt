@@ -21,7 +21,7 @@ class BridgeFinding : Algoritm(null) {
         return Update(nodeViewUpdate = updateNode, vertViewUpdate = updateVert)
     }
 
-    private fun findBridges(graph: Graph): List<Pair<String, String>> {
+    fun findBridges(graph: Graph): List<Pair<String, String>> {
         val visited = mutableMapOf<String, Boolean>().withDefault { false }
         val discovery = mutableMapOf<String, Int>().withDefault { -1 }
         val low = mutableMapOf<String, Int>().withDefault { -1 }

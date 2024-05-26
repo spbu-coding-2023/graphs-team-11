@@ -16,8 +16,8 @@ class CosmeticVM {
         isMenuVisible.value = !isMenuVisible.value
     }
 
-    fun <D> createUpdate(grahpView: GraphViewClass<D>) {
-        var update: Update<D> = Update()
+    fun createUpdate(grahpView: GraphViewClass) {
+        var update = Update()
         for (cosVM in cosmeticWidgetsViewModels) {
             update += cosVM.getUpdate(graph = grahpView.graph)
         }

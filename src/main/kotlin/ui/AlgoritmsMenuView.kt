@@ -49,8 +49,8 @@ import viewmodel.AlgorithmMenuVM
 
 @Composable
 @Preview
-fun <D> LeftMenu(
-    graphViewClass: GraphViewClass<D>, changedAlgo: MutableState<Boolean>, selected: SnapshotStateMap<D, Int>
+fun LeftMenu(
+    graphViewClass: GraphViewClass, changedAlgo: MutableState<Boolean>, selected: SnapshotStateMap<String, Int>
 ) {
     val viewModel = remember { AlgorithmMenuVM() }
     val isMenuVisible = viewModel.isMenuVisible.value
@@ -97,14 +97,14 @@ fun <D> LeftMenu(
 
 @Composable
 @Stable
-fun <D> AlgoritmList(
-    graphViewClass: GraphViewClass<D>,
+fun AlgoritmList(
+    graphViewClass: GraphViewClass,
     changedAlgo: MutableState<Boolean>,
     viewModel: AlgorithmMenuVM,
-    selected: SnapshotStateMap<D, Int>
+    selected: SnapshotStateMap<String, Int>
 ) {
     val algoList = listOf(
-        AlgorithmData<D>("Detect Communities", LeidenToRun(), AlgoritmType.BOTH),
+        AlgorithmData("Detect Communities", LeidenToRun(), AlgoritmType.BOTH),
         AlgorithmData("Sample Algorithm", SampleAlgo(), AlgoritmType.BOTH),
         AlgorithmData("Something like DFS", SomeThingLikeDFS(), AlgoritmType.BOTH),
         AlgorithmData("Kosaraju", ConnectivityСomponent(), AlgoritmType.DIRECTED),

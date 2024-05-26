@@ -37,10 +37,7 @@ import java.awt.Dimension
 
 @Composable
 fun SavedGraphsView(
-    onClose: () -> Unit,
-    appTheme: MutableState<Theme>,
-    graphs: List<Triple<Int, Graph<*>, String>>,
-    state: MyWindowState
+    onClose: () -> Unit, appTheme: MutableState<Theme>, graphs: List<Triple<Int, Graph, String>>, state: MyWindowState
 ) {
     val viewModel = SavedGraphsVM()
     val graphList = mutableStateOf(graphs)
@@ -67,7 +64,7 @@ fun SavedGraphsView(
 }
 
 @Composable
-fun SavedGraphItem(graph: Graph<*>, name: String, onUsePressed: () -> Unit, onDeletePressed: () -> Unit) {
+fun SavedGraphItem(graph: Graph, name: String, onUsePressed: () -> Unit, onDeletePressed: () -> Unit) {
     Row(
         modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp, vertical = 5.dp).clip(RoundedCornerShape(10.dp))
             .border(1.dp, Color.Gray, RoundedCornerShape(10.dp)),

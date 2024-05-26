@@ -19,11 +19,11 @@ class AlgorithmMenuVM {
         isMenuVisible.value = !isMenuVisible.value
     }
 
-    fun <D> runAlgorithm(
-        algorithm: Algoritm<D>,
-        graphViewClass: GraphViewClass<D>,
+    fun runAlgorithm(
+        algorithm: Algoritm,
+        graphViewClass: GraphViewClass,
         changedAlgo: MutableState<Boolean>,
-        selected: SnapshotStateMap<D, Int>
+        selected: SnapshotStateMap<String, Int>
     ) {
         val update = algorithm.algoRun(graphViewClass.graph, selected)
         graphViewClass.applyUpdate(update)

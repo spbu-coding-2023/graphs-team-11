@@ -9,19 +9,19 @@ import model.graph_model.graph_model_actions.VertViewUpdate
 
 import java.util.PriorityQueue
 
-data class NodeDistance<D>(val node: D, val distance: Float) : Comparable<NodeDistance<D>> {
-    override fun compareTo(other: NodeDistance<D>): Int {
+data class NodeDistance(val node: String, val distance: Float) : Comparable<NodeDistance> {
+    override fun compareTo(other: NodeDistance): Int {
         return this.distance.compareTo(other.distance)
     }
 }
 
-class ShortestPathDetection<D> : Algoritm<D>(2) {
-    override fun <D> algoRun(graph: Graph<D>, selected: SnapshotStateMap<D, Int>): Update<D> {
+class ShortestPathDetection : Algoritm(2) {
+    override fun algoRun(graph: Graph, selected: SnapshotStateMap<String, Int>): Update {
         val start = selected.keys.first()
         val end = selected.keys.last()
         val (pathNodes, pathEdges) = dijkstra(graph, start, end)
-        val updateNode: MutableMap<D, NodeViewUpdate<D>> = mutableMapOf()
-        val updateVert: MutableMap<D, MutableMap<D, VertViewUpdate<D>>> = mutableMapOf()
+        val updateNode: MutableMap<String, NodeViewUpdate> = mutableMapOf()
+        val updateVert: MutableMap<String, MutableMap<String, VertViewUpdate>> = mutableMapOf()
 
         for (node in pathNodes) {
             updateNode[node] = NodeViewUpdate(color = Color.Green)
@@ -37,10 +37,10 @@ class ShortestPathDetection<D> : Algoritm<D>(2) {
         return Update(nodeViewUpdate = updateNode, vertViewUpdate = updateVert)
     }
 
-    private fun <D> dijkstra(graph: Graph<D>, start: D, end: D): Pair<List<D>, List<Pair<D, D>>> {
-        val distances = mutableMapOf<D, Float>().withDefault { Float.MAX_VALUE }
-        val previousNodes = mutableMapOf<D, D?>()
-        val priorityQueue = PriorityQueue<NodeDistance<D>>()
+    private fun dijkstra(graph: Graph, start: String, end: String): Pair<List<String>, List<Pair<String, String>>> {
+        val distances = mutableMapOf<String, Float>().withDefault { Float.MAX_VALUE }
+        val previousNodes = mutableMapOf<String, String?>()
+        val priorityQueue = PriorityQueue<NodeDistance>()
 
         distances[start] = 0f
         priorityQueue.add(NodeDistance(start, 0f))
@@ -65,10 +65,12 @@ class ShortestPathDetection<D> : Algoritm<D>(2) {
         return Pair(pathNodes, pathEdges)
     }
 
-    private fun <D> reconstructPath(previousNodes: Map<D, D?>, start: D, end: D): Pair<List<D>, List<Pair<D, D>>> {
-        val pathNodes = mutableListOf<D>()
-        val pathEdges = mutableListOf<Pair<D, D>>()
-        var currentNode: D? = end
+    private fun reconstructPath(
+        previousNodes: Map<String, String?>, start: String, end: String
+    ): Pair<List<String>, List<Pair<String, String>>> {
+        val pathNodes = mutableListOf<String>()
+        val pathEdges = mutableListOf<Pair<String, String>>()
+        var currentNode: String? = end
 
         while (currentNode != null) {
             pathNodes.add(currentNode)

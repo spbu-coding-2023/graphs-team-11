@@ -8,12 +8,12 @@ import model.graph_model.graph_model_actions.Update
 import model.graph_model.graph_model_actions.VertViewUpdate
 import kotlin.random.Random
 
-class LeidenToRun<D> : Algoritm<D>(null) {
-    override fun <D> algoRun(graph: Graph<D>, selected: SnapshotStateMap<D, Int>): Update<D> {
+class LeidenToRun : Algoritm(null) {
+    override fun algoRun(graph: Graph, selected: SnapshotStateMap<String, Int>): Update {
         val leidenAlgorithm = LeidenAlgorithm(graph)
         val communities = leidenAlgorithm.detectCommunities()
 
-        val communityMap = mutableMapOf<Int, MutableList<D>>()
+        val communityMap = mutableMapOf<Int, MutableList<String>>()
         communities.forEach { (node, community) ->
             if (communityMap.containsKey(community)) {
                 communityMap[community]!!.add(node)
@@ -28,8 +28,8 @@ class LeidenToRun<D> : Algoritm<D>(null) {
         }
 
 
-        val updateNode: MutableMap<D, NodeViewUpdate<D>> = mutableMapOf()
-        val updateVert: MutableMap<D, MutableMap<D, VertViewUpdate<D>>> = mutableMapOf()
+        val updateNode: MutableMap<String, NodeViewUpdate> = mutableMapOf()
+        val updateVert: MutableMap<String, MutableMap<String, VertViewUpdate>> = mutableMapOf()
 
         for ((node, community) in communities) {
             updateNode[node] = NodeViewUpdate(color = colors[community])
@@ -47,9 +47,9 @@ class LeidenToRun<D> : Algoritm<D>(null) {
     }
 }
 
-class LeidenAlgorithm<D>(private val graph: Graph<D>) {
-    private var communities = mutableMapOf<D, Int>()
-    private var reversedGraph: Graph<D>
+class LeidenAlgorithm(private val graph: Graph) {
+    private var communities = mutableMapOf<String, Int>()
+    private var reversedGraph: Graph
 
     init {
         initializeCommunities()
@@ -62,7 +62,7 @@ class LeidenAlgorithm<D>(private val graph: Graph<D>) {
         }
     }
 
-    fun detectCommunities(): Map<D, Int> {
+    fun detectCommunities(): Map<String, Int> {
         var improvement = true
         while (improvement) {
             improvement = localMovingAlgorithm()
@@ -83,7 +83,7 @@ class LeidenAlgorithm<D>(private val graph: Graph<D>) {
         return improved
     }
 
-    private fun findBestCommunity(node: D): Int {
+    private fun findBestCommunity(node: String): Int {
         val neighborCommunities = mutableSetOf<Int>()
 
         // Add communities of outgoing neighbors

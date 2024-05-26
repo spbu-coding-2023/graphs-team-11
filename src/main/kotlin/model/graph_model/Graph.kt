@@ -3,20 +3,20 @@ package model.graph_model
 import androidx.compose.runtime.Stable
 
 @Stable
-open class Graph<D> {
-    var vertices: MutableMap<D, MutableSet<Pair<D, Float>>> = mutableMapOf()
+open class Graph{
+    var vertices: MutableMap<String, MutableSet<Pair<String, Float>>> = mutableMapOf()
     var size: Int = 0
 
-    fun addNode(data: D) {
+    fun addNode(data: String) {
         this.vertices[data] = mutableSetOf()
         size++
     }
 
-    open fun addVertice(data1: D, data2: D, weight: Float = 1f) {
+    open fun addVertice(data1: String, data2: String, weight: Float = 1f) {
         this.vertices[data1]?.add(Pair(data2, weight))
     }
 
-    fun deleteVertice(data1: D, data2: D) {
+    fun deleteVertice(data1: String, data2: String) {
         for (i in this.vertices[data1]!!) {
             if (i.first == data2) {
                 this.vertices[data1]!!.remove(i)
@@ -25,7 +25,7 @@ open class Graph<D> {
         }
     }
 
-    fun deleteNode(data1: D) {
+    fun deleteNode(data1: String) {
         this.vertices.remove(data1)
         for (i in vertices) {
             for (j in i.value) {
@@ -36,8 +36,8 @@ open class Graph<D> {
         }
     }
 
-    fun reverse(): Graph<D> {
-        val reversedGraph = Graph<D>()
+    fun reverse(): Graph {
+        val reversedGraph = Graph()
 
         // Add all nodes to the reversed graph
         for ((node, _) in vertices) {

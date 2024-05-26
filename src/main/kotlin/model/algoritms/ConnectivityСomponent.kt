@@ -8,14 +8,14 @@ import model.graph_model.graph_model_actions.Update
 import model.graph_model.graph_model_actions.VertViewUpdate
 import kotlin.random.Random
 
-class ConnectivityСomponent<D>: Algoritm<D>(null) {
-    override fun <D> algoRun(graph: Graph<D>, selected: SnapshotStateMap<D, Int>): Update<D> {
+class ConnectivityСomponent : Algoritm(null) {
+    override fun algoRun(graph: Graph, selected: SnapshotStateMap<String, Int>): Update {
         val reversed = graph.reverse()
 
-        var visited: MutableSet<D> = mutableSetOf()
-        val exitTime = mutableListOf<D>()
+        var visited: MutableSet<String> = mutableSetOf()
+        val exitTime = mutableListOf<String>()
 
-        fun DFSFirst(parent: D, grahp: Graph<D>) {
+        fun DFSFirst(parent: String, grahp: Graph) {
             visited.add(parent)
             for ((node, _) in grahp.vertices.getOrDefault(parent, mutableSetOf())) {
                 if (node !in visited) {
@@ -33,7 +33,7 @@ class ConnectivityСomponent<D>: Algoritm<D>(null) {
         }
 
         visited = mutableSetOf()
-        fun DFSSecond(parent: D, grahp: Graph<D>, stack: MutableSet<D>) {
+        fun DFSSecond(parent: String, grahp: Graph, stack: MutableSet<String>) {
             if (parent !in stack && parent !in visited) {
                 visited.add(parent)
                 stack.add(parent)
@@ -43,11 +43,11 @@ class ConnectivityСomponent<D>: Algoritm<D>(null) {
             }
         }
 
-        val components: MutableSet<MutableSet<D>> = mutableSetOf()
+        val components: MutableSet<MutableSet<String>> = mutableSetOf()
 
         for (i in exitTime.reversed()) {
             if (i !in visited) {
-                val component = mutableSetOf<D>()
+                val component = mutableSetOf<String>()
                 DFSSecond(i, graph, component)
                 components.add(component)
             }
@@ -55,9 +55,9 @@ class ConnectivityСomponent<D>: Algoritm<D>(null) {
         return getViewByComponents(components, graph)
     }
 
-    fun <D> getViewByComponents(components: MutableSet<MutableSet<D>> = mutableSetOf(), graph: Graph<D>): Update<D> {
-        val updateNode: MutableMap<D, NodeViewUpdate<D>> = mutableMapOf()
-        val updateVert: MutableMap<D, MutableMap<D, VertViewUpdate<D>>> = mutableMapOf()
+    fun getViewByComponents(components: MutableSet<MutableSet<String>> = mutableSetOf(), graph: Graph): Update {
+        val updateNode: MutableMap<String, NodeViewUpdate> = mutableMapOf()
+        val updateVert: MutableMap<String, MutableMap<String, VertViewUpdate>> = mutableMapOf()
 
         for (component in components) {
             val compColor = Color(Random.nextFloat(), Random.nextFloat(), Random.nextFloat())

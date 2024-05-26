@@ -6,9 +6,9 @@ import model.graph_model.graph_model_actions.NodeViewUpdate
 import model.graph_model.graph_model_actions.Update
 import model.graph_model.graph_model_actions.VertViewUpdate
 
-class Kruskal<D>: Algoritm<D>(null) {
-    override fun <D> algoRun(graph: Graph<D>, selected: SnapshotStateMap<D, Int>): Update<D> {
-        val vertes: MutableList<Pair<Float, Pair<D, D>>> = mutableListOf()
+class Kruskal : Algoritm(null) {
+    override fun algoRun(graph: Graph, selected: SnapshotStateMap<String, Int>): Update {
+        val vertes: MutableList<Pair<Float, Pair<String, String>>> = mutableListOf()
 
         for ((node1, neighbourhood) in graph.vertices) {
             for ((node2, weight) in neighbourhood) {
@@ -18,10 +18,10 @@ class Kruskal<D>: Algoritm<D>(null) {
 
         if (vertes.size <= 0) return Update()
 
-        val treeVerts: MutableList<Pair<Float, Pair<D, D>>> = mutableListOf()
-        val sortedVerts = vertes.sortedWith(compareBy{ it.first })
+        val treeVerts: MutableList<Pair<Float, Pair<String, String>>> = mutableListOf()
+        val sortedVerts = vertes.sortedWith(compareBy { it.first })
 
-        val visited: MutableSet<D> = mutableSetOf()
+        val visited: MutableSet<String> = mutableSetOf()
 
         treeVerts.add(sortedVerts[0])
         visited.add(sortedVerts[0].second.first)
@@ -39,9 +39,9 @@ class Kruskal<D>: Algoritm<D>(null) {
         return getViewByTreeVert(treeVerts, graph)
     }
 
-    fun <D> getViewByTreeVert(treeVerts: MutableList<Pair<Float, Pair<D, D>>>, graph: Graph<D>): Update<D> {
-        val updateNode: MutableMap<D, NodeViewUpdate<D>> = mutableMapOf()
-        val updateVert: MutableMap<D, MutableMap<D, VertViewUpdate<D>>> = mutableMapOf()
+    fun getViewByTreeVert(treeVerts: MutableList<Pair<Float, Pair<String, String>>>, graph: Graph): Update {
+        val updateNode: MutableMap<String, NodeViewUpdate> = mutableMapOf()
+        val updateVert: MutableMap<String, MutableMap<String, VertViewUpdate>> = mutableMapOf()
 
         for ((i, neighbourhood) in graph.vertices) {
             updateVert[i] = mutableMapOf()

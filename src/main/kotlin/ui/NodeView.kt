@@ -34,15 +34,15 @@ import viewmodel.NodeVM
 import kotlin.math.roundToInt
 
 @Composable
-fun <D> NodeView(
-    nodeView: NodeViewClass<D>,
-    selected: SnapshotStateMap<D, Int>,
+fun NodeView(
+    nodeView: NodeViewClass,
+    selected: SnapshotStateMap<String, Int>,
     isShifted: MutableState<Boolean>,
     graphVM: GraphVM,
     graphNodeKeysList: List<String>,
-    changedAlgo: MutableState<Boolean>
+    changedAlgo: MutableState<Boolean>,
 ) {
-    val viewModel = remember { NodeVM<D>() }
+    val viewModel = remember { NodeVM() }
     var offset by remember { mutableStateOf(graphVM.toAbsoluteOffset(nodeView.offset)) }
 
     Column(modifier = Modifier.offset {

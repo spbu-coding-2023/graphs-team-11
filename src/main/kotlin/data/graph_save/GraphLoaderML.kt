@@ -5,8 +5,8 @@ import model.graph_model.UndirectedGraph
 import java.io.File
 import kotlin.IndexOutOfBoundsException
 
-fun loadGraphML(path: String): Graph<String> {
-    var graph: Graph<String> = Graph()
+fun loadGraphML(path: String): Graph {
+    var graph = Graph()
 
     val idToKey: MutableMap<String, String> = mutableMapOf()
     var curData: MutableMap<String, String> = mutableMapOf()

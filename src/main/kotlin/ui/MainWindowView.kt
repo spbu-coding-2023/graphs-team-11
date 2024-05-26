@@ -89,15 +89,15 @@ fun MainWindow(
 }
 
 @Composable
-fun <D> App(
-    viewModel: MainVM<D>, changedAlgo: MutableState<Boolean>, appTheme: MutableState<Theme>
+fun App(
+    viewModel: MainVM, changedAlgo: MutableState<Boolean>, appTheme: MutableState<Theme>
 ) {
     BdsmAppTheme(appTheme = appTheme.value) {
         if (viewModel.graphIsReady.value) {
             Row {
                 Column(modifier = Modifier.background(MaterialTheme.colors.background)) {
                     LeftMenu(viewModel.graphView, changedAlgo, viewModel.selected)
-                    CommeticsMenu(viewModel.graphView, changedAlgo, viewModel.selected)
+                    CommeticsMenu(viewModel.graphView, changedAlgo)
                 }
                 Card {
                     GraphView(viewModel.graphView, changedAlgo, viewModel.selected)

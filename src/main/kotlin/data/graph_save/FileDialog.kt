@@ -16,7 +16,7 @@ fun showSaveFileDialog(): File? {
     }
 }
 
-fun <D> onSaveFilePressed(graph: Graph<D>) {
+fun onSaveFilePressed(graph: Graph) {
     val file = showSaveFileDialog()
     if (file != null) {
         val filePath = file.absolutePath

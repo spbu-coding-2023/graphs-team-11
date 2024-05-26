@@ -7,10 +7,10 @@ import model.graph_model.graph_model_actions.NodeViewUpdate
 import model.graph_model.graph_model_actions.Update
 import model.graph_model.graph_model_actions.VertViewUpdate
 
-class SampleAlgo<D> : Algoritm<D>(null) {
-    override fun <D> algoRun(graph: Graph<D>, selected: SnapshotStateMap<D, Int>): Update<D> {
-        val updateNode: MutableMap<D, NodeViewUpdate<D>> = mutableMapOf()
-        val updateVert: MutableMap<D, MutableMap<D, VertViewUpdate<D>>> = mutableMapOf()
+class SampleAlgo : Algoritm(null) {
+    override fun algoRun(graph: Graph, selected: SnapshotStateMap<String, Int>): Update {
+        val updateNode: MutableMap<String, NodeViewUpdate> = mutableMapOf()
+        val updateVert: MutableMap<String, MutableMap<String, VertViewUpdate>> = mutableMapOf()
         for (i in graph.vertices) {
             if (i.value.size % 2 == 1) {
                 updateNode[i.key] = NodeViewUpdate(color = Color.Red, radius = i.value.size.toFloat() * 5 + 5)
@@ -19,9 +19,9 @@ class SampleAlgo<D> : Algoritm<D>(null) {
             }
             updateVert[i.key] = mutableMapOf()
             for (j in i.value) {
-                updateVert[i.key]!!.set(j.first, VertViewUpdate<D>(color = Color.Yellow))
+                updateVert[i.key]!![j.first] = VertViewUpdate(color = Color.Yellow)
             }
         }
-        return Update<D>(nodeViewUpdate = updateNode, vertViewUpdate = updateVert)
+        return Update(nodeViewUpdate = updateNode, vertViewUpdate = updateVert)
     }
 }

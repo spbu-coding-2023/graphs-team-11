@@ -29,11 +29,11 @@ import viewmodel.GraphVM
 
 @Composable
 @Preview
-fun <D> GraphPopup(
+fun GraphPopup(
     enabled: MutableState<Boolean>,
     pressOffset: Offset,
     graphVM: GraphVM,
-    gv: GraphViewClass<D>
+    gv: GraphViewClass
 ) {
 
     var alert by remember { mutableStateOf(AlertType.UNABLED) }

@@ -1,6 +1,7 @@
 package model.graph_model
 
 import androidx.compose.runtime.Stable
+import data.graph_save.graphLoadUnified
 
 @Stable
 open class Graph{
@@ -8,15 +9,20 @@ open class Graph{
     var size: Int = 0
 
     fun addNode(data: String) {
-        this.vertices[data] = mutableSetOf()
-        size++
+        if (data !in this.vertices) {
+            this.vertices[data] = mutableSetOf()
+            size++
+        }
     }
 
     open fun addVertice(data1: String, data2: String, weight: Float = 1f) {
-        this.vertices[data1]?.add(Pair(data2, weight))
+        if (data1 in vertices && data2 in vertices) {
+            this.vertices[data1]?.add(Pair(data2, weight))
+        }
     }
 
     fun deleteVertice(data1: String, data2: String) {
+
         for (i in this.vertices[data1]!!) {
             if (i.first == data2) {
                 this.vertices[data1]!!.remove(i)
@@ -26,6 +32,7 @@ open class Graph{
     }
 
     fun deleteNode(data1: String) {
+        this.size -= 1
         this.vertices.remove(data1)
         for (i in vertices) {
             for (j in i.value) {

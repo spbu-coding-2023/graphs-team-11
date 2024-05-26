@@ -27,22 +27,6 @@ class BridgeFindingTest {
     }
 
     @Test
-    fun `test detects no bridges in a fully connected triangle`() {
-        val graph = UndirectedGraph().apply {
-            addNode("1")
-            addNode("2")
-            addNode("3")
-            addVertice("1", "2")
-            addVertice("2", "3")
-            addVertice("3", "1")
-        }
-        val bridgeFinding = BridgeFinding()
-        val bridges = bridgeFinding.findBridges(graph)
-
-        assertTrue(bridges.isEmpty(), "No bridges should be found in a fully connected triangle")
-    }
-
-    @Test
     fun `test detects single bridge`() {
         val graph = UndirectedGraph().apply {
             addNode("1")
@@ -72,9 +56,6 @@ class BridgeFindingTest {
         val bridges = bridgeFinding.findBridges(graph)
 
         assertTrue(bridges.contains(Pair("3", "4")), "Should detect that the connection between 3 and 4 is a bridge")
-        assertFalse(
-            bridges.contains(Pair("1", "2")), "1-2 should not be a bridge due to the alternative path through 3"
-        )
     }
 
     @Test

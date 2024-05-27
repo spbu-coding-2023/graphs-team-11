@@ -7,21 +7,21 @@ import org.junit.jupiter.api.Test
 import kotlin.test.assertFailsWith
 
 
+fun assertGraphInvariant(graph: Graph) {
+    // Assert that all edges end in same graph's nodes
+    for ((_, neighborhood) in graph.vertices) {
+        for ((u, _) in neighborhood) {
+            assert(u in graph.vertices)
+        }
+    }
+}
+
 class GraphTest {
     private lateinit var graph: Graph
 
     @BeforeEach
     fun setup() {
         graph = Graph()
-    }
-
-    fun assertGraphInvariant(graph: Graph) {
-        // Assert that all edges end in same graph's nodes
-        for ((_, neighborhood) in graph.vertices) {
-            for ((u, _) in neighborhood) {
-                assert(u in graph.vertices)
-            }
-        }
     }
 
     @Test

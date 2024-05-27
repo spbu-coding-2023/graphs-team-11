@@ -59,14 +59,14 @@ class GraphViewClass(
 
     var returnStack by mutableStateOf(Stack<Update>())
 
+    var mainJob: Job
+
     init {
-        scope.launch {
+        mainJob = scope.launch {
             // if graph is empty, add mock nodes and edge to avoid algorithm returning wrong result.
             if (graph.vertices.isEmpty() && !isEmpty) {
                 graph.apply {
                     addNode("1" )
-                    addNode("2" )
-                    addVertice("1", "2")
                 }
             }
             val positions: MutableMap<String, Offset> = layout()
@@ -166,7 +166,7 @@ class GraphViewClass(
     }
 
     // just for fast not implemented like algoritm
-    private suspend fun layout(maxIter: Int = 1000): MutableMap<String, Offset> {
+    suspend fun layout(maxIter: Int = 100): MutableMap<String, Offset> {
         val positions: MutableMap<String, Offset> = mutableMapOf()
         return withContext(Dispatchers.Default) {
             val pc = Lookup.getDefault().lookup(ProjectController::class.java)
@@ -193,20 +193,18 @@ class GraphViewClass(
 
             val layout = ForceAtlasLayout(null)
             layout.setGraphModel(graphModel)
+            layout.resetPropertiesValues()
             layout.initAlgo()
             layout.resetPropertiesValues()
 
-            val iterations = (1..maxIter).toList().chunked(maxIter / Runtime.getRuntime().availableProcessors())
-            val tasks = iterations.map { iterChunk ->
-                async {
-                    for (i in iterChunk) {
-                        if (layout.canAlgo()) layout.goAlgo()
-                        else break
-                    }
+            val task = launch {
+                for (i in 1..maxIter) {
+                    if (layout.canAlgo()) layout.goAlgo()
+                    else break
                 }
             }
 
-            tasks.awaitAll()
+            task.join()
 
             val x = mutableListOf<Float>()
             val y = mutableListOf<Float>()

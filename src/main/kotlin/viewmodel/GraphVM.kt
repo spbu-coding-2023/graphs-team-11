@@ -60,7 +60,7 @@ class GraphVM {
         val change = pointerEvent.changes.first()
         val delta = change.scrollDelta.y.toInt().sign
         val oldZoom = scaleFactor.value
-        val newZoom = (scaleFactor.value - delta * 0.05f).coerceIn(0.3f, 3.0f)
+        val newZoom = (scaleFactor.value - delta * 0.05f).coerceIn(0.0003f, 3000.0f)
         scaleFactor.value = newZoom
 
         val (mouseX, mouseY) = change.position

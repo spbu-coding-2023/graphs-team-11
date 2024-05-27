@@ -130,8 +130,9 @@ fun AlgoritmList(
                     viewModel.isException.value = true
                     viewModel.exceptionMessage.value =
                         "Required " + algorithm.algo.selectedSizeRequired.toString() + " selected nodes!"
+                } else {
+                    viewModel.runAlgorithm(algorithm.algo, graphViewClass, changedAlgo, selected)
                 }
-                viewModel.runAlgorithm(algorithm.algo, graphViewClass, changedAlgo, selected)
             }).offset(10.dp))
         }
     }

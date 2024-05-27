@@ -22,7 +22,7 @@ class IntroWindowVM(
     val graphSize = mutableStateOf("")
     val chosenGenerator = mutableStateOf("Random Tree")
     val weightMax = mutableStateOf("1")
-
+    val graphTypes = listOf("Saved", "Manual", "Generate", "Empty")
 
     fun onSettingsPressed() {
         isSettingMenuOpen.value = true

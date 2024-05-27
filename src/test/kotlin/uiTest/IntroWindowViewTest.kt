@@ -1,5 +1,6 @@
 package uiTest
 
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
@@ -7,6 +8,7 @@ import data.Constants.CHOOSE_GRAPH_WINDOW_TITLE
 import data.db.sqlite_exposed.connect
 import data.db.sqlite_exposed.connectConfig
 import kotlinx.coroutines.*
+import model.graph_model.Graph
 import org.junit.Rule
 import ui.IntroView
 import ui.IntroWindowView
@@ -15,6 +17,7 @@ import ui.components.MyApplicationState
 import ui.components.MyWindowState
 import ui.theme.Theme
 import viewmodel.IntroWindowVM
+import viewmodel.MainVM
 import kotlin.math.max
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -40,6 +43,10 @@ class IntroWindowViewTest {
             applicationState = MyApplicationState(scope)
             state = applicationState.windows.first()
             viewModel = IntroWindowVM(isSettingMenuOpen, scope)
+
+            composeTestRule.setContent {
+                IntroView(viewModel, state, appTheme, scope)
+            }
         }
     }
 
@@ -50,6 +57,38 @@ class IntroWindowViewTest {
         }
     }
 
+    private fun testReloadGraph(newViewModel: MutableState<MainVM?>, graphSize: Int): Graph {
+        // window will reload, and state will change when it is reloaded. Let's wait for it.
+        val currState = state
+        composeTestRule.waitUntil(2000) {
+            applicationState.windows.first() != currState
+        }
+
+        // state is updated, let's get the new state
+        state = applicationState.windows.first()
+
+        // make sure previous window is closed
+        composeTestRule.onNodeWithText(CHOOSE_GRAPH_WINDOW_TITLE).assertDoesNotExist()
+
+        composeTestRule.setContent {
+            MainWindow(state, isSettingMenuOpen, appTheme)
+        }
+
+        newViewModel.value = state.mainVM
+
+        // time depends on the graph size and local machine performance. Let's give min 1 second timeout.
+        // If graph is too big, we will wait longer.
+        val timeOut = (graphSize * 10).toLong()
+        composeTestRule.waitUntil(max(timeOut, 1_000)) {
+            newViewModel.value!!.graphIsReady.value
+        }
+
+        // Assert the main window is open and graph is loaded.
+        composeTestRule.onNodeWithTag("MainApp").assertExists()
+
+        // compare graph that we chose to load, and the graph that is loaded.
+        return newViewModel.value!!.graphView.graph
+    }
 
     @Test
     fun testSettingsMenuOpens() {
@@ -66,9 +105,7 @@ class IntroWindowViewTest {
 
     @Test
     fun `test Radio button changes graph type`() {
-        composeTestRule.setContent {
-            IntroView(viewModel, state, appTheme, scope)
-        }
+
 
         for (graphType in viewModel.graphTypes) {
             composeTestRule.onNodeWithText(graphType).performClick()
@@ -104,50 +141,97 @@ class IntroWindowViewTest {
 
     @Test
     fun `test Saved Graph is loaded`() {
-        composeTestRule.setContent {
-            IntroView(viewModel, state, appTheme, scope)
-        }
-
         if (viewModel.graphList.value.isNotEmpty()) {
-            val savedGraph = viewModel.graphList.value.first()
+            val savedGraph = viewModel.graphList.value.first().second
             composeTestRule.onAllNodesWithTag("UseButton").onFirst().performClick()
 
-            // window will reload, and state will change when it is reloaded. Let's wait for it.
-            val currState = state
-            composeTestRule.waitUntil(2000) {
-                applicationState.windows.first() != currState
-            }
+            val newViewModel: MutableState<MainVM?> = mutableStateOf(null)
 
-            // state is updated, let's get the new state
-            state = applicationState.windows.first()
+            val loadedGraph = testReloadGraph(newViewModel, savedGraph.vertices.size)
 
-            // make sure previous window is closed
-            composeTestRule.onNodeWithText(CHOOSE_GRAPH_WINDOW_TITLE).assertDoesNotExist()
-
-            composeTestRule.setContent {
-                MainWindow(state, isSettingMenuOpen, appTheme)
-            }
-            val newViewModel = state.mainVM
-
-            // time depends on the graph size and local machine performance. Let's give min 1 second timeout.
-            // If graph is too big, we will wait longer.
-            val timeOut = (savedGraph.second.vertices.size * 10).toLong()
-            composeTestRule.waitUntil(max(timeOut, 1_000)) {
-                newViewModel.graphIsReady.value
-            }
-
-            // Assert the main window is open and graph is loaded.
-            composeTestRule.onNodeWithTag("MainApp").assertExists()
-
-            // compare graph that we chose to load, and the graph that is loaded.
-            val loadedGraph = newViewModel.graphView.graph
-            assertEquals(savedGraph.second.size, loadedGraph.size)
-            for (i in 0 until savedGraph.second.size) {
-                assertEquals(savedGraph.second.vertices[i.toString()], loadedGraph.vertices[i.toString()])
+            assertEquals(savedGraph.size, loadedGraph.size)
+            for (i in 0 until savedGraph.size) {
+                assertEquals(savedGraph.vertices[i.toString()], loadedGraph.vertices[i.toString()])
             }
         } else {
             println("No saved graphs to test")
             composeTestRule.onNodeWithTag("UseButton").assertDoesNotExist()
         }
     }
+
+    @Test
+    fun `test generate graph with no edges (Manual)`() {
+        viewModel.chosenGraph.value = "Manual"
+        viewModel.graphSize.value = "100"
+        val graphSize = viewModel.graphSize.value.toInt()
+        composeTestRule.onNodeWithTag("CreateGraphButton").performClick()
+
+        val newViewModel: MutableState<MainVM?> = mutableStateOf(null)
+
+        val loadedGraph = testReloadGraph(newViewModel, graphSize)
+
+        assertEquals(graphSize, loadedGraph.size)
+        for (i in 0 until graphSize) {
+            assertEquals(0, loadedGraph.vertices[i.toString()]!!.size)
+        }
+    }
+
+    @Test
+    fun `test generate random graph with random edge weight`() {
+        viewModel.chosenGraph.value = "Generate"
+        viewModel.graphSize.value = "100"
+        val graphSize = viewModel.graphSize.value.toInt()
+        viewModel.chosenGenerator.value = "Random Tree"
+        viewModel.weightMax.value = "10"
+        composeTestRule.onNodeWithTag("CreateGraphButton").performClick()
+
+        val newViewModel: MutableState<MainVM?> = mutableStateOf(null)
+
+        val loadedGraph = testReloadGraph(newViewModel, graphSize)
+
+        assertEquals(graphSize, loadedGraph.size)
+        for (i in 1..graphSize) {
+            loadedGraph.vertices[i.toString()]!!.forEach { (_, weight) ->
+                assertTrue { weight <= viewModel.weightMax.value.toInt().toFloat() && weight >= 1f }
+            }
+        }
+    }
+
+    @Test
+    fun `test generate random graph with edge weight 1`() {
+        viewModel.chosenGraph.value = "Generate"
+        viewModel.graphSize.value = "100"
+        val graphSize = viewModel.graphSize.value.toInt()
+        viewModel.chosenGenerator.value = "Random Tree"
+        viewModel.weightMax.value = "1"
+        composeTestRule.onNodeWithTag("CreateGraphButton").performClick()
+
+        val newViewModel: MutableState<MainVM?> = mutableStateOf(null)
+
+        val loadedGraph = testReloadGraph(newViewModel, graphSize)
+
+        assertEquals(graphSize, loadedGraph.size)
+        for (i in 1..graphSize) {
+            loadedGraph.vertices[i.toString()]!!.forEach { (_, weight) ->
+                assertEquals(1f, weight)
+            }
+        }
+    }
+
+    @Test
+    fun `test generate flower snark graph`() {
+        viewModel.chosenGraph.value = "Generate"
+        viewModel.graphSize.value = "10"
+        val graphSize = viewModel.graphSize.value.toInt()
+        viewModel.chosenGenerator.value = "Flower Snark"
+        composeTestRule.onNodeWithTag("CreateGraphButton").performClick()
+
+        val newViewModel: MutableState<MainVM?> = mutableStateOf(null)
+
+        val loadedGraph = testReloadGraph(newViewModel, graphSize)
+
+        // multiply by 4 because flower snark graph has 4 times more vertices than the given size
+        assertEquals(graphSize * 4, loadedGraph.size)
+    }
+
 }

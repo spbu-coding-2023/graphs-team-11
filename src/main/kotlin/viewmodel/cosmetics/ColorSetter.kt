@@ -7,6 +7,7 @@ import model.graph_model.graph_model_actions.Update
 
 class ColorSetter : CosmeticWidgetsMV {
 
+
     var color: Color = Color.White
     override fun getUpdate(graph: Graph): Update {
         val nodeViewUpdate: MutableMap<String, NodeViewUpdate> = mutableMapOf()

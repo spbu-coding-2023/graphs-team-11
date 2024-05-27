@@ -9,6 +9,7 @@ import viewmodel.cosmetics.CosmeticWidgetsMV
 class CosmeticVM {
     val menuWidth = 250.dp
 
+
     val isMenuVisible = mutableStateOf(true)
     val cosmeticWidgetsViewModels: MutableList<CosmeticWidgetsMV> = mutableListOf()
 

@@ -63,6 +63,7 @@ class GraphVM {
         val newZoom = (scaleFactor.value - delta * 0.05f).coerceIn(0.0003f, 3000.0f)
         scaleFactor.value = newZoom
 
+
         val (mouseX, mouseY) = change.position
         val screenSize = Toolkit.getDefaultToolkit().screenSize
         val (width, height) = screenSize.getWidth() to screenSize.getHeight()

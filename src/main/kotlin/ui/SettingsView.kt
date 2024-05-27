@@ -112,7 +112,7 @@ fun SettingsView(onClose: () -> Unit, appTheme: MutableState<Theme>) {
 
                             Text("Golden Theme за", fontSize = 22.sp)
                             Spacer(modifier = Modifier.height(10.dp))
-                            donateButton() {
+                            donateButton {
                                 showSberIcon.value = true
                             }
                             Spacer(modifier = Modifier.height(20.dp))

@@ -1,4 +1,3 @@
 package data.graph_save
 
-abstract class GraphSaver {
-}
+abstract class GraphSaver

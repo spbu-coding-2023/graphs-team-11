@@ -32,7 +32,7 @@ class SQLiteExposedAppConfigTest {
     fun `test theme DB doesn't contain theme`() {
         var dbCount = -1
         // Clear the DB because we need to make sure that the theme is not set
-        transaction{
+        transaction {
             Settings.deleteAll()
             dbCount = Settings.selectAll().where { Settings.key eq "theme" }.count().toInt()
         }

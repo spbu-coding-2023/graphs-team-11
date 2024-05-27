@@ -9,7 +9,6 @@ import model.graph_model.GraphViewClass
 
 class AlgorithmMenuVM {
     val menuWidth = 250.dp
-
     val isMenuVisible = mutableStateOf(true)
 
     val isException = mutableStateOf(false)

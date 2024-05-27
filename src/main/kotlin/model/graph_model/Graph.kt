@@ -3,7 +3,7 @@ package model.graph_model
 import androidx.compose.runtime.Stable
 
 @Stable
-open class Graph{
+open class Graph {
     var vertices: MutableMap<String, MutableSet<Pair<String, Float>>> = mutableMapOf()
     var size: Int = 0
 

@@ -2,7 +2,6 @@ package data.tools.graphGenerators
 
 import model.graph_model.Graph
 import model.graph_model.UndirectedGraph
-import viewmodel.GraphVM
 import kotlin.random.Random
 
 fun randomTree(n: Int, maxWeight: Int, isDirected: Boolean = true): Graph {

@@ -6,7 +6,9 @@ import model.algoritms.ShortestPathDetection
 import model.graph_model.Graph
 import model.graph_model.graph_model_actions.NodeViewUpdate
 import model.graph_model.graph_model_actions.VertViewUpdate
-import kotlin.test.*
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class ShortestPathFindingTest {
 

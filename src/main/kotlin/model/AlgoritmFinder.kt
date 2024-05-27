@@ -46,7 +46,7 @@ class AlgoritmFinder(
         return endArray
     }
 
-    class NoClass() {}
+    class NoClass
 
     fun getClass(className: String, packageName: String): KClass<*> {
         try {

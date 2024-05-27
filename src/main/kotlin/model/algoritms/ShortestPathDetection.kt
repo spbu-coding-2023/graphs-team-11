@@ -6,8 +6,7 @@ import model.graph_model.Graph
 import model.graph_model.graph_model_actions.NodeViewUpdate
 import model.graph_model.graph_model_actions.Update
 import model.graph_model.graph_model_actions.VertViewUpdate
-
-import java.util.PriorityQueue
+import java.util.*
 
 data class NodeDistance(val node: String, val distance: Float) : Comparable<NodeDistance> {
     override fun compareTo(other: NodeDistance): Int {

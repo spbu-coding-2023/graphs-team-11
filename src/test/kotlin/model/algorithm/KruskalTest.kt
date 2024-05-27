@@ -2,15 +2,15 @@ package model.algorithm
 
 import model.algoritms.Kruskal
 import model.graph_model.UndirectedGraph
-import org.junit.jupiter.api.Test
-
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
 class KruskalTest {
 
     private lateinit var kruskal: Kruskal
     private lateinit var graph: UndirectedGraph
+
     @BeforeEach
     fun setup() {
         graph = UndirectedGraph()
@@ -33,6 +33,7 @@ class KruskalTest {
             assert(true)
         }
     }
+
     @Test
     fun `getMinimalTree on empty graph`() {
         val tree = kruskal.getMinimalTree(graph)

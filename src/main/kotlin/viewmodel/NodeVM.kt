@@ -9,6 +9,7 @@ class NodeVM {
     val showDuplicateError = mutableStateOf(false)
     val textFieldLength = 130
 
+
     fun onNodeSelected(
         nodeView: NodeViewClass, selected: SnapshotStateMap<String, Int>, isShifted: MutableState<Boolean>
     ) {

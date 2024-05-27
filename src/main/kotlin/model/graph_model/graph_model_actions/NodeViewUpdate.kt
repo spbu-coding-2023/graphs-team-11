@@ -7,7 +7,6 @@ import androidx.compose.ui.graphics.Shape
 data class NodeViewUpdate(
     val offset: Offset? = null,
     val deltaOffset: Offset = Offset(x = 0f, y = 0f),
-
     val radius: Float? = null,
     val color: Color? = null,
     val value: String? = null,

@@ -7,11 +7,12 @@ import data.Constants.CHOOSE_GRAPH_WINDOW_TITLE
 import data.db.sqlite_exposed.connect
 import data.db.sqlite_exposed.connectConfig
 import data.db.sqlite_exposed.getTheme
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import ui.IntroWindowView
 import ui.MainWindow
 import ui.components.MyApplicationState
-
-import kotlinx.coroutines.*
 
 fun main() = runBlocking {
     val job = launch(Dispatchers.Default) {

@@ -1,6 +1,10 @@
 package dataTest
 
-import data.db.sqlite_exposed.*
+import data.db.sqlite_exposed.connect
+import data.db.sqlite_exposed.deleteGraph
+import data.db.sqlite_exposed.getAllGraphs
+import data.db.sqlite_exposed.saveGraph
+import data.db.sqlite_exposed.serializeGraph
 import model.graph_model.Graph
 import org.junit.jupiter.api.BeforeAll
 import kotlin.test.Test

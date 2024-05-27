@@ -6,7 +6,10 @@ import model.algoritms.BridgeFinding
 import model.graph_model.UndirectedGraph
 import model.graph_model.graph_model_actions.Update
 import model.graph_model.graph_model_actions.VertViewUpdate
-import kotlin.test.*
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class BridgeFindingTest {
 

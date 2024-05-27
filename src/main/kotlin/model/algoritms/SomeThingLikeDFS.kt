@@ -6,6 +6,7 @@ import model.graph_model.Graph
 import model.graph_model.graph_model_actions.Update
 import model.graph_model.graph_model_actions.VertViewUpdate
 
+
 class SomeThingLikeDFS : Algoritm(null) {
     override fun algoRun(graph: Graph, selected: SnapshotStateMap<String, Int>): Update {
         val vertUpdate: MutableMap<String, MutableMap<String, VertViewUpdate>> = mutableMapOf()

@@ -51,6 +51,7 @@ fun CommeticsMenu(
     val viewModel = remember { CosmeticVM() }
     val isMenuVisible = viewModel.isMenuVisible.value
 
+
     val density = LocalDensity.current
 
     Row(

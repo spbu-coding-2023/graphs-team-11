@@ -13,6 +13,7 @@ class ConnectivityСomponent : Algoritm(null) {
     override fun algoRun(graph: Graph, selected: SnapshotStateMap<String, Int>): Update {
         return getViewByComponents(getComponents(graph), graph)
     }
+
     fun getComponents(graph: Graph): MutableSet<MutableSet<String>> {
         val reversed = graph.reverse()
 

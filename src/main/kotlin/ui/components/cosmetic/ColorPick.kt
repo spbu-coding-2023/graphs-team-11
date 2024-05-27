@@ -27,6 +27,7 @@ fun ColorPick(cosVM: CosmeticVM) {
 
     cosVM.cosmeticWidgetsViewModels.add(model)
 
+
     var red by remember { mutableStateOf(model.color.red) }
     var green by remember { mutableStateOf(model.color.green) }
     var blue by remember { mutableStateOf(model.color.blue) }

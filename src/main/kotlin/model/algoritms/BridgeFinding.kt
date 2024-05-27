@@ -7,6 +7,7 @@ import model.graph_model.graph_model_actions.NodeViewUpdate
 import model.graph_model.graph_model_actions.Update
 import model.graph_model.graph_model_actions.VertViewUpdate
 
+
 class BridgeFinding : Algoritm(null) {
     override fun algoRun(graph: Graph, selected: SnapshotStateMap<String, Int>): Update {
         val bridges = findBridges(graph)

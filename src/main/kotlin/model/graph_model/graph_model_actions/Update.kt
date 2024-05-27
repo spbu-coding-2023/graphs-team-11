@@ -1,5 +1,6 @@
 package model.graph_model.graph_model_actions
 
+
 class Update(
     val nodeViewUpdate: MutableMap<String, NodeViewUpdate> = mutableMapOf(),
     val vertViewUpdate: MutableMap<String, MutableMap<String, VertViewUpdate>> = mutableMapOf()

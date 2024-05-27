@@ -7,8 +7,8 @@ import androidx.compose.runtime.snapshots.SnapshotStateMap
 import data.db.sqlite_exposed.getAllGraphs
 import data.db.sqlite_exposed.saveGraph
 import kotlinx.coroutines.CoroutineScope
-import model.graph_model.GraphViewClass
 import model.graph_model.Graph
+import model.graph_model.GraphViewClass
 
 class MainVM(
     passedGraph: Graph?, scope: CoroutineScope, isEmptyGraph: Boolean
@@ -31,7 +31,7 @@ class MainVM(
 
     var graph: Graph = passedGraph ?: Graph()
 
-    val graphView = GraphViewClass(graph, scope = scope, isEmpty = isEmptyGraph){
+    val graphView = GraphViewClass(graph, scope = scope, isEmpty = isEmptyGraph) {
         graphIsReady.value = true
         changedAlgo.value = true
     }

@@ -6,7 +6,11 @@ import model.algoritms.LeidenAlgorithm
 import model.algoritms.LeidenToRun
 import model.graph_model.Graph
 import org.junit.jupiter.api.BeforeAll
-import kotlin.test.*
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertNotEquals
+import kotlin.test.assertTrue
 
 class CommunityDetectionTest {
 

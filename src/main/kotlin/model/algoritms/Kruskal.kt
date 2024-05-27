@@ -25,6 +25,7 @@ class Kruskal : Algoritm(null) {
         val treeVerts: MutableList<Pair<Float, Pair<String, String>>> = mutableListOf()
         val sortedVerts = vertes.sortedWith(compareBy { it.first })
 
+
         val trees: MutableMap<String, MutableSet<String>> = mutableMapOf()
 
         for ((v, _) in graph.vertices) {

@@ -1,9 +1,8 @@
 package model.graph_modelTests
 
 import model.graph_model.UndirectedGraph
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
-
-import org.junit.jupiter.api.Assertions.*
 
 class UndirectedGraphTest {
 

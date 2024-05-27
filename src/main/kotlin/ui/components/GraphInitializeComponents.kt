@@ -1,5 +1,6 @@
 package ui.components
 
+
 fun generateStringNodeNames(size: Int): List<String> {
     val nodeNames = mutableListOf<String>()
     var length = 1

@@ -8,7 +8,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import model.graph_model.graph_model_actions.NodeViewUpdate
 import model.graph_model.graph_model_actions.Update
 import model.graph_model.graph_model_actions.VertViewUpdate
@@ -16,7 +20,6 @@ import org.gephi.graph.api.GraphController
 import org.gephi.graph.api.GraphModel
 import org.gephi.graph.api.Node
 import org.gephi.layout.plugin.forceAtlas.ForceAtlasLayout
-import org.gephi.layout.plugin.openord.OpenOrdLayout
 import org.gephi.project.api.ProjectController
 import org.gephi.project.api.Workspace
 import org.openide.util.Lookup
@@ -67,7 +70,7 @@ class GraphViewClass(
             // if graph is empty, add mock nodes and edge to avoid algorithm returning wrong result.
             if (graph.vertices.isEmpty() && !isEmpty) {
                 graph.apply {
-                    addNode("1" )
+                    addNode("1")
                 }
             }
             val positions: MutableMap<String, Offset> = layout()

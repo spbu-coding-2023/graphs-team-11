@@ -41,7 +41,7 @@ fun GraphPopup(
 
     DropdownMenu(
         expanded = enabled.value,
-        onDismissRequest = {enabled.value = false},
+        onDismissRequest = { enabled.value = false },
         offset = DpOffset(x = pressOffset.x.dp, y = pressOffset.y.dp - graphVM.height.dp)
     ) {
         DropdownMenuItem(
@@ -51,51 +51,51 @@ fun GraphPopup(
         ) {
             Text("Create Node")
         }
-        DropdownMenuItem(onClick = {alert = AlertType.CREATEVERT}) {
+        DropdownMenuItem(onClick = { alert = AlertType.CREATEVERT }) {
             Text("Create Vert")
         }
         Divider()
-        DropdownMenuItem(onClick = {alert = AlertType.DELETENODE}) {
+        DropdownMenuItem(onClick = { alert = AlertType.DELETENODE }) {
             Text("Delete Node")
         }
-        DropdownMenuItem(onClick = {alert = AlertType.DELETEVERT}) {
+        DropdownMenuItem(onClick = { alert = AlertType.DELETEVERT }) {
             Text("Delete Vert")
         }
     }
 
     if (alert != AlertType.UNABLED) {
-            AlertDialog(
-                onDismissRequest = {
-                    alert = AlertType.UNABLED
-                },
-                title = {
-                    Text(text = "Title")
-                },
-                text = {
-                    Column() {
-                        TextField(
-                            value = text,
-                            onValueChange = { text = it }
-                        )
-                        Text("Custom Text")
-                        Checkbox(checked = false, onCheckedChange = {})
-                    }
-                },
-                buttons = {
-                    Row(
-                        modifier = Modifier.padding(all = 8.dp),
-                        horizontalArrangement = Arrangement.Center
+        AlertDialog(
+            onDismissRequest = {
+                alert = AlertType.UNABLED
+            },
+            title = {
+                Text(text = "Title")
+            },
+            text = {
+                Column {
+                    TextField(
+                        value = text,
+                        onValueChange = { text = it }
+                    )
+                    Text("Custom Text")
+                    Checkbox(checked = false, onCheckedChange = {})
+                }
+            },
+            buttons = {
+                Row(
+                    modifier = Modifier.padding(all = 8.dp),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Button(
+                        modifier = Modifier.fillMaxWidth(),
+                        onClick = { alert = AlertType.UNABLED }
                     ) {
-                        Button(
-                            modifier = Modifier.fillMaxWidth(),
-                            onClick = { alert = AlertType.UNABLED }
-                        ) {
-                            Text("Dismiss")
-                        }
+                        Text("Dismiss")
                     }
                 }
-            )
-        }
+            }
+        )
+    }
 
 }
 

@@ -2,8 +2,12 @@ package data.db.sqlite_exposed
 
 import data.Constants.SQLITE_APP_CONFIG
 import data.db.sqlite_exposed.settings.Settings
-import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.SchemaUtils
+import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
+import org.jetbrains.exposed.sql.update
 import ui.theme.Theme
 
 val configDatabase by lazy {

@@ -2,20 +2,21 @@ package model.algorithm
 
 import model.algoritms.ConnectivityСomponent
 import model.graph_model.Graph
-import org.junit.jupiter.api.Test
-
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
 class ConnectivityСomponentTest {
 
     private lateinit var conCom: ConnectivityСomponent
     private lateinit var graph: Graph
+
     @BeforeEach
     fun setup() {
         graph = Graph()
         conCom = ConnectivityСomponent()
     }
+
     @Test
     fun `getComponents of empty graph`() {
         val comp = conCom.getComponents(graph)

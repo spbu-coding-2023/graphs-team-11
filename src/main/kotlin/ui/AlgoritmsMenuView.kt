@@ -42,7 +42,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
-import model.algoritms.*
+import model.algoritms.AlgorithmData
+import model.algoritms.AlgoritmType
+import model.algoritms.BridgeFinding
+import model.algoritms.ConnectivityСomponent
+import model.algoritms.Kruskal
+import model.algoritms.LeidenToRun
+import model.algoritms.SampleAlgo
+import model.algoritms.ShortestPathDetection
+import model.algoritms.SomeThingLikeDFS
 import model.graph_model.GraphViewClass
 import model.graph_model.UndirectedGraph
 import viewmodel.AlgorithmMenuVM

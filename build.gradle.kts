@@ -2,7 +2,7 @@ import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 
 plugins {
     kotlin("jvm")
-    id("org.jetbrains.compose")
+    id("org.jetbrains.compose") version "1.6.2"
     jacoco
 }
 
@@ -43,11 +43,18 @@ dependencies {
 
     testImplementation("org.jetbrains.kotlin:kotlin-test")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
+    testImplementation("io.mockk:mockk:1.13.11")
+
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.2")
+    testImplementation("org.jetbrains.compose.ui:ui-test-junit4:1.6.2")
+}
+
+tasks.withType<Test> {
+    // hides warning of the mockk testing library
+    jvmArgs("-XX:+EnableDynamicAgentLoading", "-Djdk.instrument.traceUsage")
 }
 
 tasks.test {
-    useJUnitPlatform()
-
     testLogging {
         events("skipped", "failed")
         afterSuite(

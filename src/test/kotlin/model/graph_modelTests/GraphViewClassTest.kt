@@ -1,19 +1,15 @@
-package model.graph_model
+package model.graph_modelTests
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.test.StandardTestDispatcher
-import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
+import model.graph_model.Graph
+import model.graph_model.GraphViewClass
 import model.graph_model.graph_model_actions.NodeViewUpdate
 import model.graph_model.graph_model_actions.Update
 import model.graph_model.graph_model_actions.VertViewUpdate
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 

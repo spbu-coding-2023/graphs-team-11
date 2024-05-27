@@ -1,7 +1,6 @@
 package model.graph_model
 
 import androidx.compose.runtime.Stable
-import data.graph_save.graphLoadUnified
 
 @Stable
 open class Graph{

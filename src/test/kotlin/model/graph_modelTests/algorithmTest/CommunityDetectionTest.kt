@@ -1,4 +1,4 @@
-package modelTest
+package model.graph_modelTests.algorithmTest
 
 import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.graphics.Color

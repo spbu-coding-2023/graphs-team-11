@@ -102,7 +102,7 @@ class GraphGeneratorsTest {
             return generators.map { generator ->
                 DynamicTest.dynamicTest("Test ${generator.name}") {
                     val graph: Graph = if (generator.name == "randomTree") {
-                        generator.call(nodeAmount, 1)
+                        generator.call(nodeAmount, 1, true)
                     } else {
                         generator.call(nodeAmount)
                     }

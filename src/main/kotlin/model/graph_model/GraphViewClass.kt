@@ -16,6 +16,7 @@ import org.gephi.graph.api.GraphController
 import org.gephi.graph.api.GraphModel
 import org.gephi.graph.api.Node
 import org.gephi.layout.plugin.forceAtlas.ForceAtlasLayout
+import org.gephi.layout.plugin.openord.OpenOrdLayout
 import org.gephi.project.api.ProjectController
 import org.gephi.project.api.Workspace
 import org.openide.util.Lookup
@@ -166,7 +167,7 @@ class GraphViewClass(
     }
 
     // just for fast not implemented like algoritm
-    suspend fun layout(maxIter: Int = 1000): MutableMap<String, Offset> {
+    suspend fun layout(maxIter: Int = 100): MutableMap<String, Offset> {
         val positions: MutableMap<String, Offset> = mutableMapOf()
         return withContext(Dispatchers.Default) {
             val pc = Lookup.getDefault().lookup(ProjectController::class.java)
@@ -193,20 +194,18 @@ class GraphViewClass(
 
             val layout = ForceAtlasLayout(null)
             layout.setGraphModel(graphModel)
+            layout.resetPropertiesValues()
             layout.initAlgo()
             layout.resetPropertiesValues()
 
-            val iterations = (1..maxIter).toList().chunked(maxIter / Runtime.getRuntime().availableProcessors())
-            val tasks = iterations.map { iterChunk ->
-                async {
-                    for (i in iterChunk) {
-                        if (layout.canAlgo()) layout.goAlgo()
-                        else break
-                    }
+            val task = launch {
+                for (i in 1..maxIter) {
+                    if (layout.canAlgo()) layout.goAlgo()
+                    else break
                 }
             }
 
-            tasks.awaitAll()
+            task.join()
 
             val x = mutableListOf<Float>()
             val y = mutableListOf<Float>()

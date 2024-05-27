@@ -8,6 +8,10 @@ import model.graph_model.graph_model_actions.VertViewUpdate
 
 class Kruskal : Algoritm(null) {
     override fun algoRun(graph: Graph, selected: SnapshotStateMap<String, Int>): Update {
+        return getViewByTreeVert(getMinimalTree(graph), graph)
+    }
+
+    fun getMinimalTree(graph: Graph): MutableList<Pair<Float, Pair<String, String>>> {
         val vertes: MutableList<Pair<Float, Pair<String, String>>> = mutableListOf()
 
         for ((node1, neighbourhood) in graph.vertices) {
@@ -16,27 +20,26 @@ class Kruskal : Algoritm(null) {
             }
         }
 
-        if (vertes.size <= 0) return Update()
+        if (vertes.size <= 0) return vertes
 
         val treeVerts: MutableList<Pair<Float, Pair<String, String>>> = mutableListOf()
         val sortedVerts = vertes.sortedWith(compareBy { it.first })
 
-        val visited: MutableSet<String> = mutableSetOf()
+        val trees: MutableMap<String, MutableSet<String>> = mutableMapOf()
 
-        treeVerts.add(sortedVerts[0])
-        visited.add(sortedVerts[0].second.first)
-        visited.add(sortedVerts[0].second.second)
+        for ((v, _) in graph.vertices) {
+            trees[v] = mutableSetOf(v)
+        }
 
         for (i in sortedVerts) {
-            if ((i.second.first in visited).xor((i.second.second in visited))) {
-                visited.add(i.second.first)
-                visited.add(i.second.second)
-
+            if (i.second.second !in trees[i.second.first]!!) {
                 treeVerts.add(i)
+                trees[i.second.first]!!.add(i.second.second)
+                trees[i.second.second] = trees[i.second.first]!!
             }
         }
 
-        return getViewByTreeVert(treeVerts, graph)
+        return treeVerts
     }
 
     fun getViewByTreeVert(treeVerts: MutableList<Pair<Float, Pair<String, String>>>, graph: Graph): Update {

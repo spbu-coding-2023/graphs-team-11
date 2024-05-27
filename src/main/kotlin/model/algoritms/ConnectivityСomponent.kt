@@ -9,7 +9,11 @@ import model.graph_model.graph_model_actions.VertViewUpdate
 import kotlin.random.Random
 
 class ConnectivityСomponent : Algoritm(null) {
+
     override fun algoRun(graph: Graph, selected: SnapshotStateMap<String, Int>): Update {
+        return getViewByComponents(getComponents(graph), graph)
+    }
+    fun getComponents(graph: Graph): MutableSet<MutableSet<String>> {
         val reversed = graph.reverse()
 
         var visited: MutableSet<String> = mutableSetOf()
@@ -52,7 +56,7 @@ class ConnectivityСomponent : Algoritm(null) {
                 components.add(component)
             }
         }
-        return getViewByComponents(components, graph)
+        return components
     }
 
     fun getViewByComponents(components: MutableSet<MutableSet<String>> = mutableSetOf(), graph: Graph): Update {

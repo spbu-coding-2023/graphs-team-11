@@ -18,7 +18,6 @@ class IntroWindowVM(
     var graphList: MutableState<List<Triple<Int, Graph, String>>> = mutableStateOf(getAllGraphs())
     val isFileLoaderOpen = mutableStateOf(false)
     val fileLoaderException: MutableState<String?> = mutableStateOf(null)
-    val expanded = mutableStateOf(false)
     val chosenGraph = mutableStateOf("Saved")
     val graphSize = mutableStateOf("")
     val chosenGenerator = mutableStateOf("Random Tree")

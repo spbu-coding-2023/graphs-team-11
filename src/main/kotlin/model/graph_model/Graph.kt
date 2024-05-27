@@ -1,7 +1,6 @@
 package model.graph_model
 
 import androidx.compose.runtime.Stable
-import data.graph_save.graphLoadUnified
 
 @Stable
 open class Graph{
@@ -21,8 +20,7 @@ open class Graph{
         }
     }
 
-    fun deleteVertice(data1: String, data2: String) {
-
+    open fun deleteVertice(data1: String, data2: String) {
         for (i in this.vertices[data1]!!) {
             if (i.first == data2) {
                 this.vertices[data1]!!.remove(i)

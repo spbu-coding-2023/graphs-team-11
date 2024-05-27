@@ -5,4 +5,9 @@ class UndirectedGraph: Graph() {
         this.vertices[data1]?.add(Pair(data2, weight))
         this.vertices[data2]?.add(Pair(data1, weight))
     }
+
+    override fun deleteVertice(data1: String, data2: String) {
+        super.deleteVertice(data1, data2)
+        super.deleteVertice(data2, data1)
+    }
 }

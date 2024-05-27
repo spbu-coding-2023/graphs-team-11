@@ -61,7 +61,7 @@ fun NodeView(
         ).border(
             if (selected.getOrDefault(nodeView.value, -1) >= 0) 4.dp else 2.dp,
             color = nodeView.color,
-            shape = CircleShape,
+            shape = nodeView.shape,
 
             ).size((nodeView.radius).dp).pointerInput(Unit) {
             detectDragGestures { change, dragAmount ->

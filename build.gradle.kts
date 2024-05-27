@@ -43,6 +43,7 @@ dependencies {
     implementation("org.gephi", "gephi-toolkit", "0.10.1", classifier = "all")
 
     testImplementation("org.jetbrains.kotlin:kotlin-test")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.1")
 }
 
 tasks.test {

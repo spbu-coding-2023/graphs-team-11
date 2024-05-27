@@ -6,15 +6,17 @@ import androidx.compose.ui.unit.dp
 import model.algoritms.Algoritm
 import model.graph_model.GraphViewClass
 import model.graph_model.graph_model_actions.Update
-import org.junit.jupiter.api.BeforeAll
 import viewmodel.AlgorithmMenuVM
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
 import io.mockk.*
+import kotlin.test.*
 
 class AlgorithmMenuVMTest {
+    private lateinit var viewModel: AlgorithmMenuVM
+
+    @BeforeTest
+    fun setup() {
+        viewModel = AlgorithmMenuVM()
+    }
 
     @Test
     fun `initial state is correct`() {
@@ -51,15 +53,5 @@ class AlgorithmMenuVMTest {
 
         verify { mockGraphViewClass.applyUpdate(mockUpdate) }
         assertTrue(changedAlgo.value)
-    }
-
-    companion object {
-        private lateinit var viewModel: AlgorithmMenuVM
-
-        @JvmStatic
-        @BeforeAll
-        fun setup() {
-            viewModel = AlgorithmMenuVM()
-        }
     }
 }

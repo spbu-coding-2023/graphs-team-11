@@ -46,11 +46,17 @@ dependencies {
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
     testImplementation("io.mockk:mockk:1.13.11")
 
+    // JUnit 5
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.2")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.2")
+    testImplementation("org.junit.vintage:junit-vintage-engine:5.10.2")
+
+    // Compose UI Test
     testImplementation("org.jetbrains.compose.ui:ui-test-junit4:1.6.2")
 }
 
 tasks.withType<Test> {
+    useJUnitPlatform()
     // hides warning of the mockk testing library
     jvmArgs("-XX:+EnableDynamicAgentLoading", "-Djdk.instrument.traceUsage")
 }

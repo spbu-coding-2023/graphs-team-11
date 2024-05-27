@@ -1,4 +1,4 @@
-package modelTest
+package model.algorithm
 
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.ui.graphics.Color

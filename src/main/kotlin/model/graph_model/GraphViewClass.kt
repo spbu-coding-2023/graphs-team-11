@@ -59,14 +59,14 @@ class GraphViewClass(
 
     var returnStack by mutableStateOf(Stack<Update>())
 
+    lateinit var mainJob: Job
+
     init {
-        scope.launch {
+        mainJob = scope.launch {
             // if graph is empty, add mock nodes and edge to avoid algorithm returning wrong result.
             if (graph.vertices.isEmpty() && !isEmpty) {
                 graph.apply {
                     addNode("1" )
-                    addNode("2" )
-                    addVertice("1", "2")
                 }
             }
             val positions: MutableMap<String, Offset> = layout()
@@ -166,7 +166,7 @@ class GraphViewClass(
     }
 
     // just for fast not implemented like algoritm
-    private suspend fun layout(maxIter: Int = 1000): MutableMap<String, Offset> {
+    suspend fun layout(maxIter: Int = 1000): MutableMap<String, Offset> {
         val positions: MutableMap<String, Offset> = mutableMapOf()
         return withContext(Dispatchers.Default) {
             val pc = Lookup.getDefault().lookup(ProjectController::class.java)

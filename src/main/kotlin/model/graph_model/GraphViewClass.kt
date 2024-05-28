@@ -115,9 +115,9 @@ class GraphViewClass(
 
     }
 
-    fun addVert(oneValue: String, twoValue: String) {
+    fun addVert(oneValue: String, twoValue: String, weight: Float = 1f) {
         if (oneValue in this.nodesViews && twoValue in this.nodesViews) {
-            this.graph.addVertice(oneValue, twoValue)
+            this.graph.addVertice(oneValue, twoValue, weight = weight)
             if (oneValue in this.vertViews) {
                 this.vertViews[oneValue]!![twoValue] = VertView(
                     start = nodesViews[oneValue]!!, end = nodesViews[twoValue]!!, color = vertColor, alpha = 1f

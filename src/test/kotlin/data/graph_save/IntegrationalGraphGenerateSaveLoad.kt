@@ -25,13 +25,11 @@ import model.graph_modelTests.assertGraphInvariant
 import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
-import java.io.IOException
-import java.nio.file.Path
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 
-class IntegrationalGraphGenerateSaveLayout {
+class IntegrationalGraphGenerateSaveLoad {
 
     val fileName = "graph.graphml"
 

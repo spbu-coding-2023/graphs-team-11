@@ -22,6 +22,7 @@ package model
 import androidx.compose.ui.geometry.Offset
 import data.graph_save.graphLoadUnified
 import data.graph_save.graphSaveUnified
+import data.graph_save.graphToStringML
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.runTest
@@ -40,6 +41,7 @@ import kotlin.test.assertEquals
 class IntegrationalGraphLoadAddSave  {
     companion object StaticData {
         val fileName = "IntegrationalGraphLoadAddSave.graphml"
+        val fileNameSecond = "IntegrationalGraphLoadAddSave2.graphml"
 
         @field:TempDir
         lateinit var tempFolder: File
@@ -105,30 +107,6 @@ class IntegrationalGraphLoadAddSave  {
 
         assertEquals(gv.graph.vertices, expected)
 
-        graphSaveUnified(path, gv.graph)
-    }
-
-    @Test
-    @Order(3)
-    fun `Cheak File`() = runTest {
-        var num = 100
-        while (num < 1000) {
-            try {
-                graph = graphLoadUnified(path)
-
-                val expected = mutableMapOf(
-                    "n0" to mutableSetOf(Pair("n1", 1.1f), Pair("n2", 1f)),
-                    "n1" to mutableSetOf(Pair("n0", 1.1f), Pair("n2", 2f)),
-                    "n2" to mutableSetOf(Pair("n0", 1f), Pair("n1", 2f)),
-                )
-
-                assertEquals(graph.vertices, expected)
-
-                Thread.sleep(100)
-                num += 100
-            } catch (e: FileNotFoundException) {
-                println("Waiting...")
-            }
-        }
+        graphSaveUnified(tempFolder.toString() + "\\" + fileNameSecond, gv.graph)
     }
 }

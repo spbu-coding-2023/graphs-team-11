@@ -34,7 +34,7 @@ jobs:
 
       - name: Run tests in Docker
         run: |
-          docker run --rm -e DISPLAY=:99 -v /tmp/.X11-unix:/tmp/.X11-unix graphs-team-11:latest xvfb-run -a ./gradlew test
+          docker run --rm -e DISPLAY=:99 -v /tmp/.X11-unix:/tmp/.X11-unix graphs-team-11:latest ./gradlew test
 
       - name: Set up Docker Buildx for JaCoCo
         uses: docker/setup-buildx-action@v2

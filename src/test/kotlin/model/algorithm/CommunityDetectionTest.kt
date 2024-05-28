@@ -1,3 +1,22 @@
+/*
+ *
+ *  * This file is part of BDSM Graphs.
+ *  *
+ *  * BDSM Graphs is free software: you can redistribute it and/or modify
+ *  * it under the terms of the GNU General Public License as published by
+ *  * the Free Software Foundation, either version 3 of the License, or
+ *  * (at your option) any later version.
+ *  *
+ *  * BDSM Graphs is distributed in the hope that it will be useful,
+ *  * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  * GNU General Public License for more details.
+ *  *
+ *  * You should have received a copy of the GNU General Public License
+ *  * along with . If not, see <https://www.gnu.org/licenses/>.
+ *
+ */
+
 package model.algorithm
 
 import androidx.compose.runtime.snapshots.SnapshotStateMap
@@ -5,19 +24,27 @@ import androidx.compose.ui.graphics.Color
 import model.algoritms.LeidenAlgorithm
 import model.algoritms.LeidenToRun
 import model.graph_model.Graph
-import org.junit.jupiter.api.BeforeEach
-import kotlin.test.*
+import org.junit.jupiter.api.BeforeAll
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertNotEquals
+import kotlin.test.assertTrue
 
 class CommunityDetectionTest {
-    private lateinit var mockGraph: Graph
-    private lateinit var mockGraphWithTwoCommunities: Graph
-    private lateinit var disconnectedGraph: Graph
 
-    @BeforeEach
-    fun setup() {
-        mockGraph = Graph().apply {
-            for (i in 1..5) {
-                addNode(i.toString())
+    companion object {
+        private lateinit var mockGraph: Graph
+        private lateinit var mockGraphWithTwoCommunities: Graph
+        private lateinit var disconnectedGraph: Graph
+
+        @JvmStatic
+        @BeforeAll
+        fun setup() {
+            mockGraph = Graph().apply {
+                for (i in 1..5) {
+                    addNode(i.toString())
+                }
 
                 addVertice("1", "2")
                 addVertice("1", "3")
@@ -25,24 +52,24 @@ class CommunityDetectionTest {
                 addVertice("3", "4")
                 addVertice("4", "5")
             }
-        }
 
-        mockGraphWithTwoCommunities = Graph().apply {
-            for (i in 1..4) {
-                addNode(i.toString())
-            }
-            addVertice("1", "4")
-            addVertice("1", "2")
-            addVertice("2", "3")
-        }
+            mockGraphWithTwoCommunities = Graph().apply {
+                for (i in 1..4) {
+                    addNode(i.toString())
+                }
 
-        disconnectedGraph = Graph().apply {
-            for (i in 1..4) {
-                addNode(i.toString())
+                addVertice("1", "4")
+                addVertice("1", "2")
+                addVertice("2", "3")
             }
 
-        }
+            disconnectedGraph = Graph().apply {
+                for (i in 1..4) {
+                    addNode(i.toString())
+                }
+            }
 
+        }
     }
 
     @Test

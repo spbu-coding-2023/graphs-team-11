@@ -11,14 +11,15 @@ import model.graph_model.GraphViewClass
 import model.graph_model.graph_model_actions.NodeViewUpdate
 import model.graph_model.graph_model_actions.Update
 import model.graph_model.graph_model_actions.VertViewUpdate
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-
-import org.junit.jupiter.api.Assertions.*
 
 class GraphViewClassTest {
     private lateinit var graph: Graph
     private lateinit var scope: CoroutineScope
+    // No Layout Test, because it will have it's own integration test
     @BeforeEach
     fun setup() {
         graph = Graph()

@@ -17,23 +17,13 @@
  *
  */
 
-package model.graph_modelTests
+package model.graph_model
 
-import model.graph_model.Graph
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import kotlin.test.assertFailsWith
 
-
-fun assertGraphInvariant(graph: Graph) {
-    // Assert that all edges end in same graph's nodes
-    for ((_, neighborhood) in graph.vertices) {
-        for ((u, _) in neighborhood) {
-            assert(u in graph.vertices)
-        }
-    }
-}
 
 class GraphTest {
     private lateinit var graph: Graph
@@ -41,6 +31,15 @@ class GraphTest {
     @BeforeEach
     fun setup() {
         graph = Graph()
+    }
+
+    fun assertGraphInvariant(graph: Graph) {
+        // Assert that all edges end in same graph's nodes
+        for ((_, neighborhood) in graph.vertices) {
+            for ((u, _) in neighborhood) {
+                assert(u in graph.vertices)
+            }
+        }
     }
 
     @Test

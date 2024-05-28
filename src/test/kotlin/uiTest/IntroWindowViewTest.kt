@@ -9,7 +9,9 @@ import data.db.sqlite_exposed.connect
 import data.db.sqlite_exposed.connectConfig
 import kotlinx.coroutines.*
 import model.graph_model.Graph
+import org.junit.Before
 import org.junit.Rule
+import org.junit.Test
 import ui.IntroView
 import ui.IntroWindowView
 import ui.MainWindow
@@ -19,8 +21,6 @@ import ui.theme.Theme
 import viewmodel.IntroWindowVM
 import viewmodel.MainVM
 import kotlin.math.max
-import kotlin.test.BeforeTest
-import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -36,8 +36,9 @@ class IntroWindowViewTest {
     private val isSettingMenuOpen = mutableStateOf(false)
     private val appTheme = mutableStateOf(Theme.LIGHT)
 
-    @BeforeTest
+    @Before
     fun setup() {
+        System.setProperty("java.awt.headless", "false")
         runBlocking {
             connectDatabase()
             applicationState = MyApplicationState(scope)

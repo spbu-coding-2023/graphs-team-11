@@ -13,5 +13,11 @@ RUN ./gradlew --version
 # Set environment variables for headless mode
 ENV _JAVA_OPTIONS="-Djava.awt.headless=false"
 
+# Install additional necessary libraries
+RUN apt-get update && apt-get install -y \
+    libxrender1 \
+    libxtst6 \
+    libxi6
+
 # Define the command to run the tests
 CMD ["./gradlew", "test"]

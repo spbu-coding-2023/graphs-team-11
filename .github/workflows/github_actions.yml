@@ -21,8 +21,18 @@ jobs:
           docker buildx create --name mybuilder --use
           docker buildx inspect --bootstrap
 
+      - name: Cache Gradle dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            gradle-${{ runner.os }}-
+
       - name: Build Docker image
-        run: docker buildx build --tag graphs-team-11:latest --load .
+        run: docker buildx build --tag graphs-team-11:latest --load --cache-from type=gha --cache-to type=gha,mode=max .
 
       - name: Run tests in Docker
         run: docker run --rm graphs-team-11:latest sh -c "xvfb-run -a ./gradlew test --stacktrace"

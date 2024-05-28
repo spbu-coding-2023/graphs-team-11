@@ -2,6 +2,7 @@ package model.graph_modelTests
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import data.tools.graphGenerators.randomTree
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.runTest
@@ -18,7 +19,6 @@ import org.junit.jupiter.api.Assertions.*
 class GraphViewClassTest {
     private lateinit var graph: Graph
     private lateinit var scope: CoroutineScope
-    // No Layout Test, because it will have it's own integration test
     @BeforeEach
     fun setup() {
         graph = Graph()
@@ -160,5 +160,16 @@ class GraphViewClassTest {
         assertEquals(gv.vertViews["1"]!!["2"]!!.color, oldVerts)
         assertNotEquals(gv.nodesViews["1"]!!.radius, youngNodes)
         assertNotEquals(gv.vertViews["1"]!!["2"]!!.color, youngVerts)
+    }
+
+    @Test
+    fun `layout return not NuN values`() = runTest{
+        // Yes, test on random. Yes, it isn't unit.
+        val gv = GraphViewClass(randomTree(1000, 1), scope = scope, isEmpty = false, afterLayout = null)
+        gv.mainJob.join()
+
+        for ((_, view) in gv.nodesViews) {
+            assert(!view.offset.x.isNaN() && !view.offset.y.isNaN())
+        }
     }
 }

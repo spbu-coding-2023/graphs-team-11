@@ -29,7 +29,7 @@ jobs:
             ${{ runner.os }}-buildx-
 
       - name: Build Docker image
-        run: docker buildx build --cache-from=type=local,src=/tmp/.buildx-cache --cache-to=type=local,dest=/tmp/.buildx-cache --tag graphs-team-11:latest .
+        run: docker buildx build --cache-from=type=local,src=/tmp/.buildx-cache --cache-to=type=local,dest=/tmp/.buildx-cache --tag graphs-team-11:latest --load .
 
       - name: Run tests in Docker
         run: docker run --rm graphs-team-11:latest

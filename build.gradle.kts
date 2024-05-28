@@ -57,6 +57,7 @@ dependencies {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+    systemProperty("java.awt.headless", "true")
     // hides warning of the mockk testing library
     jvmArgs("-XX:+EnableDynamicAgentLoading", "-Djdk.instrument.traceUsage")
 }

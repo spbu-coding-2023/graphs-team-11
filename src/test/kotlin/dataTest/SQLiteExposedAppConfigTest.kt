@@ -3,26 +3,18 @@ package dataTest
 import data.db.sqlite_exposed.connectConfig
 import data.db.sqlite_exposed.getTheme
 import data.db.sqlite_exposed.setTheme
-import data.db.sqlite_exposed.settings.Settings
-import org.jetbrains.exposed.sql.deleteAll
-import org.jetbrains.exposed.sql.transactions.transaction
 import org.junit.jupiter.api.BeforeAll
 import ui.theme.Theme
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
+// need to fix this later!
 class SQLiteExposedAppConfigTest {
-
     companion object {
         @JvmStatic
         @BeforeAll
         fun setup() {
             connectConfig()
-
-            // Clear the settings table
-            transaction {
-                Settings.deleteAll()
-            }
         }
     }
 

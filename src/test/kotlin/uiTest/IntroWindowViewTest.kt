@@ -38,6 +38,7 @@ class IntroWindowViewTest {
 
     @Before
     fun setup() {
+        System.setProperty("java.awt.headless", "true")
         runBlocking {
             connectDatabase()
             applicationState = MyApplicationState(scope)

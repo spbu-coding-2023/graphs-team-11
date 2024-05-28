@@ -1,4 +1,4 @@
-name: Kotlin CI with Gradle
+name: Kotlin CI with Gradle in Docker
 
 on:
   push:
@@ -7,34 +7,22 @@ on:
   pull_request:
     branches:
       [ main, develop ]
+
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - name: Set up JDK 21.0.2
-        uses: actions/setup-java@v4
-        with:
-          distribution: "oracle"
-          java-version: "21.0.2"
-
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
-
-      - name: Debug Java and Gradle versions
+      - name: Set up Docker Buildx with docker-container driver
         run: |
-          java -version
-          ./gradlew --version
+          docker buildx create --name mybuilder --use
+          docker buildx inspect --bootstrap
 
-      - name: Testing
-        run: ./gradlew test -Djava.awt.headless=false
+      - name: Build Docker image
+        run: docker buildx build --tag graphs-team-11:latest --load .
 
-      - name: Run Test Coverage
-        run: ./gradlew jacocoTestReport
-
-      - name: Generate JaCoCo Badge
-        uses: cicirello/jacoco-badge-generator@v2
-        with:
-          generate-branches-badge: true
-          jacoco-csv-file: build/reports/jacoco/test/jacocoTestReport.csv
+      - name: Run tests in Docker
+        run: docker run --rm graphs-team-11:latest sh -c "xvfb-run -a ./gradlew test --stacktrace"

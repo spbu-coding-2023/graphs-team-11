@@ -105,8 +105,8 @@ compose.desktop {
 
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            modules("java.compile", "java,instrument", "java,sql", "jdk.unsupported")
-            packageName = "Graphs Team 11"
+            modules("java.compiler", "java.instrument" , "java.sql", "jdk.unsupported")
+            packageName = "GraphsTeam11"
             packageVersion = "1.0.0"
         }
     }

@@ -23,8 +23,17 @@ import org.junit.jupiter.api.Test
 
 import org.junit.jupiter.api.Assertions.*
 
+/**
+ * A test class for testing the functionality of the save module,
+ * more specifically the graphToStringML function.
+ *
+ * The function takes a Graph instance and returns its representation as a graphML string.
+ */
 class SaveGraphMLKtTest {
 
+    /**
+     * `empty graph Save` - test of correct saving of an empty graph
+     */
     @Test
     fun `empty graph Save`() {
         val graphString = graphToStringML(Graph())
@@ -41,6 +50,9 @@ xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdr
         assertEquals(graphString, expected)
     }
 
+    /**
+     * `empty undirected graph Save` - test of correct saving of an empty undirected graph
+     */
     @Test
     fun `empty undirected graph Save`() {
         val graphString = graphToStringML(UndirectedGraph())
@@ -57,6 +69,9 @@ xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdr
         assertEquals(graphString, expected)
     }
 
+    /**
+     * `ultimate directed graph Save` - test of correct saving of directed graph
+     */
     @Test
     fun `ultimate directed graph Save`() {
         val graph = Graph()
@@ -90,6 +105,9 @@ xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdr
         assertEquals(graphString, expected)
     }
 
+    /**
+     * `ultimate directed graph Save` - test of correct saving of directed weighted graph
+     */
     @Test
     fun `ultimate directed graph with weights Save`() {
         val graph = Graph()

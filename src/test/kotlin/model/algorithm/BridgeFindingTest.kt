@@ -8,8 +8,16 @@ import model.graph_model.graph_model_actions.Update
 import model.graph_model.graph_model_actions.VertViewUpdate
 import kotlin.test.*
 
+/**
+ * Test class for checking the correctness of the bridge search algorithm.
+ * Also for checking that this algoritm is correctly integrated in graph's update system
+ */
 class BridgeFindingTest {
 
+    /**
+     * testFindBridgesNoBridges - test that the bridge-finding algorithm will not find bridges in a graph
+     * where there are no bridges
+     */
     @Test
     fun testFindBridgesNoBridges() {
         val graph = UndirectedGraph().apply {
@@ -26,6 +34,10 @@ class BridgeFindingTest {
         assertEquals(expected, result)
     }
 
+    /**
+     * `test detects single bridge` - test that the bridge-finding algorithm will find bridge in a graph
+     * where there is single bridges
+     */
     @Test
     fun `test detects single bridge`() {
         val graph = UndirectedGraph().apply {
@@ -40,6 +52,9 @@ class BridgeFindingTest {
         assertEquals(Pair("1", "2"), bridges[0], "The bridge between nodes 1 and 2 should be detected")
     }
 
+    /**
+     * `test detects bridges in complex graph` - test that the bridge-finding algorithm will find all bridges in a graph
+     */
     @Test
     fun `test detects bridges in complex graph`() {
         val graph = UndirectedGraph().apply {
@@ -58,6 +73,10 @@ class BridgeFindingTest {
         assertTrue(bridges.contains(Pair("3", "4")), "Should detect that the connection between 3 and 4 is a bridge")
     }
 
+    /**
+     * `test detects bridges in a disconnected graph` - test that the bridge-finding algorithm will find no bridges
+     * between disconnected nodes
+     */
     @Test
     fun `test detects bridges in a disconnected graph`() {
         val graph = UndirectedGraph().apply {
@@ -83,6 +102,10 @@ class BridgeFindingTest {
         )
     }
 
+    /**
+     * testAlgoRunNoBridges - test that the bridge-finding algorithm will return empty update
+     * on graph without brides
+     */
     @Test
     fun testAlgoRunNoBridges() {
         val graph = UndirectedGraph().apply {
@@ -104,6 +127,9 @@ class BridgeFindingTest {
         }
     }
 
+    /**
+     * testAlgoRunWithBridges - test that the bridge-finding algorithm will return correct update
+     */
     @Test
     fun testAlgoRunWithBridges() {
         val graph = UndirectedGraph().apply {

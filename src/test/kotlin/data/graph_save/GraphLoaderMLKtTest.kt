@@ -27,9 +27,19 @@ import org.junit.jupiter.api.Assertions.*
 import java.io.File
 import kotlin.test.assertFailsWith
 
+
+/**
+ * Test class to check the proccesFileLoad function.
+ * Accepts a graphML file and returns a Graph instance.
+ */
+
 class GraphLoaderMLKtTest {
 
     // Positive
+
+    /**
+     * `loadGraphML empty grahp` - test of correct loading of an empty graph.
+     */
     @Test
     fun `loadGraphML empty grahp`() {
         val lines = """"""
@@ -39,6 +49,9 @@ class GraphLoaderMLKtTest {
         assert(graph.vertices.isEmpty())
     }
 
+    /**
+     * `load correct` - test of correct loading of a correct graph
+     */
     @Test
     fun `load correct`() {
         val lines = """<?xml version="1.0" encoding="UTF-8"?>
@@ -70,6 +83,9 @@ class GraphLoaderMLKtTest {
         assertEquals(graph.vertices, expected)
     }
 
+    /**
+     * `load correct with node names` - test of correct loading of a graph that has the node name attribute
+     */
     @Test
     fun `load correct with node names`() {
         val lines = """<?xml version="1.0" encoding="UTF-8"?>
@@ -103,6 +119,9 @@ class GraphLoaderMLKtTest {
         assertEquals(graph.vertices, expected)
     }
 
+    /**
+     * `load correct with edge weight` - test of correct loading of a weighted graph
+     */
     @Test
     fun `load correct with edge weight`() {
         val lines = """<?xml version="1.0" encoding="UTF-8"?>
@@ -135,6 +154,9 @@ class GraphLoaderMLKtTest {
 
     // Negative
 
+    /**
+     * `No node exit at the end` - test of correct error handling in case of absence of closing tag before </graph> tag
+     */
     @Test
     fun `No node exit at the end`() {
         val exception = assertFailsWith<NullPointerException> {
@@ -156,6 +178,9 @@ class GraphLoaderMLKtTest {
         assertEquals(exception.message, "Invalid File Format: some tag isn't close")
     }
 
+    /**
+     * `No node exit` - test of correct error handling in case of absence of closing tag of node
+     */
     @Test
     fun `No node exit`() {
         val exception = assertFailsWith<NullPointerException> {
@@ -178,6 +203,9 @@ class GraphLoaderMLKtTest {
         assert(exception.message!!.startsWith("Invalid File Format: No node exit"))
     }
 
+    /**
+     * `No node edge` - test of correct error handling in case of absence of closing tag of edge
+     */
     @Test
     fun `No edge exit`() {
         val exception = assertFailsWith<NullPointerException> {
@@ -202,6 +230,9 @@ class GraphLoaderMLKtTest {
         assert(exception.message!!.startsWith("Invalid File Format: No edge exit"))
     }
 
+    /**
+     * `No node id` - test of correct error handling in case of absence of id in node tag
+     */
     @Test
     fun `No node id`() {
         val exception = assertFailsWith<NullPointerException> {
@@ -222,6 +253,9 @@ class GraphLoaderMLKtTest {
         assert(exception.message!!.startsWith("Invalid File Format: No needed data"))
     }
 
+    /**
+     * `No edge source` - test of correct error handling in case of absence of source in node edge
+     */
     @Test
     fun `No edge source`() {
         val exception = assertFailsWith<NullPointerException> {
@@ -243,6 +277,9 @@ class GraphLoaderMLKtTest {
         assert(exception.message!!.startsWith("Invalid File Format: No edge source or target"))
     }
 
+    /**
+     * `Invalid edge source` - test of correct error handling in case of absence of node with source id
+     */
     @Test
     fun `Invalid edge source`() {
         val exception = assertFailsWith<NullPointerException> {

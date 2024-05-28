@@ -38,6 +38,18 @@ import kotlin.io.path.createFile
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
+/**
+ * Test Scenario: Test the integration of the load module and the graph view model.
+ *
+ * This scenario was chosen because the layout module will be used every time the graph is loaded.
+ *
+ * Step 1: Load an empty graph.
+ *
+ * Step 2: Create a GraphViewClass and hence perform the layout of the empty graph.
+ * Check that the GraphViewClass has empty lists of vertex and edge views.
+ *
+ * Step 3: Add vertices and nodes to the graph through the GraphViewClass interface. Check that they are really added.
+ */
 class IntegrationalGraphLoadAddSave  {
     companion object StaticData {
         val fileName = "IntegrationalGraphLoadAddSave.graphml"

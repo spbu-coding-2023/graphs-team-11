@@ -7,6 +7,10 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
+
+/**
+ * A test class to check the correct operation of the module for saving graphs in database.
+ */
 class SQLiteExposedGraphTest {
 
     var graph = Graph().apply {

@@ -27,9 +27,8 @@ jobs:
       - name: Run tests and generate JaCoCo report in Docker
         run: |
           docker run --rm graphs-team-11:latest sh -c "xvfb-run -a ./gradlew test jacocoTestReport --stacktrace"
-          docker ps -a
-          container_id=$(docker ps -a -q -l)
-          docker cp $container_id:/app/build/reports/jacoco/test ${{ github.workspace }}/build/reports/jacoco/test
+          container_id=$(docker ps -aqf "name=graphs-team-11")
+          docker cp $container_id:/app/build/reports/jacoco ${{ github.workspace }}/build/reports/jacoco
 
       - name: Upload JaCoCo report
         uses: actions/upload-artifact@v3
@@ -37,8 +36,8 @@ jobs:
           name: jacoco-report
           path: ${{ github.workspace }}/build/reports/jacoco/test
 
-      - name: Set up Docker Buildx for JaCoCo
-        uses: docker/setup-buildx-action@v2
-
       - name: Generate JaCoCo Badge
-        run: docker run --rm -v ${{ github.workspace }}/build/reports/jacoco/test:/reports cicirello/jacoco-badge-generator:latest --generate-branches-badge=true --jacoco-csv-file=/reports/jacocoTestReport.csv
+        uses: cicirello/jacoco-badge-generator@v2
+        with:
+          generate-branches-badge: true
+          jacoco-csv-file: ${{ github.workspace }}/build/reports/jacoco/jacocoTestReport.csv

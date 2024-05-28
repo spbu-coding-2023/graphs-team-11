@@ -65,6 +65,7 @@ class IntroWindowViewTest {
         }
     }
 
+    @OptIn(ExperimentalTestApi::class)
     private fun testReloadGraph(newViewModel: MutableState<MainVM?>, graphSize: Int): Graph {
         // window will reload, and state will change when it is reloaded. Let's wait for it.
         val currState = state
@@ -88,8 +89,11 @@ class IntroWindowViewTest {
         // If graph is too big, we will wait longer.
         val timeOut = (graphSize * 10).toLong()
         composeTestRule.waitUntil(max(timeOut, 1_000)) {
-            newViewModel.value!!.graphIsReady.value
+            newViewModel.value?.graphIsReady?.value == true
         }
+
+        // Ensure the main window is stable and the graph is loaded before asserting its existence.
+        composeTestRule.waitUntilExactlyOneExists(hasTestTag("MainApp"), timeoutMillis = 5000)
 
         // Assert the main window is open and graph is loaded.
         composeTestRule.onNodeWithTag("MainApp").assertExists()

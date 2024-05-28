@@ -4,18 +4,21 @@ FROM eclipse-temurin:21-jdk
 # Set the working directory
 WORKDIR /app
 
-# Copy the project files to the working directory
-COPY . .
-
-# Install necessary dependencies (Gradle and others)
-RUN ./gradlew --version
-
-# Install additional necessary libraries for GUI operations
+# Install necessary system dependencies first to take advantage of docker layer caching
 RUN apt-get update && apt-get install -y \
     libxrender1 \
     libxtst6 \
     libxi6 \
     xvfb
+
+# Install Gradle and check version, could be cached unless gradle files change
+COPY gradlew .
+COPY gradle gradle
+COPY build.gradle .
+RUN ./gradlew --version
+
+# Copy the rest of the project files
+COPY . .
 
 # Set environment variables for headless mode
 ENV _JAVA_OPTIONS="-Djava.awt.headless=false"
@@ -24,4 +27,4 @@ ENV _JAVA_OPTIONS="-Djava.awt.headless=false"
 RUN echo "Docker setup complete"
 
 # Define the command to run the tests
-CMD ["sh", "-c", "echo 'Starting tests...' && xvfb-run -a ./gradlew test --stacktrace && echo 'Tests completed' && tail -f /dev/null"]
+CMD ["sh", "-c", "xvfb-run -a ./gradlew test --stackwatch --stacktrace ' && tail -f /dev/null"]

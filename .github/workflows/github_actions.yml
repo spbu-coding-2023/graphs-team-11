@@ -3,10 +3,13 @@ name: Kotlin CI with Gradle in Docker
 on:
   push:
     branches:
-      [ main, CI, develop ]
+      - main
+      - CI
+      - develop
   pull_request:
     branches:
-      [ main, develop ]
+      - main
+      - develop
 
 jobs:
   build:
@@ -16,40 +19,35 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Docker Buildx with docker-container driver
-        run: |
-          docker buildx create --name mybuilder --use
-          docker buildx inspect --bootstrap
-
-      - name: Cache Gradle dependencies
-        id: gradle-cache
+      - name: Cache Gradle packages
         uses: actions/cache@v3
         with:
           path: |
             ~/.gradle/caches
             ~/.gradle/wrapper
-          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
-            gradle-${{ runner.os }}-
+            ${{ runner.os }}-gradle-
 
       - name: Cache Docker layers
-        id: docker-cache
         uses: actions/cache@v3
         with:
           path: /tmp/.buildx-cache
-          key: docker-${{ runner.os }}-${{ github.sha }}
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
           restore-keys: |
-            docker-${{ runner.os }}-
+            ${{ runner.os }}-buildx-
+
+      - name: Set up Docker Buildx with docker-container driver
+        run: |
+          docker buildx create --name mybuilder --use
+          docker buildx inspect --bootstrap
 
       - name: Build Docker image
-        run: docker buildx build --tag graphs-team-11:latest --load --cache-from type=local,src=/tmp/.buildx-cache --cache-to type=local,dest=/tmp/.buildx-cache .
+        run: |
+          docker buildx build --tag graphs-team-11:latest --load \
+            --cache-from=type=local,src=/tmp/.buildx-cache \
+            --cache-to=type=local,dest=/tmp/.buildx-cache-new \
+            .
 
       - name: Run tests in Docker
         run: docker run --rm graphs-team-11:latest sh -c "xvfb-run -a ./gradlew test --stacktrace"
-
-      - name: Save Docker layer cache
-        if: always()
-        uses: actions/cache@v3
-        with:
-          path: /tmp/.buildx-cache
-          key: docker-${{ runner.os }}-${{ github.sha }}

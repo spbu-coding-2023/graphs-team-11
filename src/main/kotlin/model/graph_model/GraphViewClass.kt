@@ -16,7 +16,6 @@ import org.gephi.graph.api.GraphController
 import org.gephi.graph.api.GraphModel
 import org.gephi.graph.api.Node
 import org.gephi.layout.plugin.forceAtlas.ForceAtlasLayout
-import org.gephi.layout.plugin.openord.OpenOrdLayout
 import org.gephi.project.api.ProjectController
 import org.gephi.project.api.Workspace
 import org.openide.util.Lookup
@@ -60,7 +59,7 @@ class GraphViewClass(
 
     var returnStack by mutableStateOf(Stack<Update>())
 
-    lateinit var mainJob: Job
+    var mainJob: Job
 
     init {
         mainJob = scope.launch {
@@ -116,9 +115,9 @@ class GraphViewClass(
 
     }
 
-    fun addVert(oneValue: String, twoValue: String) {
+    fun addVert(oneValue: String, twoValue: String, weight: Float = 1f) {
         if (oneValue in this.nodesViews && twoValue in this.nodesViews) {
-            this.graph.addVertice(oneValue, twoValue)
+            this.graph.addVertice(oneValue, twoValue, weight = weight)
             if (oneValue in this.vertViews) {
                 this.vertViews[oneValue]!![twoValue] = VertView(
                     start = nodesViews[oneValue]!!, end = nodesViews[twoValue]!!, color = vertColor, alpha = 1f

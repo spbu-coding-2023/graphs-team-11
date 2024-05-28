@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -67,7 +68,7 @@ fun IntroView(viewModel: IntroWindowVM, state: MyWindowState, appTheme: MutableS
                 Row(
                     verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(20.dp)
                 ) {
-                    listOf("Saved", "Manual", "Generate", "Empty").forEach { graphType ->
+                    viewModel.graphTypes.forEach { graphType ->
                         Row(
                             Modifier.padding(vertical = 4.dp).clickable { viewModel.chosenGraph.value = graphType },
                             verticalAlignment = Alignment.CenterVertically
@@ -137,7 +138,7 @@ fun IntroView(viewModel: IntroWindowVM, state: MyWindowState, appTheme: MutableS
                         onClick = {
                             val graph = viewModel.createEmptyGraph()
                             state.reloadWindow(graph, scope, true)
-                        }, modifier = Modifier.padding(bottom = 20.dp), colors = ButtonDefaults.buttonColors(
+                        }, modifier = Modifier.padding(bottom = 20.dp).testTag("ButtonForEmpty"), colors = ButtonDefaults.buttonColors(
                             backgroundColor = MaterialTheme.colors.surface,
                             disabledBackgroundColor = MaterialTheme.colors.onSurface.copy(alpha = 0.12f),
                         )
@@ -158,7 +159,7 @@ fun SavedGraphsList(
     viewModel: IntroWindowVM, state: MyWindowState
 ) {
     Column(
-        modifier = Modifier.background(MaterialTheme.colors.background).fillMaxSize(),
+        modifier = Modifier.background(MaterialTheme.colors.background).fillMaxSize().testTag("SavedGraphsList"),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Button(
@@ -191,7 +192,7 @@ fun SavedGraphsList(
 fun CreateGraphButtonWithCheck(
     viewModel: IntroWindowVM, onClick: () -> Unit
 ) {
-    Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+    Column(modifier = Modifier.fillMaxWidth().testTag("CreateGraphButton"), horizontalAlignment = Alignment.CenterHorizontally) {
         Button(
             onClick = onClick,
             modifier = Modifier.padding(bottom = 20.dp),
@@ -214,7 +215,7 @@ fun GenerateGraphSettings(
 ) {
 
     Column(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth().testTag("GenerateGraphSettings"),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(20.dp),
     ) {
@@ -262,7 +263,7 @@ fun GenerateGraphSettings(
 @Composable
 fun IntTextField(graphSize: MutableState<String>) {
     Row(
-        verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)
+        verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp), modifier = Modifier.testTag("IntTextField")
     ) {
         Text("Choose Graph Size: ", fontSize = 18.sp)
         TextField(value = graphSize.value, onValueChange = {

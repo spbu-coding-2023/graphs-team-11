@@ -1,4 +1,5 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("jvm") version "1.9.22"
@@ -95,6 +96,18 @@ tasks.named<JacocoReport>("jacocoTestReport") {
         html.outputLocation = layout.buildDirectory.dir("jacocoHtml")
     }
 }
+
+tasks.withType<KotlinCompile> {
+    kotlinOptions {
+        jvmTarget = "21" // Kotlin's max supported version currently
+    }
+}
+
+tasks.withType<JavaCompile> {
+    sourceCompatibility = "22"
+    targetCompatibility = "22"
+}
+
 
 compose.desktop {
     application {

@@ -29,6 +29,17 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 
+/**
+ * Test scenario: Test the integration of the graph generation module into the save-to-file module
+ * and the integration of the graph saving module into the file upload module.
+ *
+ * The choice of this test scenario is justified by the assumption of frequent use of the “Load-Process-Save” scenario.
+ * In addition, the requirement of graph equality before saving and loading and after is obvious.
+ *
+ * Step 1: Generate the graph and save it to a file
+ *
+ * Step 2: Load the graph from the file and compare it with the original graph
+ */
 class IntegrationalGraphGenerateSaveLoad {
 
     val fileName = "graph.graphml"

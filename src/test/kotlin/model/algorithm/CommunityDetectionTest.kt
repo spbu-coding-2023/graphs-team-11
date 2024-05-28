@@ -5,48 +5,44 @@ import androidx.compose.ui.graphics.Color
 import model.algoritms.LeidenAlgorithm
 import model.algoritms.LeidenToRun
 import model.graph_model.Graph
-import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.BeforeEach
 import kotlin.test.*
 
 class CommunityDetectionTest {
+    private lateinit var mockGraph: Graph
+    private lateinit var mockGraphWithTwoCommunities: Graph
+    private lateinit var disconnectedGraph: Graph
 
-    companion object {
-        private lateinit var mockGraph: Graph
-        private lateinit var mockGraphWithTwoCommunities: Graph
-        private lateinit var disconnectedGraph: Graph
-
-        @JvmStatic
-        @BeforeAll
-        fun setup() {
-            mockGraph = Graph().apply {
-                for (i in 1..5) {
-                    addNode(i.toString())
-                }
-
-                addVertice("1", "2")
-                addVertice("1", "3")
-                addVertice("2", "3")
-                addVertice("3", "4")
-                addVertice("4", "5")
+    @BeforeEach
+    fun setup() {
+        mockGraph = Graph().apply {
+            for (i in 1..5) {
+                addNode(i.toString())
             }
 
-            mockGraphWithTwoCommunities = Graph().apply {
-                for (i in 1..4) {
-                    addNode(i.toString())
-                }
-
-                addVertice("1", "4")
-                addVertice("1", "2")
-                addVertice("2", "3")
-            }
-
-            disconnectedGraph = Graph().apply {
-                for (i in 1..4) {
-                    addNode(i.toString())
-                }
-            }
-
+            addVertice("1", "2")
+            addVertice("1", "3")
+            addVertice("2", "3")
+            addVertice("3", "4")
+            addVertice("4", "5")
         }
+
+        mockGraphWithTwoCommunities = Graph().apply {
+            for (i in 1..4) {
+                addNode(i.toString())
+            }
+
+            addVertice("1", "4")
+            addVertice("1", "2")
+            addVertice("2", "3")
+        }
+
+        disconnectedGraph = Graph().apply {
+            for (i in 1..4) {
+                addNode(i.toString())
+            }
+        }
+
     }
 
     @Test

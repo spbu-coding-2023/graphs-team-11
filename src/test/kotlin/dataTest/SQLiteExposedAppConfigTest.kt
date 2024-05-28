@@ -9,6 +9,10 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 // need to fix this later!
+
+/**
+ * A test class to check the correct operation of the module for storing settings in the database, namely the theme.
+ */
 class SQLiteExposedAppConfigTest {
     companion object {
         @JvmStatic

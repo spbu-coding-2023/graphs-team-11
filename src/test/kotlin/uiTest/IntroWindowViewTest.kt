@@ -98,6 +98,10 @@ class IntroWindowViewTest {
         return newViewModel.value!!.graphView.graph
     }
 
+
+    /**
+     * Test settings menu open.
+     */
     @Test
     fun testSettingsMenuOpens() {
         val viewModel = IntroWindowVM(isSettingMenuOpen, scope)
@@ -111,6 +115,12 @@ class IntroWindowViewTest {
         composeTestRule.onNodeWithTag("SettingsWindowTag").assertExists()
     }
 
+    /**
+     * Test radio button changes graph type.
+     *
+     * Check that when you change the method of loading the graph (Saved, Manual, Generate, Empty),
+     * the window actually changes to the desired one.
+     */
     @Test
     fun `test Radio button changes graph type`() {
 
@@ -147,6 +157,15 @@ class IntroWindowViewTest {
         }
     }
 
+    /**
+     * Integration test of the module of graph loading from SQLite databas and the graph view module
+     *
+     * Step 1: Take a graph. Save it and upload it to the database.
+     * At the same time we check that the window works correctly - it closes and opens correctly
+     *
+     * Step 2. Check the equality of the old and new graphs
+     *
+     */
     @Test
     fun `test Saved Graph is loaded`() {
         if (viewModel.graphList.value.isNotEmpty()) {
@@ -167,6 +186,15 @@ class IntroWindowViewTest {
         }
     }
 
+    /**
+     * Test the integration of the GraphViewModelClass class into the main application,
+     * by generating an empty graph and checking that it is displayed.
+     *
+     * Step 1: Generate an empty graph and check
+     * that the window will reload when the graph is replaced in the application
+     *
+     * Step 2: Check that the size of the graph displayed in the window corresponds to the one we have loaded
+     */
     @Test
     fun `test generate graph with no edges (Manual)`() {
         viewModel.chosenGraph.value = "Manual"
@@ -184,6 +212,12 @@ class IntroWindowViewTest {
         }
     }
 
+    /**
+     * Test generate random graph with random edge weight
+     *
+     * Checking for correctness of a weighted random tree created via the user interface.
+     * And also that it is actually displayed.
+     */
     @Test
     fun `test generate random graph with random edge weight`() {
         viewModel.chosenGraph.value = "Generate"
@@ -205,6 +239,13 @@ class IntroWindowViewTest {
         }
     }
 
+    /**
+     * Test generate random graph with random edge weight
+     *
+     * Checking for correctness of unweighted random tree created via the user interface.
+     * And also that it is actually displayed.
+     *
+     */
     @Test
     fun `test generate random graph with edge weight 1`() {
         viewModel.chosenGraph.value = "Generate"
@@ -226,6 +267,13 @@ class IntroWindowViewTest {
         }
     }
 
+    /**
+     * Test generate random graph with random edge weight
+     *
+     * Checking for correctness of flower snark created via the user interface.
+     * And also that it is actually displayed.
+     *
+     */
     @Test
     fun `test generate flower snark graph`() {
         viewModel.chosenGraph.value = "Generate"

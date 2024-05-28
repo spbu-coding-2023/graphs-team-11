@@ -21,31 +21,25 @@ jobs:
           docker buildx create --name mybuilder --use
           docker buildx inspect --bootstrap
 
-      - name: Cache Docker layers
-        uses: actions/cache@v3
-        with:
-          path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-buildx-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-buildx-
-
       - name: Build Docker image
-        run: docker buildx build --cache-from=type=local,src=/tmp/.buildx-cache --cache-to=type=local,dest=/tmp/.buildx-cache --tag graphs-team-11:latest --load .
+        run: docker buildx build --tag graphs-team-11:latest --load .
 
       - name: Run tests and generate JaCoCo report in Docker
         run: |
           docker run --rm graphs-team-11:latest sh -c "xvfb-run -a ./gradlew test jacocoTestReport --stacktrace"
-          docker cp $(docker ps -lq):/app/build/reports/jacoco/test ${{ github.workspace }}/build/reports/jacoco/test
+          docker cp $(docker ps -lq):/app/build/reports/jacoco/test ${{ github.workspace }}/build/reports/jacoco/test || echo 'Test directory not found'
+          docker cp $(docker ps -lq):/app/build/jacocoHtml ${{ github.workspace }}/build/reports/jacoco/jacocoHtml || echo 'JaCoCo HTML directory not found'
+          docker cp $(docker ps -lq):/app/build/reports/jacoco/test/jacocoTestReport.csv ${{ github.workspace }}/build/reports/jacoco/jacocoTestReport.csv || echo 'JaCoCo CSV report not found'
 
       - name: Upload JaCoCo report
         uses: actions/upload-artifact@v3
         with:
           name: jacoco-report
-          path: ${{ github.workspace }}/build/reports/jacoco/test
+          path: ${{ github.workspace }}/build/reports/jacoco
 
       - name: Set up Docker Buildx for JaCoCo
         uses: docker/setup-buildx-action@v2
 
       - name: Generate JaCoCo Badge
         run: |
-          docker run --rm -v ${{ github.workspace }}/build/reports/jacoco/test:/reports cicirello/jacoco-badge-generator:latest --generate-branches-badge=true --jacoco-csv-file=/reports/jacocoTestReport.csv
+          docker run --rm -v ${{ github.workspace }}/build/reports/jacoco:/reports cicirello/jacoco-badge-generator:latest --generate-branches-badge=true --jacoco-csv-file=/reports/jacocoTestReport.csv

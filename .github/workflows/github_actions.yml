@@ -42,11 +42,13 @@ jobs:
           docker buildx create --name mybuilder --use
           docker buildx inspect --bootstrap
 
-      - name: Build Docker image
+      - name: Build Docker, with cache
         run: |
-          docker buildx build --tag graphs-team-11:latest --load \
-            --cache-from=type=local,src=/tmp/.buildx-cache \
-            --cache-to=type=local,dest=/tmp/.buildx-cache-new \
+          docker buildx build \
+            --tag graphs-team-11:latest \
+            --load \
+            --cache-from=type=local,src=/tmp/.build  \
+            --cache-to=type=local,mode=max,dest=/tmp/.buildx-cache-new \
             .
 
       - name: Run tests in Docker

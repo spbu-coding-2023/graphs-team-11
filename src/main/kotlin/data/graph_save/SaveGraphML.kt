@@ -13,7 +13,10 @@ fun saveGraphML(path: String, graph: Graph) {
     } else {
         File(path)
     }
+    pathFile.writeText(graphToStringML(graph))
+}
 
+fun graphToStringML(graph: Graph): String {
     var toWrite = """<?xml version="1.0" encoding="UTF-8"?>
 <!-- This file was written by the JAVA GraphML Library.-->
 <graphml xmlns="http://graphml.graphdrawing.org/xmlns"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -36,19 +39,16 @@ xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdr
             val target = u
             if (weigth != 1f) {
                 val weightString = weigth.toString()
-                toWrite += """
-                    <edge id="e$edgeCounter" source="$v" target="$target">
-                        <data key="weight">$weightString</data>
-                    </edge>\n
-                """.trimIndent()
+                toWrite += """<edge id="e$edgeCounter" source="$v" target="$target">""" + "\n" +
+                        """<data key="weight">$weightString</data>""" + "\n" +
+                "</edge>" + "\n"
             } else {
                 toWrite += "<edge id=\"e$edgeCounter\" source=\"$v\" target=\"$target\"/>\n"
             }
             edgeCounter++
         }
     }
-    println(edgeCounter)
     toWrite += """</graph>
 </graphml>"""
-    pathFile.writeText(toWrite)
+    return toWrite
 }

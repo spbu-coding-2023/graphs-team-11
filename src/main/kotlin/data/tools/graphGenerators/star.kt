@@ -1,80 +1,45 @@
+/*
+ *
+ *  * This file is part of BDSM Graphs.
+ *  *
+ *  * BDSM Graphs is free software: you can redistribute it and/or modify
+ *  * it under the terms of the GNU General Public License as published by
+ *  * the Free Software Foundation, either version 3 of the License, or
+ *  * (at your option) any later version.
+ *  *
+ *  * BDSM Graphs is distributed in the hope that it will be useful,
+ *  * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  * GNU General Public License for more details.
+ *  *
+ *  * You should have received a copy of the GNU General Public License
+ *  * along with . If not, see <https://www.gnu.org/licenses/>.
+ *
+ */
+
 package data.tools.graphGenerators
 
 import model.graph_model.Graph
 import model.graph_model.UndirectedGraph
-import ui.components.generateStringNodeNames
-import viewmodel.IntroWindowVM
 
-fun starDirected(n: Int, type: IntroWindowVM.GraphKeyType): Graph<*> = when (type) {
-    IntroWindowVM.GraphKeyType.INT -> starDirectedInt(n)
-    IntroWindowVM.GraphKeyType.STRING -> starDirectedString(n)
-    IntroWindowVM.GraphKeyType.FLOAT -> starDirectedFloat(n)
-}
-
-private fun starDirectedInt(n: Int): Graph<Int> {
-    val graph = Graph<Int>()
-    graph.addNode(1)
+fun starDirected(n: Int): Graph {
+    val graph = Graph()
+    graph.addNode("1")
     for (i in 2..n) {
-        graph.addNode(i)
-        graph.addVertice(1, i)
+        val curr = i.toString()
+        graph.addNode(curr)
+        graph.addVertice("1", curr)
     }
     return graph
 }
 
-private fun starDirectedString(n: Int): Graph<String> {
-    val graph = Graph<String>()
-    val nodeNames = generateStringNodeNames(n)
-    graph.addNode(nodeNames[0])
-    for (i in 1..<n) {
-        graph.addNode(nodeNames[i])
-        graph.addVertice(nodeNames[0], nodeNames[i])
-    }
-    return graph
-}
-
-private fun starDirectedFloat(n: Int): Graph<Float> {
-    val graph = Graph<Float>()
-    graph.addNode(1f)
+fun starUndirected(n: Int): Graph {
+    val graph = UndirectedGraph()
+    graph.addNode("1")
     for (i in 2..n) {
-        graph.addNode(i.toFloat())
-        graph.addVertice(1f, i.toFloat())
-    }
-    return graph
-}
-
-fun starUndirected(n: Int, type: IntroWindowVM.GraphKeyType): Graph<*> = when (type) {
-    IntroWindowVM.GraphKeyType.INT -> starUndirectedInt(n)
-    IntroWindowVM.GraphKeyType.STRING -> starUndirectedString(n)
-    IntroWindowVM.GraphKeyType.FLOAT -> starUndirectedFloat(n)
-}
-
-private fun starUndirectedInt(n: Int): UndirectedGraph<Int> {
-    val graph = UndirectedGraph<Int>()
-    graph.addNode(1)
-    for (i in 2..n) {
-        graph.addNode(i)
-        graph.addVertice(1, i)
-    }
-    return graph
-}
-
-private fun starUndirectedString(n: Int): UndirectedGraph<String> {
-    val graph = UndirectedGraph<String>()
-    val nodeNames = generateStringNodeNames(n)
-    graph.addNode(nodeNames[0])
-    for (i in 1..<n) {
-        graph.addNode(nodeNames[i])
-        graph.addVertice(nodeNames[0], nodeNames[i])
-    }
-    return graph
-}
-
-private fun starUndirectedFloat(n: Int): UndirectedGraph<Float> {
-    val graph = UndirectedGraph<Float>()
-    graph.addNode(1f)
-    for (i in 2..n) {
-        graph.addNode(i.toFloat())
-        graph.addVertice(1f, i.toFloat())
+        val curr = i.toString()
+        graph.addNode(curr)
+        graph.addVertice("1", curr)
     }
     return graph
 }

@@ -1,3 +1,22 @@
+/*
+ *
+ *  * This file is part of BDSM Graphs.
+ *  *
+ *  * BDSM Graphs is free software: you can redistribute it and/or modify
+ *  * it under the terms of the GNU General Public License as published by
+ *  * the Free Software Foundation, either version 3 of the License, or
+ *  * (at your option) any later version.
+ *  *
+ *  * BDSM Graphs is distributed in the hope that it will be useful,
+ *  * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  * GNU General Public License for more details.
+ *  *
+ *  * You should have received a copy of the GNU General Public License
+ *  * along with . If not, see <https://www.gnu.org/licenses/>.
+ *
+ */
+
 package ui
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
@@ -29,11 +48,11 @@ import viewmodel.GraphVM
 
 @Composable
 @Preview
-fun <D> GraphPopup(
+fun GraphPopup(
     enabled: MutableState<Boolean>,
     pressOffset: Offset,
     graphVM: GraphVM,
-    gv: GraphViewClass<D>
+    gv: GraphViewClass
 ) {
 
     var alert by remember { mutableStateOf(AlertType.UNABLED) }
@@ -41,7 +60,7 @@ fun <D> GraphPopup(
 
     DropdownMenu(
         expanded = enabled.value,
-        onDismissRequest = {enabled.value = false},
+        onDismissRequest = { enabled.value = false },
         offset = DpOffset(x = pressOffset.x.dp, y = pressOffset.y.dp - graphVM.height.dp)
     ) {
         DropdownMenuItem(
@@ -51,51 +70,51 @@ fun <D> GraphPopup(
         ) {
             Text("Create Node")
         }
-        DropdownMenuItem(onClick = {alert = AlertType.CREATEVERT}) {
+        DropdownMenuItem(onClick = { alert = AlertType.CREATEVERT }) {
             Text("Create Vert")
         }
         Divider()
-        DropdownMenuItem(onClick = {alert = AlertType.DELETENODE}) {
+        DropdownMenuItem(onClick = { alert = AlertType.DELETENODE }) {
             Text("Delete Node")
         }
-        DropdownMenuItem(onClick = {alert = AlertType.DELETEVERT}) {
+        DropdownMenuItem(onClick = { alert = AlertType.DELETEVERT }) {
             Text("Delete Vert")
         }
     }
 
     if (alert != AlertType.UNABLED) {
-            AlertDialog(
-                onDismissRequest = {
-                    alert = AlertType.UNABLED
-                },
-                title = {
-                    Text(text = "Title")
-                },
-                text = {
-                    Column() {
-                        TextField(
-                            value = text,
-                            onValueChange = { text = it }
-                        )
-                        Text("Custom Text")
-                        Checkbox(checked = false, onCheckedChange = {})
-                    }
-                },
-                buttons = {
-                    Row(
-                        modifier = Modifier.padding(all = 8.dp),
-                        horizontalArrangement = Arrangement.Center
+        AlertDialog(
+            onDismissRequest = {
+                alert = AlertType.UNABLED
+            },
+            title = {
+                Text(text = "Title")
+            },
+            text = {
+                Column {
+                    TextField(
+                        value = text,
+                        onValueChange = { text = it }
+                    )
+                    Text("Custom Text")
+                    Checkbox(checked = false, onCheckedChange = {})
+                }
+            },
+            buttons = {
+                Row(
+                    modifier = Modifier.padding(all = 8.dp),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Button(
+                        modifier = Modifier.fillMaxWidth(),
+                        onClick = { alert = AlertType.UNABLED }
                     ) {
-                        Button(
-                            modifier = Modifier.fillMaxWidth(),
-                            onClick = { alert = AlertType.UNABLED }
-                        ) {
-                            Text("Dismiss")
-                        }
+                        Text("Dismiss")
                     }
                 }
-            )
-        }
+            }
+        )
+    }
 
 }
 

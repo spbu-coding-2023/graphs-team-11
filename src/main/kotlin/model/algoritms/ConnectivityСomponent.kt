@@ -1,3 +1,22 @@
+/*
+ *
+ *  * This file is part of BDSM Graphs.
+ *  *
+ *  * BDSM Graphs is free software: you can redistribute it and/or modify
+ *  * it under the terms of the GNU General Public License as published by
+ *  * the Free Software Foundation, either version 3 of the License, or
+ *  * (at your option) any later version.
+ *  *
+ *  * BDSM Graphs is distributed in the hope that it will be useful,
+ *  * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  * GNU General Public License for more details.
+ *  *
+ *  * You should have received a copy of the GNU General Public License
+ *  * along with . If not, see <https://www.gnu.org/licenses/>.
+ *
+ */
+
 package model.algoritms
 
 import androidx.compose.runtime.snapshots.SnapshotStateMap
@@ -6,17 +25,21 @@ import model.graph_model.Graph
 import model.graph_model.graph_model_actions.NodeViewUpdate
 import model.graph_model.graph_model_actions.Update
 import model.graph_model.graph_model_actions.VertViewUpdate
-import java.awt.Component
 import kotlin.random.Random
 
-class ConnectivityСomponent: Algoritm(null) {
-    override fun <D> algoRun(graph: Graph<D>, selected: SnapshotStateMap<D, Int>): Update<D> {
+class ConnectivityСomponent : Algoritm(null) {
+
+    override fun algoRun(graph: Graph, selected: SnapshotStateMap<String, Int>): Update {
+        return getViewByComponents(getComponents(graph), graph)
+    }
+
+    fun getComponents(graph: Graph): MutableSet<MutableSet<String>> {
         val reversed = graph.reverse()
 
-        var visited: MutableSet<D> = mutableSetOf()
-        val exitTime = mutableListOf<D>()
+        var visited: MutableSet<String> = mutableSetOf()
+        val exitTime = mutableListOf<String>()
 
-        fun DFSFirst(parent: D, grahp: Graph<D>) {
+        fun DFSFirst(parent: String, grahp: Graph) {
             visited.add(parent)
             for ((node, _) in grahp.vertices.getOrDefault(parent, mutableSetOf())) {
                 if (node !in visited) {
@@ -34,7 +57,7 @@ class ConnectivityСomponent: Algoritm(null) {
         }
 
         visited = mutableSetOf()
-        fun DFSSecond(parent: D, grahp: Graph<D>, stack: MutableSet<D>) {
+        fun DFSSecond(parent: String, grahp: Graph, stack: MutableSet<String>) {
             if (parent !in stack && parent !in visited) {
                 visited.add(parent)
                 stack.add(parent)
@@ -44,21 +67,21 @@ class ConnectivityСomponent: Algoritm(null) {
             }
         }
 
-        val components: MutableSet<MutableSet<D>> = mutableSetOf()
+        val components: MutableSet<MutableSet<String>> = mutableSetOf()
 
         for (i in exitTime.reversed()) {
             if (i !in visited) {
-                val component = mutableSetOf<D>()
+                val component = mutableSetOf<String>()
                 DFSSecond(i, graph, component)
                 components.add(component)
             }
         }
-        return getViewByComponents(components, graph)
+        return components
     }
 
-    fun <D> getViewByComponents(components: MutableSet<MutableSet<D>> = mutableSetOf(), graph: Graph<D>): Update<D> {
-        val updateNode: MutableMap<D, NodeViewUpdate<D>> = mutableMapOf()
-        val updateVert: MutableMap<D, MutableMap<D, VertViewUpdate<D>>> = mutableMapOf()
+    fun getViewByComponents(components: MutableSet<MutableSet<String>> = mutableSetOf(), graph: Graph): Update {
+        val updateNode: MutableMap<String, NodeViewUpdate> = mutableMapOf()
+        val updateVert: MutableMap<String, MutableMap<String, VertViewUpdate>> = mutableMapOf()
 
         for (component in components) {
             val compColor = Color(Random.nextFloat(), Random.nextFloat(), Random.nextFloat())

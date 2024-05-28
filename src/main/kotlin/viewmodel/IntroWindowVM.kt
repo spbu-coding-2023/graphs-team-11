@@ -1,3 +1,22 @@
+/*
+ *
+ *  * This file is part of BDSM Graphs.
+ *  *
+ *  * BDSM Graphs is free software: you can redistribute it and/or modify
+ *  * it under the terms of the GNU General Public License as published by
+ *  * the Free Software Foundation, either version 3 of the License, or
+ *  * (at your option) any later version.
+ *  *
+ *  * BDSM Graphs is distributed in the hope that it will be useful,
+ *  * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  * GNU General Public License for more details.
+ *  *
+ *  * You should have received a copy of the GNU General Public License
+ *  * along with . If not, see <https://www.gnu.org/licenses/>.
+ *
+ */
+
 package viewmodel
 
 import androidx.compose.runtime.MutableState
@@ -8,80 +27,59 @@ import data.tools.graphGenerators.flowerSnark
 import data.tools.graphGenerators.randomTree
 import data.tools.graphGenerators.starDirected
 import data.tools.graphGenerators.starUndirected
+import kotlinx.coroutines.CoroutineScope
 import model.graph_model.Graph
 import ui.components.MyWindowState
-import ui.components.generateStringNodeNames
 
 class IntroWindowVM(
-    var isSettingMenuOpen: MutableState<Boolean>,
+    var isSettingMenuOpen: MutableState<Boolean>, private val scope: CoroutineScope
 ) {
-    var graphList: MutableState<List<Triple<Int, Graph<*>, String>>> = mutableStateOf(getAllGraphs())
+    var graphList: MutableState<List<Triple<Int, Graph, String>>> = mutableStateOf(getAllGraphs())
     val isFileLoaderOpen = mutableStateOf(false)
     val fileLoaderException: MutableState<String?> = mutableStateOf(null)
+    val chosenGraph = mutableStateOf("Saved")
+    val graphSize = mutableStateOf("")
+    val chosenGenerator = mutableStateOf("Random Tree")
+    val weightMax = mutableStateOf("1")
+    val graphTypes = listOf("Saved", "Manual", "Generate", "Empty")
 
-    enum class GraphKeyType {
-        INT, STRING, FLOAT,
-    }
+
 
     fun onSettingsPressed() {
         isSettingMenuOpen.value = true
     }
 
-    fun onUseGraphSqliteExposedPressed(state: MyWindowState, graph: Graph<*>) {
-        state.reloadWindow(graph)
+    fun onUseGraphSqliteExposedPressed(state: MyWindowState, graph: Graph) {
+        state.reloadWindow(graph, scope)
     }
 
-    fun onDeleteGraphSqliteExposedPressed(id: Int, graphList: MutableState<List<Triple<Int, Graph<*>, String>>>) {
+    fun onDeleteGraphSqliteExposedPressed(id: Int) {
         deleteGraph(id)
         graphList.value = graphList.value.filter { it.first != id }
     }
 
-    fun generateGraph(graphSize: Int, chosenGenerator: String, graphType: GraphKeyType, maxWeight: Int): Graph<*> {
-        return when (chosenGenerator) {
-            "Random Tree" -> randomTree(graphSize, graphType, maxWeight)
-            "Flower Snark" -> flowerSnark(graphSize, graphType)
-            "Star Directed" -> starDirected(graphSize, graphType)
-            "Star Undirected" -> starUndirected(graphSize, graphType)
-            else -> createEmptyGraph(graphType)
+    fun generateGraph(maxWeight: Int): Graph {
+        val graphSize = graphSize.value.toInt()
+        return when (chosenGenerator.value) {
+            "Random Tree" -> randomTree(graphSize, maxWeight)
+            "Flower Snark" -> flowerSnark(graphSize)
+            "Star Directed" -> starDirected(graphSize)
+            "Star Undirected" -> starUndirected(graphSize)
+            else -> createEmptyGraph()
         }
     }
 
-    fun createEmptyGraph(type: GraphKeyType): Graph<*> {
-        return when (type) {
-            GraphKeyType.INT -> Graph<Int>()
-            GraphKeyType.STRING -> Graph<String>()
-            GraphKeyType.FLOAT -> Graph<Float>()
-        }
+    fun createEmptyGraph(): Graph {
+        return Graph()
     }
 
-    fun createGraphWithoutEdges(type: GraphKeyType, size: Int): Graph<*> {
-        return when (type) {
-            GraphKeyType.INT -> {
-                val graph = Graph<Int>()
-                for (i in 0 until size) {
-                    graph.addNode(i)
-                }
-                graph
+    fun createGraphWithoutEdges(): Graph {
+        val size = graphSize.value.toInt()
 
-            }
-
-            GraphKeyType.STRING -> {
-                val graph = Graph<String>()
-                val nodeNames = generateStringNodeNames(size)
-                nodeNames.forEach { nodeName ->
-                    graph.addNode(nodeName)
-                }
-                graph
-            }
-
-            GraphKeyType.FLOAT -> {
-                val graph = Graph<Float>()
-                for (i in 0 until size) {
-                    graph.addNode(i.toFloat())
-                }
-                graph
-            }
+        val graph = Graph()
+        for (i in 0 until size) {
+            graph.addNode(i.toString())
         }
-
+        return graph
     }
 }

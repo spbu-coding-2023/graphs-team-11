@@ -1,3 +1,22 @@
+/*
+ *
+ *  * This file is part of BDSM Graphs.
+ *  *
+ *  * BDSM Graphs is free software: you can redistribute it and/or modify
+ *  * it under the terms of the GNU General Public License as published by
+ *  * the Free Software Foundation, either version 3 of the License, or
+ *  * (at your option) any later version.
+ *  *
+ *  * BDSM Graphs is distributed in the hope that it will be useful,
+ *  * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  * GNU General Public License for more details.
+ *  *
+ *  * You should have received a copy of the GNU General Public License
+ *  * along with . If not, see <https://www.gnu.org/licenses/>.
+ *
+ */
+
 package ui
 
 import androidx.compose.foundation.Canvas
@@ -8,7 +27,11 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -34,17 +57,15 @@ import viewmodel.GraphVM
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun <D> GrahpView(
-    gv: GraphViewClass<D>,
+fun GraphView(
+    gv: GraphViewClass,
     changedAlgo: MutableState<Boolean>,
-    selected: SnapshotStateMap<D, Int>,
+    selected: SnapshotStateMap<String, Int>,
     padding: Int = 100,
-    showNodes: Boolean = true
+    showNodes: Boolean = true,
 ) {
     val viewModel = remember { GraphVM() }
     viewModel.padding = padding
-
-    // println(viewModel.toAbsoluteOffset(Offset(-1f, -1f)))
 
     if (changedAlgo.value) {
         changedAlgo.value = false
@@ -80,22 +101,24 @@ fun <D> GrahpView(
             changedAlgo.value = true
 
         }.onPointerEvent(PointerEventType.Press) {
-            val selectedList = mutableMapOf<Int, D>()
+            val selectedList = mutableMapOf<Int, String>()
             for ((i, isSel) in selected) {
                 selectedList[isSel] = i
             }
             if (it.button == PointerButton.Secondary) {
-                if (selectedList.size == 0) {
-                    gv.addNode(null, toNotAbsoluteOffset(it.changes.first.position))
-                    changedAlgo.value = true
+                if (selectedList.size < 2) {
+                    if (!gv.newNodes.any { node -> node.value == null }) {
+                        gv.addNode(null, toNotAbsoluteOffset(it.changes.first().position))
+                        changedAlgo.value = true
+                    }
                 } else if (selectedList.size == 2) {
                     gv.addVert(selectedList[0]!!, selectedList[1]!!)
                     changedAlgo.value = true
                 }
             }
         }) {
-            for ((i, verts) in gv.vertViews) {
-                for ((j, view) in verts) {
+            for ((_, verts) in gv.vertViews) {
+                for ((_, view) in verts) {
                     val arrow = Path()
                     val start = (viewModel.toAbsoluteOffset(view.start.offset) + Offset(
                         x = view.start.radius.dp.toPx(), y = view.start.radius.dp.toPx()
@@ -138,8 +161,7 @@ fun <D> GrahpView(
 
                     val textPosition = (start + end) / 2f
 
-                    if ((view.weight != 1f) && (textPosition.x > 0) && (textPosition.y > 0)
-                        && (textPosition.x < size.width) && (textPosition.y < size.height)) {
+                    if ((view.weight != 1f) && (textPosition.x > 0) && (textPosition.y > 0) && (textPosition.x < size.width) && (textPosition.y < size.height)) {
                         drawText(
                             textMeasurer,
                             text = view.weight.toString(),
@@ -154,18 +176,18 @@ fun <D> GrahpView(
             }
         }
         if (showNodes) {
+            val graphNodeKeysList = gv.nodesViews.keys.map { it }
             for (i in gv.nodesViews) {
                 NodeView(
                     nodeView = i.value,
-                    mainOffset = viewModel.mainOffset,
-                    toAbsoluteOffset = viewModel.toAbsoluteOffset,
-                    toNotAbsoluteOffset = viewModel.toNotAbsoluteOffset,
                     selected = selected,
                     isShifted = isShifted,
-                    scaleFactor = viewModel.scaleFactor.value
+                    viewModel,
+                    graphNodeKeysList,
+                    changedAlgo
                 )
             }
-            val toRemove = mutableListOf<NodeViewClass<D>>()
+            val toRemove = mutableListOf<NodeViewClass>()
             for (i in gv.newNodes) {
                 if (i.value != null) {
                     val value = i.value!!
@@ -175,15 +197,11 @@ fun <D> GrahpView(
                     toRemove.add(i)
                     continue
                 }
+
                 NodeView(
-                    nodeView = i,
-                    mainOffset = viewModel.mainOffset,
-                    toAbsoluteOffset = viewModel.toAbsoluteOffset,
-                    toNotAbsoluteOffset = viewModel.toNotAbsoluteOffset,
-                    selected = selected,
-                    isShifted = isShifted,
-                    scaleFactor = viewModel.scaleFactor.value
+                    nodeView = i, selected = selected, isShifted = isShifted, viewModel, graphNodeKeysList, changedAlgo
                 )
+
             }
             for (i in toRemove) {
                 gv.newNodes.remove(i)

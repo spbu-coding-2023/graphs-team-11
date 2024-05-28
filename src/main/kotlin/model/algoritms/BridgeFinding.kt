@@ -1,3 +1,22 @@
+/*
+ *
+ *  * This file is part of BDSM Graphs.
+ *  *
+ *  * BDSM Graphs is free software: you can redistribute it and/or modify
+ *  * it under the terms of the GNU General Public License as published by
+ *  * the Free Software Foundation, either version 3 of the License, or
+ *  * (at your option) any later version.
+ *  *
+ *  * BDSM Graphs is distributed in the hope that it will be useful,
+ *  * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  * GNU General Public License for more details.
+ *  *
+ *  * You should have received a copy of the GNU General Public License
+ *  * along with . If not, see <https://www.gnu.org/licenses/>.
+ *
+ */
+
 package model.algoritms
 
 import androidx.compose.runtime.snapshots.SnapshotStateMap
@@ -7,11 +26,12 @@ import model.graph_model.graph_model_actions.NodeViewUpdate
 import model.graph_model.graph_model_actions.Update
 import model.graph_model.graph_model_actions.VertViewUpdate
 
+
 class BridgeFinding : Algoritm(null) {
-    override fun <D> algoRun(graph: Graph<D>, selected: SnapshotStateMap<D, Int>): Update<D> {
+    override fun algoRun(graph: Graph, selected: SnapshotStateMap<String, Int>): Update {
         val bridges = findBridges(graph)
-        val updateNode: MutableMap<D, NodeViewUpdate<D>> = mutableMapOf()
-        val updateVert: MutableMap<D, MutableMap<D, VertViewUpdate<D>>> = mutableMapOf()
+        val updateNode: MutableMap<String, NodeViewUpdate> = mutableMapOf()
+        val updateVert: MutableMap<String, MutableMap<String, VertViewUpdate>> = mutableMapOf()
 
         bridges.forEach { (u, v) ->
             updateVert.computeIfAbsent(u) { mutableMapOf() }[v] = VertViewUpdate(color = Color.Red, alpha = 1f)
@@ -21,12 +41,12 @@ class BridgeFinding : Algoritm(null) {
         return Update(nodeViewUpdate = updateNode, vertViewUpdate = updateVert)
     }
 
-    private fun <D> findBridges(graph: Graph<D>): List<Pair<D, D>> {
-        val visited = mutableMapOf<D, Boolean>().withDefault { false }
-        val discovery = mutableMapOf<D, Int>().withDefault { -1 }
-        val low = mutableMapOf<D, Int>().withDefault { -1 }
-        val parent = mutableMapOf<D, D?>().withDefault { null }
-        val bridges = mutableListOf<Pair<D, D>>()
+    fun findBridges(graph: Graph): List<Pair<String, String>> {
+        val visited = mutableMapOf<String, Boolean>().withDefault { false }
+        val discovery = mutableMapOf<String, Int>().withDefault { -1 }
+        val low = mutableMapOf<String, Int>().withDefault { -1 }
+        val parent = mutableMapOf<String, String?>().withDefault { null }
+        val bridges = mutableListOf<Pair<String, String>>()
         var time = 0
 
         for (node in graph.vertices.keys) {
@@ -38,14 +58,14 @@ class BridgeFinding : Algoritm(null) {
         return bridges
     }
 
-    private fun <D> bridgeDFS(
-        graph: Graph<D>,
-        u: D,
-        visited: MutableMap<D, Boolean>,
-        discovery: MutableMap<D, Int>,
-        low: MutableMap<D, Int>,
-        parent: MutableMap<D, D?>,
-        bridges: MutableList<Pair<D, D>>,
+    private fun bridgeDFS(
+        graph: Graph,
+        u: String,
+        visited: MutableMap<String, Boolean>,
+        discovery: MutableMap<String, Int>,
+        low: MutableMap<String, Int>,
+        parent: MutableMap<String, String?>,
+        bridges: MutableList<Pair<String, String>>,
         time: Int
     ): Int {
         var currentTime = time

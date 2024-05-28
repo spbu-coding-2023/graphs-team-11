@@ -1,12 +1,32 @@
+/*
+ *
+ *  * This file is part of BDSM Graphs.
+ *  *
+ *  * BDSM Graphs is free software: you can redistribute it and/or modify
+ *  * it under the terms of the GNU General Public License as published by
+ *  * the Free Software Foundation, either version 3 of the License, or
+ *  * (at your option) any later version.
+ *  *
+ *  * BDSM Graphs is distributed in the hope that it will be useful,
+ *  * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  * GNU General Public License for more details.
+ *  *
+ *  * You should have received a copy of the GNU General Public License
+ *  * along with . If not, see <https://www.gnu.org/licenses/>.
+ *
+ */
+
 package model.graph_model.graph_model_actions
 
-class Update<D>(
-    val nodeViewUpdate: MutableMap<D, NodeViewUpdate<D>> = mutableMapOf(),
-    val vertViewUpdate: MutableMap<D, MutableMap<D, VertViewUpdate<D>>> = mutableMapOf()
-) {
-    operator fun plus(other: Update<D>): Update<D> {
 
-        val sumUpdate = Update<D>()
+class Update(
+    val nodeViewUpdate: MutableMap<String, NodeViewUpdate> = mutableMapOf(),
+    val vertViewUpdate: MutableMap<String, MutableMap<String, VertViewUpdate>> = mutableMapOf()
+) {
+    operator fun plus(other: Update): Update {
+
+        val sumUpdate = Update()
 
         for ((node, _) in this.nodeViewUpdate) {
             if (node in other.nodeViewUpdate) {

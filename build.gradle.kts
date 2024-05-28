@@ -1,9 +1,8 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
-import org.jetbrains.kotlin.ir.backend.js.compile
 
 plugins {
-    kotlin("jvm")
-    id("org.jetbrains.compose")
+    kotlin("jvm") version "1.9.22"
+    id("org.jetbrains.compose") version "1.6.2"
     jacoco
 }
 
@@ -37,17 +36,36 @@ dependencies {
     // File Picker
     implementation("com.darkrockstudios:mpfilepicker:3.1.0")
 
-    // XML Serialization
-    implementation("io.github.pdvrieze.xmlutil:serialization:0.86.3")
-
     implementation("org.gephi", "gephi-toolkit", "0.10.1", classifier = "all")
 
     testImplementation("org.jetbrains.kotlin:kotlin-test")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.1")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
+    testImplementation("io.mockk:mockk:1.13.11")
+
+    // JUnit 5
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.2")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.2")
+    testImplementation("org.junit.vintage:junit-vintage-engine:5.10.2")
+
+    // Compose UI Test
+    testImplementation("org.jetbrains.compose.ui:ui-test-junit4:1.6.2")
+
+    // Test Containers
+    testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
+    testImplementation("org.testcontainers:testcontainers:1.19.8")
+    testImplementation("org.testcontainers:junit-jupiter:1.19.8")
+
+}
+
+tasks.withType<Test> {
+    useJUnitPlatform()
+    systemProperty("java.awt.headless", "false")
+    // hides warning of the mockk testing library
+    jvmArgs("-XX:+EnableDynamicAgentLoading", "-Djdk.instrument.traceUsage")
 }
 
 tasks.test {
-    useJUnitPlatform()
-
     testLogging {
         events("skipped", "failed")
         afterSuite(
@@ -87,7 +105,8 @@ compose.desktop {
 
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "Graphs Team 11"
+            modules("java.compiler", "java.instrument" , "java.sql", "jdk.unsupported")
+            packageName = "GraphsTeam11"
             packageVersion = "1.0.0"
         }
     }

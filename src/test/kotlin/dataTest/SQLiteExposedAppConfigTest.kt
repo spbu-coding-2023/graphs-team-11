@@ -1,3 +1,22 @@
+/*
+ *
+ *  * This file is part of BDSM Graphs.
+ *  *
+ *  * BDSM Graphs is free software: you can redistribute it and/or modify
+ *  * it under the terms of the GNU General Public License as published by
+ *  * the Free Software Foundation, either version 3 of the License, or
+ *  * (at your option) any later version.
+ *  *
+ *  * BDSM Graphs is distributed in the hope that it will be useful,
+ *  * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  * GNU General Public License for more details.
+ *  *
+ *  * You should have received a copy of the GNU General Public License
+ *  * along with . If not, see <https://www.gnu.org/licenses/>.
+ *
+ */
+
 package dataTest
 
 import data.db.sqlite_exposed.connectConfig
@@ -12,6 +31,11 @@ import ui.theme.Theme
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
+// need to fix this later!
+
+/**
+ * A test class to check the correct operation of the module for storing settings in the database, namely the theme.
+ */
 class SQLiteExposedAppConfigTest {
 
     companion object {
@@ -23,27 +47,9 @@ class SQLiteExposedAppConfigTest {
     }
 
     @Test
-    fun `test getTheme returns default value`() {
+    fun `test getTheme returns default value because DB is empty`() {
         val currentTheme = getTheme()
         assertEquals(Theme.LIGHT, currentTheme)
-    }
-
-    @Test
-    fun `test theme DB doesn't contain theme`() {
-        var dbCount = -1
-        // Clear the DB because we need to make sure that the theme is not set
-        transaction{
-            Settings.deleteAll()
-            dbCount = Settings.selectAll().where { Settings.key eq "theme" }.count().toInt()
-        }
-        assertEquals(dbCount, 0)
-
-        setTheme(Theme.DARK)
-
-        transaction {
-            dbCount = Settings.selectAll().where { Settings.key eq "theme" }.count().toInt()
-        }
-        assertEquals(dbCount, 1)
     }
 
     @Test

@@ -1,18 +1,47 @@
+/*
+ *
+ *  * This file is part of BDSM Graphs.
+ *  *
+ *  * BDSM Graphs is free software: you can redistribute it and/or modify
+ *  * it under the terms of the GNU General Public License as published by
+ *  * the Free Software Foundation, either version 3 of the License, or
+ *  * (at your option) any later version.
+ *  *
+ *  * BDSM Graphs is distributed in the hope that it will be useful,
+ *  * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  * GNU General Public License for more details.
+ *  *
+ *  * You should have received a copy of the GNU General Public License
+ *  * along with . If not, see <https://www.gnu.org/licenses/>.
+ *
+ */
+
 package ui.components
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.material.AlertDialog
+import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
+import androidx.compose.material.TextField
+import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -21,23 +50,16 @@ import com.darkrockstudios.libraries.mpfilepicker.FilePicker
 import data.Constants.APP_NAME
 import data.Constants.CHOOSE_GRAPH_WINDOW_TITLE
 import data.Constants.FILE_LOAD_FORMAT_FILTER
-import data.Constants.FILE_SAVE_FORMAT_FILTER
-import data.Constants.RESOURCE_DIR
 import data.graph_save.graphLoadUnified
+import kotlinx.coroutines.CoroutineScope
 import model.graph_model.Graph
 import ui.theme.BdsmAppTheme
 import ui.theme.Theme
 import viewmodel.MainVM
 import java.awt.Dimension
-import java.awt.FileDialog
-import java.awt.Frame
-import java.io.File
-import java.nio.file.InvalidPathException
-import kotlin.io.path.absolutePathString
-import kotlin.io.path.isRegularFile
-import kotlin.io.path.listDirectoryEntries
+import kotlin.reflect.KFunction3
 
-class MyApplicationState {
+class MyApplicationState(val scope: CoroutineScope) {
     val windows = mutableStateListOf<MyWindowState>()
 
     init {
@@ -45,11 +67,11 @@ class MyApplicationState {
     }
 
     private fun openChooseGraphWindow() {
-        windows += MyWindowState(CHOOSE_GRAPH_WINDOW_TITLE)
+        windows += MyWindowState(CHOOSE_GRAPH_WINDOW_TITLE, scope = scope, isEmptyGraph = false)
     }
 
-    private fun openNewWindow(graph: Graph<*>?) {
-        windows += MyWindowState(APP_NAME, graph)
+    private fun openNewWindow(graph: Graph?, scope: CoroutineScope, isEmptyGraph: Boolean) {
+        windows += MyWindowState(APP_NAME, graph, scope, isEmptyGraph)
     }
 
     private fun exit() {
@@ -57,26 +79,30 @@ class MyApplicationState {
     }
 
     private fun MyWindowState(
-        title: String, graph: Graph<*>? = null
+        title: String, graph: Graph? = null, scope: CoroutineScope, isEmptyGraph: Boolean
     ) = MyWindowState(
         title,
         graph,
         openNewWindow = ::openNewWindow,
         exit = ::exit,
         windows,
-        openChooseGraphWindow = ::openChooseGraphWindow
+        openChooseGraphWindow = ::openChooseGraphWindow,
+        scope,
+        isEmptyGraph,
     )
 }
 
 class MyWindowState(
     val title: String,
-    val graph: Graph<*>? = null,
-    val openNewWindow: (Graph<*>?) -> Unit,
+    val graph: Graph? = null,
+    val openNewWindow: KFunction3<Graph?, CoroutineScope, Boolean, Unit>,
     val exit: () -> Unit,
     private val windows: SnapshotStateList<MyWindowState>,
     val openChooseGraphWindow: () -> Unit,
+    val scope: CoroutineScope,
+    isEmptyGraph: Boolean,
 ) {
-    val mainVM = MainVM(graph)
+    val mainVM = MainVM(graph, scope, isEmptyGraph)
 
     fun close() {
         val closeWindow = windows::remove
@@ -90,15 +116,15 @@ class MyWindowState(
         } else closeWindow(this)
     }
 
-    fun reloadWindow(graph: Graph<*>?) {
+    fun reloadWindow(graph: Graph?, scope: CoroutineScope, isEmptyGraph: Boolean = false) {
         windows.remove(this)
-        openNewWindow(graph)
+        openNewWindow(graph, scope, isEmptyGraph)
     }
 }
 
 @Composable
 fun SelectNameWindow(
-    appTheme: MutableState<Theme>, viewModel: MainVM<*>, onClose: () -> Unit
+    appTheme: MutableState<Theme>, viewModel: MainVM, onClose: () -> Unit
 ) {
     Window(
         title = "Select Graph Name",
@@ -161,16 +187,15 @@ fun SelectNameWindow(
 
 @Composable
 fun GraphFilePicker(
-    isFileLoaderOpen: MutableState<Boolean>,
-    fileLoaderException: MutableState<String?>,
-    state: MyWindowState) {
+    isFileLoaderOpen: MutableState<Boolean>, fileLoaderException: MutableState<String?>, state: MyWindowState
+) {
     FilePicker(
         isFileLoaderOpen.value, fileExtensions = FILE_LOAD_FORMAT_FILTER
     ) { path ->
         if (path != null) {
             try {
-                val loadedGraph: Graph<String> = graphLoadUnified(path.path)
-                state.reloadWindow(loadedGraph)
+                val loadedGraph: Graph = graphLoadUnified(path.path)
+                state.reloadWindow(loadedGraph, state.scope)
             } catch (e: NullPointerException) {
                 fileLoaderException.value = e.message
             }
@@ -190,5 +215,15 @@ fun GraphFilePicker(
                 }
             },
         )
+    }
+}
+
+@Composable
+fun GraphLoadingView() {
+    Box(
+        modifier = Modifier.fillMaxSize().background(MaterialTheme.colors.background),
+        contentAlignment = Alignment.Center
+    ) {
+        CircularProgressIndicator(color = MaterialTheme.colors.primary)
     }
 }

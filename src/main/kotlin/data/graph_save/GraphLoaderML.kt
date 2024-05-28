@@ -1,12 +1,39 @@
+/*
+ *
+ *  * This file is part of BDSM Graphs.
+ *  *
+ *  * BDSM Graphs is free software: you can redistribute it and/or modify
+ *  * it under the terms of the GNU General Public License as published by
+ *  * the Free Software Foundation, either version 3 of the License, or
+ *  * (at your option) any later version.
+ *  *
+ *  * BDSM Graphs is distributed in the hope that it will be useful,
+ *  * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  * GNU General Public License for more details.
+ *  *
+ *  * You should have received a copy of the GNU General Public License
+ *  * along with . If not, see <https://www.gnu.org/licenses/>.
+ *
+ */
+
 package data.graph_save
 
 import model.graph_model.Graph
 import model.graph_model.UndirectedGraph
 import java.io.File
-import kotlin.IndexOutOfBoundsException
 
-fun loadGraphML(path: String): Graph<String> {
-    var graph: Graph<String> = Graph()
+fun loadGraphML(path: String): Graph {
+
+    var stringFile = ""
+    File(path).forEachLine { stringFile += it + "\n" }
+    stringFile = stringFile.trim('\n')
+
+    return proccesFileLoad(stringFile)
+}
+
+fun proccesFileLoad(file: String): Graph {
+    var graph = Graph()
 
     val idToKey: MutableMap<String, String> = mutableMapOf()
     var curData: MutableMap<String, String> = mutableMapOf()
@@ -14,7 +41,7 @@ fun loadGraphML(path: String): Graph<String> {
     var mainKeyId: String? = null
     var weightId: String? = null
 
-    File(path).forEachLine {
+    file.split("\n").forEach() { it ->
         val striped = it.trim(' ').split(" ")
         val tag = striped[0]
 
@@ -33,7 +60,13 @@ fun loadGraphML(path: String): Graph<String> {
                         }
                     }
                     if (data["edgedefault"] == "undirected") {
-                        graph = UndirectedGraph<String>()
+                        graph = UndirectedGraph()
+                    }
+                }
+
+                tag.startsWith("</graph") -> {
+                    if (!curData.isEmpty()) {
+                        throw NullPointerException("Invalid File Format: some tag isn't close")
                     }
                 }
 
@@ -57,6 +90,9 @@ fun loadGraphML(path: String): Graph<String> {
                 }
 
                 tag.startsWith("<node") -> {
+                    if (!curData.isEmpty()) {
+                        throw NullPointerException("Invalid File Format: No node exit \nProblem in line \"$it\"")
+                    }
                     curData["id"] = it.split("\"")[1]
                     if ("/" in it) {
                         try {
@@ -106,6 +142,9 @@ fun loadGraphML(path: String): Graph<String> {
                 }
 
                 tag.startsWith("<edge") -> {
+                    if (!curData.isEmpty()) {
+                        throw NullPointerException("Invalid File Format: No edge exit \nProblem in line \"$it\"")
+                    }
                     val data = mutableMapOf<String, String>()
                     it.split(" ").forEach {
                         if ("=" in it) {
@@ -115,7 +154,6 @@ fun loadGraphML(path: String): Graph<String> {
                                     .trim('>')
                                     .trim('/')
                                     .trim('"')
-
                         }
                     }
                     try {

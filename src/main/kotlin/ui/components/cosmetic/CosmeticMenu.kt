@@ -1,3 +1,22 @@
+/*
+ *
+ *  * This file is part of BDSM Graphs.
+ *  *
+ *  * BDSM Graphs is free software: you can redistribute it and/or modify
+ *  * it under the terms of the GNU General Public License as published by
+ *  * the Free Software Foundation, either version 3 of the License, or
+ *  * (at your option) any later version.
+ *  *
+ *  * BDSM Graphs is distributed in the hope that it will be useful,
+ *  * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  * GNU General Public License for more details.
+ *  *
+ *  * You should have received a copy of the GNU General Public License
+ *  * along with . If not, see <https://www.gnu.org/licenses/>.
+ *
+ */
+
 package ui.components.cosmetic
 
 import androidx.compose.animation.AnimatedVisibility
@@ -35,7 +54,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -46,11 +64,12 @@ import viewmodel.CosmeticVM
 
 @Composable
 @Preview
-fun <D> CommeticsMenu(
-    graphViewClass: GraphViewClass<D>, changedAlgo: MutableState<Boolean>, selected: SnapshotStateMap<D, Int>
+fun CommeticsMenu(
+    graphViewClass: GraphViewClass, changedAlgo: MutableState<Boolean>
 ) {
     val viewModel = remember { CosmeticVM() }
     val isMenuVisible = viewModel.isMenuVisible.value
+
 
     val density = LocalDensity.current
 

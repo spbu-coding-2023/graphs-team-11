@@ -1,3 +1,22 @@
+/*
+ *
+ *  * This file is part of BDSM Graphs.
+ *  *
+ *  * BDSM Graphs is free software: you can redistribute it and/or modify
+ *  * it under the terms of the GNU General Public License as published by
+ *  * the Free Software Foundation, either version 3 of the License, or
+ *  * (at your option) any later version.
+ *  *
+ *  * BDSM Graphs is distributed in the hope that it will be useful,
+ *  * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  * GNU General Public License for more details.
+ *  *
+ *  * You should have received a copy of the GNU General Public License
+ *  * along with . If not, see <https://www.gnu.org/licenses/>.
+ *
+ */
+
 package ui
 
 import androidx.compose.animation.core.AnimationSpec
@@ -37,6 +56,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -59,7 +79,8 @@ fun SettingsView(onClose: () -> Unit, appTheme: MutableState<Theme>) {
         window.minimumSize = Dimension(600, 400)
         BdsmAppTheme(appTheme = appTheme.value) {
             Column(
-                modifier = Modifier.background(MaterialTheme.colors.background).fillMaxSize().padding(20.dp),
+                modifier = Modifier.background(MaterialTheme.colors.background).fillMaxSize().padding(20.dp).testTag("SettingsWindowTag")
+                ,
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.SpaceBetween,
             ) {
@@ -112,7 +133,7 @@ fun SettingsView(onClose: () -> Unit, appTheme: MutableState<Theme>) {
 
                             Text("Golden Theme за", fontSize = 22.sp)
                             Spacer(modifier = Modifier.height(10.dp))
-                            donateButton() {
+                            donateButton {
                                 showSberIcon.value = true
                             }
                             Spacer(modifier = Modifier.height(20.dp))

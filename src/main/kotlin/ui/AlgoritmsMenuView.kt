@@ -1,3 +1,22 @@
+/*
+ *
+ *  * This file is part of BDSM Graphs.
+ *  *
+ *  * BDSM Graphs is free software: you can redistribute it and/or modify
+ *  * it under the terms of the GNU General Public License as published by
+ *  * the Free Software Foundation, either version 3 of the License, or
+ *  * (at your option) any later version.
+ *  *
+ *  * BDSM Graphs is distributed in the hope that it will be useful,
+ *  * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  * GNU General Public License for more details.
+ *  *
+ *  * You should have received a copy of the GNU General Public License
+ *  * along with . If not, see <https://www.gnu.org/licenses/>.
+ *
+ */
+
 package ui
 
 import androidx.compose.animation.AnimatedVisibility
@@ -42,14 +61,23 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
-import model.algoritms.*
+import model.algoritms.AlgorithmData
+import model.algoritms.AlgoritmType
+import model.algoritms.BridgeFinding
+import model.algoritms.ConnectivityСomponent
+import model.algoritms.Kruskal
+import model.algoritms.LeidenToRun
+import model.algoritms.SampleAlgo
+import model.algoritms.ShortestPathDetection
+import model.algoritms.SomeThingLikeDFS
 import model.graph_model.GraphViewClass
+import model.graph_model.UndirectedGraph
 import viewmodel.AlgorithmMenuVM
 
 @Composable
 @Preview
-fun <D> LeftMenu(
-    graphViewClass: GraphViewClass<D>, changedAlgo: MutableState<Boolean>, selected: SnapshotStateMap<D, Int>
+fun LeftMenu(
+    graphViewClass: GraphViewClass, changedAlgo: MutableState<Boolean>, selected: SnapshotStateMap<String, Int>
 ) {
     val viewModel = remember { AlgorithmMenuVM() }
     val isMenuVisible = viewModel.isMenuVisible.value
@@ -96,20 +124,20 @@ fun <D> LeftMenu(
 
 @Composable
 @Stable
-fun <D> AlgoritmList(
-    graphViewClass: GraphViewClass<D>,
+fun AlgoritmList(
+    graphViewClass: GraphViewClass,
     changedAlgo: MutableState<Boolean>,
     viewModel: AlgorithmMenuVM,
-    selected: SnapshotStateMap<D, Int>
+    selected: SnapshotStateMap<String, Int>
 ) {
-    val algoList = mutableListOf(
-        Pair("Detect Communities", LeidenToRun()),
-        Pair("Sample Algorithm", SampleAlgo()),
-        Pair("Something like DFS", SomeThingLikeDFS()),
-        Pair("Kosaraju", ConnectivityСomponent()),
-        Pair("Minimal Tree", Kruskal()),
-        Pair("Shortest Path Detection", ShortestPathDetection()),
-        Pair("Find Bridges", BridgeFinding()),
+    val algoList = listOf(
+        AlgorithmData("Detect Communities", LeidenToRun(), AlgoritmType.BOTH),
+        AlgorithmData("Sample Algorithm", SampleAlgo(), AlgoritmType.BOTH),
+        AlgorithmData("Something like DFS", SomeThingLikeDFS(), AlgoritmType.BOTH),
+        AlgorithmData("Kosaraju", ConnectivityСomponent(), AlgoritmType.DIRECTED),
+        AlgorithmData("Minimal Tree", Kruskal(), AlgoritmType.UNDIRECTED),
+        AlgorithmData("Shortest Path Detection", ShortestPathDetection(), AlgoritmType.BOTH),
+        AlgorithmData("Find Bridges", BridgeFinding(), AlgoritmType.UNDIRECTED),
     )
 
     Column(
@@ -118,14 +146,20 @@ fun <D> AlgoritmList(
     ) {
         Text(text = "Algorithms")
         Divider(color = Color.Black, modifier = Modifier.fillMaxWidth(0.3f))
-        for (algorithm in algoList) {
-            Text(text = algorithm.first, modifier = Modifier.clickable(onClick = {
-                if (selected.size != algorithm.second.selectedSizeRequired && algorithm.second.selectedSizeRequired != null) {
+        val algorithms = algoList.filter {
+            it.type == AlgoritmType.BOTH ||
+                    (graphViewClass.graph is UndirectedGraph && it.type == AlgoritmType.UNDIRECTED) ||
+                    (graphViewClass.graph !is UndirectedGraph && it.type == AlgoritmType.DIRECTED)
+        }
+        for (algorithm in algorithms) {
+            Text(text = algorithm.name, modifier = Modifier.clickable(onClick = {
+                if (selected.size != algorithm.algo.selectedSizeRequired && algorithm.algo.selectedSizeRequired != null) {
                     viewModel.isException.value = true
                     viewModel.exceptionMessage.value =
-                        "Required " + algorithm.second.selectedSizeRequired.toString() + " selected nodes!"
+                        "Required " + algorithm.algo.selectedSizeRequired.toString() + " selected nodes!"
+                } else {
+                    viewModel.runAlgorithm(algorithm.algo, graphViewClass, changedAlgo, selected)
                 }
-                viewModel.runAlgorithm(algorithm.second, graphViewClass, changedAlgo, selected)
             }).offset(10.dp))
         }
     }

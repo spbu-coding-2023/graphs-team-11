@@ -1,3 +1,22 @@
+/*
+ *
+ *  * This file is part of BDSM Graphs.
+ *  *
+ *  * BDSM Graphs is free software: you can redistribute it and/or modify
+ *  * it under the terms of the GNU General Public License as published by
+ *  * the Free Software Foundation, either version 3 of the License, or
+ *  * (at your option) any later version.
+ *  *
+ *  * BDSM Graphs is distributed in the hope that it will be useful,
+ *  * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  * GNU General Public License for more details.
+ *  *
+ *  * You should have received a copy of the GNU General Public License
+ *  * along with . If not, see <https://www.gnu.org/licenses/>.
+ *
+ */
+
 package viewmodel
 
 import androidx.compose.runtime.Stable
@@ -60,8 +79,9 @@ class GraphVM {
         val change = pointerEvent.changes.first()
         val delta = change.scrollDelta.y.toInt().sign
         val oldZoom = scaleFactor.value
-        val newZoom = (scaleFactor.value - delta * 0.05f).coerceIn(0.3f, 3.0f)
+        val newZoom = (scaleFactor.value - delta * 0.05f).coerceIn(0.0003f, 3000.0f)
         scaleFactor.value = newZoom
+
 
         val (mouseX, mouseY) = change.position
         val screenSize = Toolkit.getDefaultToolkit().screenSize

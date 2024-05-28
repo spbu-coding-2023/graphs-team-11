@@ -1,4 +1,24 @@
+/*
+ *
+ *  * This file is part of BDSM Graphs.
+ *  *
+ *  * BDSM Graphs is free software: you can redistribute it and/or modify
+ *  * it under the terms of the GNU General Public License as published by
+ *  * the Free Software Foundation, either version 3 of the License, or
+ *  * (at your option) any later version.
+ *  *
+ *  * BDSM Graphs is distributed in the hope that it will be useful,
+ *  * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  * GNU General Public License for more details.
+ *  *
+ *  * You should have received a copy of the GNU General Public License
+ *  * along with . If not, see <https://www.gnu.org/licenses/>.
+ *
+ */
+
 package ui
+
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -25,6 +45,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Window
@@ -37,10 +58,7 @@ import java.awt.Dimension
 
 @Composable
 fun SavedGraphsView(
-    onClose: () -> Unit,
-    appTheme: MutableState<Theme>,
-    graphs: List<Triple<Int, Graph<*>, String>>,
-    state: MyWindowState
+    onClose: () -> Unit, appTheme: MutableState<Theme>, graphs: List<Triple<Int, Graph, String>>, state: MyWindowState
 ) {
     val viewModel = SavedGraphsVM()
     val graphList = mutableStateOf(graphs)
@@ -67,7 +85,7 @@ fun SavedGraphsView(
 }
 
 @Composable
-fun SavedGraphItem(graph: Graph<*>, name: String, onUsePressed: () -> Unit, onDeletePressed: () -> Unit) {
+fun SavedGraphItem(graph: Graph, name: String, onUsePressed: () -> Unit, onDeletePressed: () -> Unit) {
     Row(
         modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp, vertical = 5.dp).clip(RoundedCornerShape(10.dp))
             .border(1.dp, Color.Gray, RoundedCornerShape(10.dp)),
@@ -81,7 +99,7 @@ fun SavedGraphItem(graph: Graph<*>, name: String, onUsePressed: () -> Unit, onDe
             Icon(Icons.Default.Check,
                 contentDescription = "Use",
                 tint = Color(0xFF21a038),
-                modifier = Modifier.clickable { onUsePressed() })
+                modifier = Modifier.clickable { onUsePressed() }.testTag("UseButton"))
             Divider(Modifier.width(20.dp))
             Icon(Icons.Default.Delete,
                 contentDescription = "Delete",

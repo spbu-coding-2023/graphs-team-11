@@ -1,114 +1,86 @@
+/*
+ *
+ *  * This file is part of BDSM Graphs.
+ *  *
+ *  * BDSM Graphs is free software: you can redistribute it and/or modify
+ *  * it under the terms of the GNU General Public License as published by
+ *  * the Free Software Foundation, either version 3 of the License, or
+ *  * (at your option) any later version.
+ *  *
+ *  * BDSM Graphs is distributed in the hope that it will be useful,
+ *  * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  * GNU General Public License for more details.
+ *  *
+ *  * You should have received a copy of the GNU General Public License
+ *  * along with . If not, see <https://www.gnu.org/licenses/>.
+ *
+ */
+
 package dataTest
 
-import data.db.sqlite_exposed.*
+import data.db.sqlite_exposed.connect
+import data.db.sqlite_exposed.deleteGraph
+import data.db.sqlite_exposed.getAllGraphs
+import data.db.sqlite_exposed.saveGraph
+import data.db.sqlite_exposed.serializeGraph
 import model.graph_model.Graph
-import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.DynamicTest
-import org.junit.jupiter.api.Nested
-import org.junit.jupiter.api.TestFactory
+import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
+
+/**
+ * A test class to check the correct operation of the module for saving graphs in database.
+ */
 class SQLiteExposedGraphTest {
 
-    companion object {
-        lateinit var intGraph: Graph<Int>
-        lateinit var stringGraph: Graph<String>
-        lateinit var floatGraph: Graph<Float>
-
-        @JvmStatic
-        @BeforeAll
-        fun setup() {
-            intGraph = Graph<Int>().apply {
-                for (i in 1..4) {
-                    addNode(i)
-                }
-                addVertice(1, 2)
-                addVertice(2, 3)
-                addVertice(3, 4)
-
-            }
-            stringGraph = Graph<String>().apply {
-                for (i in 'A'..'D') {
-                    addNode(i.toString())
-                }
-                addVertice("A", "B")
-                addVertice("A", "D")
-                addVertice("B", "C")
-
-            }
-            floatGraph = Graph<Float>().apply {
-                for (i in 1..4) {
-                    addNode(i.toFloat())
-                }
-                addVertice(1f, 2f)
-                addVertice(2f, 3f)
-                addVertice(3f, 4f)
-            }
-
-            connect()
+    var graph = Graph().apply {
+        for (i in 'A'..'D') {
+            addNode(i.toString())
         }
+        addVertice("A", "B")
+        addVertice("A", "D")
+        addVertice("B", "C")
     }
 
-    @Nested
-    inner class SerializeAndDeserializeTests {
-
-        @Test
-        fun `test serializeGraph function with Int`() {
-            val serializedGraph = serializeGraph(intGraph)
-            val expectedSerializedGraph = "1:(2, 1.0)|2:(3, 1.0)|3:(4, 1.0)|4::4"
-            assertEquals(expectedSerializedGraph, serializedGraph)
-        }
-
-        @Test
-        fun `test serializeGraph function with String`() {
-            val serializedGraph = serializeGraph(stringGraph)
-            val expectedSerializedGraph = "A:(B, 1.0);(D, 1.0)|B:(C, 1.0)|C:|D::4"
-            assertEquals(expectedSerializedGraph, serializedGraph)
-        }
-
-        @Test
-        fun `test serializeGraph function with Float`() {
-            val serializedGraph = serializeGraph(floatGraph)
-            val expectedSerializedGraph = "1.0:(2.0, 1.0)|2.0:(3.0, 1.0)|3.0:(4.0, 1.0)|4.0::4"
-            assertEquals(expectedSerializedGraph, serializedGraph)
-        }
+    @BeforeTest
+    fun setup() {
+        connect()
     }
 
-    private val graphs = listOf(
-        Pair(intGraph, "`Test Int Graph`"),
-        Pair(stringGraph, "`Test String Graph`"),
-        Pair(floatGraph, "`Test Float Graph`"),
-    )
+    @Test
+    fun `test serializeGraph function with String`() {
+        val serializedGraph = serializeGraph(graph)
+        val expectedSerializedGraph = "A:(B, 1.0);(D, 1.0)|B:(C, 1.0)|C:|D::4"
+        assertEquals(expectedSerializedGraph, serializedGraph)
+    }
 
-    @TestFactory
-    fun `test Save, Get then Delete graphs`(): List<DynamicTest> {
-        return graphs.map { (graph, name) ->
-            DynamicTest.dynamicTest("Test save and get then delete graph with name $name") {
-                saveGraph(graph, name)
-                val savedGraphs = getAllGraphs()
-                val savedGraph = savedGraphs.find { it.third == name } ?: run {
-                    throw AssertionError("Graph with name $name not found")
-                }
-                val savedGraphData = savedGraph.second
-                assertEquals(name, savedGraph.third)
-                assertEquals(graph.size, savedGraphData.size)
+    @Test
+    fun `test Save, Get then Delete graph`() {
+        val graphName = "My graph"
+        saveGraph(graph, graphName)
+        val savedGraphs = getAllGraphs()
+        val savedGraph = savedGraphs.find { it.third == graphName } ?: run {
+            throw AssertionError("Graph with name $graphName not found")
+        }
+        val savedGraphData = savedGraph.second
+        assertEquals(graphName, savedGraph.third)
+        assertEquals(graph.size, savedGraphData.size)
 
-                for (node in graph.vertices) {
-                    val contains = savedGraphData.vertices.containsKey(node.key)
-                    assertTrue(contains)
-                    for (neighbor in node.value) {
-                        assertTrue(savedGraphData.vertices[node.key]?.contains(neighbor) == true)
-                    }
-                }
-                // deleting the graph.
-                val savedGraphId = savedGraph.first
-                deleteGraph(savedGraphId)
-                val graphsAfterDelete = getAllGraphs()
-                val deletedGraph = graphsAfterDelete.find { it.first == savedGraphId }
-                assertEquals(null, deletedGraph)
+        for (node in graph.vertices) {
+            val contains = savedGraphData.vertices.containsKey(node.key)
+            assertTrue(contains)
+            for (neighbor in node.value) {
+                assertTrue(savedGraphData.vertices[node.key]?.contains(neighbor) == true)
             }
         }
+        // deleting the graph.
+        val savedGraphId = savedGraph.first
+        deleteGraph(savedGraphId)
+        val graphsAfterDelete = getAllGraphs()
+        val deletedGraph = graphsAfterDelete.find { it.first == savedGraphId }
+        assertEquals(null, deletedGraph)
     }
 }

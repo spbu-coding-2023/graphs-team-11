@@ -1,3 +1,22 @@
+/*
+ *
+ *  * This file is part of BDSM Graphs.
+ *  *
+ *  * BDSM Graphs is free software: you can redistribute it and/or modify
+ *  * it under the terms of the GNU General Public License as published by
+ *  * the Free Software Foundation, either version 3 of the License, or
+ *  * (at your option) any later version.
+ *  *
+ *  * BDSM Graphs is distributed in the hope that it will be useful,
+ *  * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  * GNU General Public License for more details.
+ *  *
+ *  * You should have received a copy of the GNU General Public License
+ *  * along with . If not, see <https://www.gnu.org/licenses/>.
+ *
+ */
+
 package viewmodel
 
 import androidx.compose.runtime.MutableState
@@ -6,11 +25,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.snapshots.SnapshotStateMap
 import data.db.sqlite_exposed.getAllGraphs
 import data.db.sqlite_exposed.saveGraph
-import model.graph_model.GraphViewClass
+import kotlinx.coroutines.CoroutineScope
 import model.graph_model.Graph
+import model.graph_model.GraphViewClass
 
-class MainVM<D>(
-    passedGraph: Graph<D>?,
+class MainVM(
+    passedGraph: Graph?, scope: CoroutineScope, isEmptyGraph: Boolean
 ) {
     val changedAlgo = mutableStateOf(false)
 
@@ -18,19 +38,22 @@ class MainVM<D>(
     val isSelectNameWindowOpen = mutableStateOf(false)
     val isFileLoaderOpen = mutableStateOf(false)
     val fileLoaderException: MutableState<String?> = mutableStateOf(null)
-    val isFileSaverOpen = mutableStateOf(false)
+    val graphIsReady = mutableStateOf(false)
 
     private val graphNamesList = mutableListOf<String>()
     val isGraphNameAvailable = mutableStateOf(true)
 
     val graphName = mutableStateOf("")
-    val selected: SnapshotStateMap<D, Int> = mutableStateMapOf()
+    val selected: SnapshotStateMap<String, Int> = mutableStateMapOf()
 
-    var graphList: List<Triple<Int, Graph<*>, String>> = getAllGraphs()
+    var graphList: List<Triple<Int, Graph, String>> = getAllGraphs()
 
-    var graph: Graph<D> = passedGraph ?: Graph()
+    var graph: Graph = passedGraph ?: Graph()
 
-    val graphView = GraphViewClass(graph)
+    val graphView = GraphViewClass(graph, scope = scope, isEmpty = isEmptyGraph) {
+        graphIsReady.value = true
+        changedAlgo.value = true
+    }
 
     fun onUndoPressed() {
         changedAlgo.value = true

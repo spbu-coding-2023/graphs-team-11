@@ -23,7 +23,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Testing
-        run: ./gradlew test -Djava.awt.headless=true
+        run: ./gradlew test -Djava.awt.headless=false
 
       - name: Run Test Coverage
         run: ./gradlew jacocoTestReport

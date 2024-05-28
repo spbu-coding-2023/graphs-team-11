@@ -3,10 +3,10 @@ name: Kotlin CI with Gradle
 on:
   push:
     branches:
-      [main, CI, develop]
+      [ main, CI, develop ]
   pull_request:
     branches:
-      [ main, develop]
+      [ main, develop ]
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -21,6 +21,11 @@ jobs:
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
+
+      - name: Debug Java and Gradle versions
+        run: |
+          java -version
+          ./gradlew --version
 
       - name: Testing
         run: ./gradlew test -Djava.awt.headless=false

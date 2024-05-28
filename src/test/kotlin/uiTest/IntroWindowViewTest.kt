@@ -39,15 +39,22 @@ class IntroWindowViewTest {
     @Before
     fun setup() {
         System.setProperty("java.awt.headless", "false")
+
+        println("Starting setup...")
+
         runBlocking {
             connectDatabase()
             applicationState = MyApplicationState(scope)
             state = applicationState.windows.first()
             viewModel = IntroWindowVM(isSettingMenuOpen, scope)
 
+            println("Setup complete. Initializing content...")
+
             composeTestRule.setContent {
                 IntroView(viewModel, state, appTheme, scope)
             }
+
+            println("Setup and initialization complete.")
         }
     }
 

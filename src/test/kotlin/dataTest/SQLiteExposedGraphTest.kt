@@ -25,28 +25,29 @@ import data.db.sqlite_exposed.getAllGraphs
 import data.db.sqlite_exposed.saveGraph
 import data.db.sqlite_exposed.serializeGraph
 import model.graph_model.Graph
-import org.junit.jupiter.api.BeforeAll
+import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
+
+/**
+ * A test class to check the correct operation of the module for saving graphs in database.
+ */
 class SQLiteExposedGraphTest {
 
-    companion object {
-        var graph = Graph().apply {
-            for (i in 'A'..'D') {
-                addNode(i.toString())
-            }
-            addVertice("A", "B")
-            addVertice("A", "D")
-            addVertice("B", "C")
+    var graph = Graph().apply {
+        for (i in 'A'..'D') {
+            addNode(i.toString())
         }
+        addVertice("A", "B")
+        addVertice("A", "D")
+        addVertice("B", "C")
+    }
 
-        @JvmStatic
-        @BeforeAll
-        fun setup() {
-            connect()
-        }
+    @BeforeTest
+    fun setup() {
+        connect()
     }
 
     @Test

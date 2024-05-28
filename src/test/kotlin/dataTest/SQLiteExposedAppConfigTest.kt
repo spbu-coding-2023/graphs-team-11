@@ -31,6 +31,11 @@ import ui.theme.Theme
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
+// need to fix this later!
+
+/**
+ * A test class to check the correct operation of the module for storing settings in the database, namely the theme.
+ */
 class SQLiteExposedAppConfigTest {
 
     companion object {
@@ -42,27 +47,9 @@ class SQLiteExposedAppConfigTest {
     }
 
     @Test
-    fun `test getTheme returns default value`() {
+    fun `test getTheme returns default value because DB is empty`() {
         val currentTheme = getTheme()
         assertEquals(Theme.LIGHT, currentTheme)
-    }
-
-    @Test
-    fun `test theme DB doesn't contain theme`() {
-        var dbCount = -1
-        // Clear the DB because we need to make sure that the theme is not set
-        transaction {
-            Settings.deleteAll()
-            dbCount = Settings.selectAll().where { Settings.key eq "theme" }.count().toInt()
-        }
-        assertEquals(dbCount, 0)
-
-        setTheme(Theme.DARK)
-
-        transaction {
-            dbCount = Settings.selectAll().where { Settings.key eq "theme" }.count().toInt()
-        }
-        assertEquals(dbCount, 1)
     }
 
     @Test

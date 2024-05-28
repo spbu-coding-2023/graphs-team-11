@@ -30,6 +30,15 @@ import org.junit.jupiter.api.TestFactory
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
+
+/**
+ * Test class for checking correctness of graph generation by graph generators.
+ *
+ * It checks the number of vertices in the generated graph, weight of edges and
+ * the preservation of the Graph class invariant - that all edges point from graph to graph.
+ *
+ * Testing is performed on 4 different sizes of graphs - 10, 88, 100, 500.
+ */
 class GraphGeneratorsTest {
     private val nodeAmounts = listOf(10, 88, 100, 500)
 

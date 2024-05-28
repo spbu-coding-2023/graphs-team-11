@@ -24,6 +24,15 @@ import model.graph_model.UndirectedGraph
 import java.io.File
 
 fun loadGraphML(path: String): Graph {
+
+    var stringFile = ""
+    File(path).forEachLine { stringFile += it + "\n" }
+    stringFile = stringFile.trim('\n')
+
+    return proccesFileLoad(stringFile)
+}
+
+fun proccesFileLoad(file: String): Graph {
     var graph = Graph()
 
     val idToKey: MutableMap<String, String> = mutableMapOf()
@@ -32,7 +41,7 @@ fun loadGraphML(path: String): Graph {
     var mainKeyId: String? = null
     var weightId: String? = null
 
-    File(path).forEachLine { it ->
+    file.split("\n").forEach() { it ->
         val striped = it.trim(' ').split(" ")
         val tag = striped[0]
 
@@ -52,6 +61,12 @@ fun loadGraphML(path: String): Graph {
                     }
                     if (data["edgedefault"] == "undirected") {
                         graph = UndirectedGraph()
+                    }
+                }
+
+                tag.startsWith("</graph") -> {
+                    if (!curData.isEmpty()) {
+                        throw NullPointerException("Invalid File Format: some tag isn't close")
                     }
                 }
 
@@ -75,6 +90,9 @@ fun loadGraphML(path: String): Graph {
                 }
 
                 tag.startsWith("<node") -> {
+                    if (!curData.isEmpty()) {
+                        throw NullPointerException("Invalid File Format: No node exit \nProblem in line \"$it\"")
+                    }
                     curData["id"] = it.split("\"")[1]
                     if ("/" in it) {
                         try {
@@ -124,6 +142,9 @@ fun loadGraphML(path: String): Graph {
                 }
 
                 tag.startsWith("<edge") -> {
+                    if (!curData.isEmpty()) {
+                        throw NullPointerException("Invalid File Format: No edge exit \nProblem in line \"$it\"")
+                    }
                     val data = mutableMapOf<String, String>()
                     it.split(" ").forEach {
                         if ("=" in it) {
@@ -133,7 +154,6 @@ fun loadGraphML(path: String): Graph {
                                     .trim('>')
                                     .trim('/')
                                     .trim('"')
-
                         }
                     }
                     try {

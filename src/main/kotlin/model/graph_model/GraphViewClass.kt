@@ -43,6 +43,7 @@ import org.gephi.project.api.ProjectController
 import org.gephi.project.api.Workspace
 import org.openide.util.Lookup
 import java.util.*
+import kotlin.math.max
 import kotlin.math.sqrt
 
 
@@ -82,7 +83,7 @@ class GraphViewClass(
 
     var returnStack by mutableStateOf(Stack<Update>())
 
-    lateinit var mainJob: Job
+    var mainJob: Job
 
     init {
         mainJob = scope.launch {
@@ -138,9 +139,9 @@ class GraphViewClass(
 
     }
 
-    fun addVert(oneValue: String, twoValue: String) {
+    fun addVert(oneValue: String, twoValue: String, weight: Float = 1f) {
         if (oneValue in this.nodesViews && twoValue in this.nodesViews) {
-            this.graph.addVertice(oneValue, twoValue)
+            this.graph.addVertice(oneValue, twoValue, weight = weight)
             if (oneValue in this.vertViews) {
                 this.vertViews[oneValue]!![twoValue] = VertView(
                     start = nodesViews[oneValue]!!, end = nodesViews[twoValue]!!, color = vertColor, alpha = 1f
@@ -189,7 +190,7 @@ class GraphViewClass(
     }
 
     // just for fast not implemented like algoritm
-    suspend fun layout(maxIter: Int = 100): MutableMap<String, Offset> {
+    suspend fun layout(maxIter: Int = 500): MutableMap<String, Offset> {
         val positions: MutableMap<String, Offset> = mutableMapOf()
         return withContext(Dispatchers.Default) {
             val pc = Lookup.getDefault().lookup(ProjectController::class.java)
@@ -235,13 +236,14 @@ class GraphViewClass(
                 x.add(nodes[v]!!.x())
                 y.add(nodes[v]!!.y())
             }
+            val nodePerScreen = max(x.size / 500, 1)
             if (x.size > 0) {
                 val (minX, maxX) = Pair(x.min(), x.max())
                 val (minY, maxY) = Pair(y.min(), y.max())
                 for ((v, _) in graph.vertices) {
                     positions[v] = Offset(
-                        x = 1 - 2 * (nodes[v]!!.x() - minX) / (maxX - minX),
-                        y = 1 - 2 * (nodes[v]!!.y() - minY) / (maxY - minY)
+                        x = nodePerScreen - 2 * nodePerScreen * (nodes[v]!!.x() - minX) / (maxX - minX),
+                        y = nodePerScreen - 2 * nodePerScreen * (nodes[v]!!.y() - minY) / (maxY - minY)
                     )
                 }
             }

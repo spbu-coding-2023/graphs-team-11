@@ -56,6 +56,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -78,7 +79,8 @@ fun SettingsView(onClose: () -> Unit, appTheme: MutableState<Theme>) {
         window.minimumSize = Dimension(600, 400)
         BdsmAppTheme(appTheme = appTheme.value) {
             Column(
-                modifier = Modifier.background(MaterialTheme.colors.background).fillMaxSize().padding(20.dp),
+                modifier = Modifier.background(MaterialTheme.colors.background).fillMaxSize().padding(20.dp).testTag("SettingsWindowTag")
+                ,
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.SpaceBetween,
             ) {

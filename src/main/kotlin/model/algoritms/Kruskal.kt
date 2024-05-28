@@ -68,11 +68,11 @@ class Kruskal : Algoritm(null) {
 
         for ((i, neighbourhood) in graph.vertices) {
             updateVert[i] = mutableMapOf()
-            for ((j, weight) in neighbourhood) {
+            for ((j, _) in neighbourhood) {
                 updateVert[i]!![j] = VertViewUpdate(alpha = 0.1f)
             }
         }
-        for ((weight, nodePair) in treeVerts) {
+        for ((_, nodePair) in treeVerts) {
             if (nodePair.first !in updateVert) updateVert[nodePair.first] = mutableMapOf()
             updateVert[nodePair.first]!![nodePair.second] = VertViewUpdate(alpha = 1f)
         }

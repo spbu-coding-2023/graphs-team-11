@@ -42,6 +42,7 @@ class IntroWindowVM(
     val chosenGenerator = mutableStateOf("Random Tree")
     val weightMax = mutableStateOf("1")
 
+
     fun onSettingsPressed() {
         isSettingMenuOpen.value = true
     }

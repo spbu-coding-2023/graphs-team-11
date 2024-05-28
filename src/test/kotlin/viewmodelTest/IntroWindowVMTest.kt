@@ -27,10 +27,7 @@ import kotlinx.coroutines.test.TestScope
 import model.graph_model.Graph
 import org.junit.jupiter.api.BeforeEach
 import viewmodel.IntroWindowVM
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
-import kotlin.test.assertTrue
+import kotlin.test.*
 
 class IntroWindowVMTest {
 
@@ -39,7 +36,7 @@ class IntroWindowVMTest {
     private val testDispatcher = StandardTestDispatcher()
     private val testScope = TestScope(testDispatcher)
 
-    @BeforeEach
+    @BeforeTest
     fun setup() {
         connect()
         isSettingMenuOpen = mutableStateOf(false)

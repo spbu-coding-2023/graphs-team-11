@@ -45,6 +45,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Window
@@ -98,7 +99,7 @@ fun SavedGraphItem(graph: Graph, name: String, onUsePressed: () -> Unit, onDelet
             Icon(Icons.Default.Check,
                 contentDescription = "Use",
                 tint = Color(0xFF21a038),
-                modifier = Modifier.clickable { onUsePressed() })
+                modifier = Modifier.clickable { onUsePressed() }.testTag("UseButton"))
             Divider(Modifier.width(20.dp))
             Icon(Icons.Default.Delete,
                 contentDescription = "Delete",

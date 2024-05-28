@@ -27,6 +27,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.MenuBar
@@ -114,7 +115,7 @@ fun App(
 ) {
     BdsmAppTheme(appTheme = appTheme.value) {
         if (viewModel.graphIsReady.value) {
-            Row {
+            Row(modifier = Modifier.testTag("MainApp")) {
                 Column(modifier = Modifier.background(MaterialTheme.colors.background)) {
                     LeftMenu(viewModel.graphView, changedAlgo, viewModel.selected)
                     CommeticsMenu(viewModel.graphView, changedAlgo)

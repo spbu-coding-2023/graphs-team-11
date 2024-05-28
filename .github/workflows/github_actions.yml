@@ -22,6 +22,7 @@ jobs:
           docker buildx inspect --bootstrap
 
       - name: Cache Gradle dependencies
+        id: gradle-cache
         uses: actions/cache@v3
         with:
           path: |
@@ -31,8 +32,24 @@ jobs:
           restore-keys: |
             gradle-${{ runner.os }}-
 
+      - name: Cache Docker layers
+        id: docker-cache
+        uses: actions/cache@v3
+        with:
+          path: /tmp/.buildx-cache
+          key: docker-${{ runner.os }}-${{ github.sha }}
+          restore-keys: |
+            docker-${{ runner.os }}-
+
       - name: Build Docker image
-        run: docker buildx build --tag graphs-team-11:latest --load --cache-from type=gha --cache-to type=gha,mode=max .
+        run: docker buildx build --tag graphs-team-11:latest --load --cache-from type=local,src=/tmp/.buildx-cache --cache-to type=local,dest=/tmp/.buildx-cache .
 
       - name: Run tests in Docker
         run: docker run --rm graphs-team-11:latest sh -c "xvfb-run -a ./gradlew test --stacktrace"
+
+      - name: Save Docker layer cache
+        if: always()
+        uses: actions/cache@v3
+        with:
+          path: /tmp/.buildx-cache
+          key: docker-${{ runner.os }}-${{ github.sha }}

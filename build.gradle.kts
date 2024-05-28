@@ -36,9 +36,6 @@ dependencies {
     // File Picker
     implementation("com.darkrockstudios:mpfilepicker:3.1.0")
 
-    // XML Serialization
-    implementation("io.github.pdvrieze.xmlutil:serialization:0.86.3")
-
     implementation("org.gephi", "gephi-toolkit", "0.10.1", classifier = "all")
 
     testImplementation("org.jetbrains.kotlin:kotlin-test")
@@ -53,6 +50,12 @@ dependencies {
 
     // Compose UI Test
     testImplementation("org.jetbrains.compose.ui:ui-test-junit4:1.6.2")
+
+    // Test Containers
+    testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
+    testImplementation("org.testcontainers:testcontainers:1.19.8")
+    testImplementation("org.testcontainers:junit-jupiter:1.19.8")
+
 }
 
 tasks.withType<Test> {
@@ -102,7 +105,8 @@ compose.desktop {
 
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "Graphs Team 11"
+            modules("java.compiler", "java.instrument" , "java.sql", "jdk.unsupported")
+            packageName = "GraphsTeam11"
             packageVersion = "1.0.0"
         }
     }

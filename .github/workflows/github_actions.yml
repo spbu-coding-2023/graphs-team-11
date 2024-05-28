@@ -1,4 +1,4 @@
-name: Kotlin CI with Gradle
+name: Kotlin CI with Gradle in Docker
 
 on:
   push:
@@ -7,34 +7,39 @@ on:
   pull_request:
     branches:
       [ main, develop ]
+
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - name: Set up JDK 22.0.1
-        uses: actions/setup-java@v4
-        with:
-          distribution: "oracle"
-          java-version: "22.0.1"
-
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
-
-      - name: Debug Java and Gradle versions
+      - name: Set up Docker Buildx with docker-container driver
         run: |
-          java -version
-          ./gradlew --version
+          docker buildx create --name mybuilder --use
+          docker buildx inspect --bootstrap
 
-      - name: Testing
-        run: ./gradlew test -Djava.awt.headless=false
-
-      - name: Run Test Coverage
-        run: ./gradlew jacocoTestReport
-
-      - name: Generate JaCoCo Badge
-        uses: cicirello/jacoco-badge-generator@v2
+      - name: Cache Docker layers
+        uses: actions/cache@v3
         with:
-          generate-branches-badge: true
-          jacoco-csv-file: build/reports/jacoco/test/jacocoTestReport.csv
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+
+      - name: Build Docker image
+        run: docker buildx build --cache-from=type=local,src=/tmp/.buildx-cache --cache-to=type=local,dest=/tmp/.buildx-cache --tag graphs-team-11:latest --load .
+
+      - name: Run tests in Docker
+        run: |
+          docker run --rm -e -it --entrypoint /bin/bash graphs-team-11:latest ./gradlew test
+
+      - name: Set up Docker Buildx for JaCoCo
+        uses: docker/setup-buildx-action@v2
+
+      - name: Run Test Coverage and Generate JaCoCo Badge
+        run: |
+          docker run --rm graphs-team-11:latest ./gradlew jacocoTestReport
+          docker run --rm -v ${{ github.workspace }}/build/reports/jacoco/test:/reports cicirello/jacoco-badge-generator:latest --generate-branches-badge=true --jacoco-csv-file=/reports/jacocoTestReport.csv

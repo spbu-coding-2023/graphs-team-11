@@ -94,7 +94,7 @@ tasks.named<JacocoReport>("jacocoTestReport") {
     dependsOn(tasks.test)
     reports {
         csv.required = true
-        xml.required = true
+        xml.required = false
         html.outputLocation = layout.buildDirectory.dir("jacocoHtml")
     }
 }
@@ -105,8 +105,8 @@ compose.desktop {
 
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            modules("java.compiler", "java.instrument" , "java.sql", "jdk.unsupported")
-            packageName = "GraphsTeam11"
+            modules("java.compile", "java,instrument", "java,sql", "jdk.unsupported")
+            packageName = "Graphs Team 11"
             packageVersion = "1.0.0"
         }
     }

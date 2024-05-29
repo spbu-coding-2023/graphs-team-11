@@ -1,11 +1,28 @@
-version: 2
+version: 3
 
 mergeable:
-  - when: pull_request.*, pull_request_review.*
-    name: 'Approval check'
+  - when: 'pull_request.*, pull_request_review.*'
+    name: Approvals check
+    filter:
+      # ignore 'Feedback' PR
+      - do: payload
+        pull_request:
+          title:
+            must_exclude:
+              regex: ^Feedback$
+              regex_flag: none
     validate:
+      - do: description
+        no_empty:
+          enabled: true
+          message: 'Description should not be empty! Please provide a description for this pull request.'
       - do: approvals
         min:
           count: 1
+        block:
+          changes_requested: true
         limit:
-          users: [ 'VersusXX', '7gambit7', 'AlexandrKudrya']
+          users:
+            - VersusXX
+            - AlexandrKudrya
+            - 7gambit7

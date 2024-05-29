@@ -1,17 +1,13 @@
 name: Kotlin CI with Gradle in Docker
 
 on:
-  push:
-    branches:
-      [ main, CI, develop ]
   pull_request:
     branches:
-      [ main, develop ]
+      - '**'
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4

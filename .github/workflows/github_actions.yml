@@ -3,15 +3,18 @@ name: Kotlin CI with Gradle in Docker
 on:
   push:
     branches:
-      [ main, CI, develop ]
+      - '**'
   pull_request:
     branches:
-      [ main, develop ]
+      - '**'
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
+    # Conditional to prevent running this job on push if the push is associated with a pull request
+    if: >
+      github.event_name == 'pull_request' ||
+      (github.event_name == 'push' && github.event.pull_request == null)
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4

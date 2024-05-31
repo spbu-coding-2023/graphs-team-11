@@ -1,0 +1,24 @@
+name: Kotlin CI with Gradle in Docker
+
+on:
+  pull_request:
+    branches:
+      - '**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx with docker-container driver
+        run: |
+          docker buildx create --name mybuilder --use
+          docker buildx inspect --bootstrap
+
+      - name: Build Docker image
+        run: docker buildx build --tag graphs-team-11:latest --load .
+
+      - name: Run tests in Docker
+        run: docker run --rm graphs-team-11:latest sh -c "xvfb-run -a ./gradlew test --stacktrace"

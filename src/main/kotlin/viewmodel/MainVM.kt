@@ -22,12 +22,16 @@ package viewmodel
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.snapshots.SnapshotStateMap
+import androidx.compose.runtime.toMutableStateList
+import data.db.sqlite_exposed.deleteGraph
 import data.db.sqlite_exposed.getAllGraphs
 import data.db.sqlite_exposed.saveGraph
 import kotlinx.coroutines.CoroutineScope
 import model.graph_model.Graph
 import model.graph_model.GraphViewClass
+import ui.components.MyWindowState
 
 class MainVM(
     passedGraph: Graph?, scope: CoroutineScope, isEmptyGraph: Boolean
@@ -40,13 +44,12 @@ class MainVM(
     val fileLoaderException: MutableState<String?> = mutableStateOf(null)
     val graphIsReady = mutableStateOf(false)
 
-    private val graphNamesList = mutableListOf<String>()
     val isGraphNameAvailable = mutableStateOf(true)
 
     val graphName = mutableStateOf("")
     val selected: SnapshotStateMap<String, Int> = mutableStateMapOf()
 
-    var graphList: List<Triple<Int, Graph, String>> = getAllGraphs()
+    var graphList: SnapshotStateList<Triple<Int, Graph, String>> = getAllGraphs().toMutableStateList()
 
     var graph: Graph = passedGraph ?: Graph()
 
@@ -62,7 +65,8 @@ class MainVM(
 
     fun saveSQLiteGraph() {
         saveGraph(graph, graphName.value.ifEmpty { "Graph " + graphList.size + 1 })
-        graphList = getAllGraphs()
+        graphList.clear()
+        graphList.addAll(getAllGraphs().toMutableStateList())
     }
 
     fun onSQLEViewGraphsPressed() {
@@ -71,13 +75,22 @@ class MainVM(
 
     fun onSaveGraphPressed() {
         isSelectNameWindowOpen.value = true
-        graphNamesList.addAll(graphList.map { it.third })
+    }
+
+    fun onGraphLoad(state: MyWindowState, graph: Graph) {
+        state.reloadWindow(graph, state.scope)
+    }
+
+    fun onGraphDelete(id: Int) {
+        deleteGraph(id)
+        println(getAllGraphs().size)
+        graphList.removeIf { it.first == id }
     }
 
     fun onTextChange(text: String) {
         if (text.length <= 40) {
             graphName.value = text
         }
-        isGraphNameAvailable.value = !graphNamesList.contains(text)
+        isGraphNameAvailable.value = !graphList.map { it.third }.contains(text)
     }
 }

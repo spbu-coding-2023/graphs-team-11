@@ -96,7 +96,7 @@ fun MainWindow(
         }
         if (viewModel.isSavedGraphsOpen.value) {
             SavedGraphsView(
-                onClose = { viewModel.isSavedGraphsOpen.value = false }, appTheme, viewModel.graphList, state
+                onClose = { viewModel.isSavedGraphsOpen.value = false }, appTheme, viewModel, state
             )
         }
         if (viewModel.isSelectNameWindowOpen.value) {

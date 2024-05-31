@@ -40,7 +40,6 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -53,15 +52,13 @@ import model.graph_model.Graph
 import ui.components.MyWindowState
 import ui.theme.BdsmAppTheme
 import ui.theme.Theme
-import viewmodel.SavedGraphsVM
+import viewmodel.MainVM
 import java.awt.Dimension
 
 @Composable
 fun SavedGraphsView(
-    onClose: () -> Unit, appTheme: MutableState<Theme>, graphs: List<Triple<Int, Graph, String>>, state: MyWindowState
+    onClose: () -> Unit, appTheme: MutableState<Theme>, viewModel: MainVM, state: MyWindowState
 ) {
-    val viewModel = SavedGraphsVM()
-    val graphList = mutableStateOf(graphs)
 
     Window(
         title = "Saved Graphs", onCloseRequest = onClose, alwaysOnTop = true
@@ -72,11 +69,11 @@ fun SavedGraphsView(
                 modifier = Modifier.background(MaterialTheme.colors.background).fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                graphList.value.forEach { (id, graph, name) ->
+                viewModel.graphList.forEach { (id, graph, name) ->
                     item {
                         SavedGraphItem(graph, name, onUsePressed = {
                             viewModel.onGraphLoad(state, graph)
-                        }, onDeletePressed = { viewModel.onGraphDelete(id, graphList) })
+                        }, onDeletePressed = { viewModel.onGraphDelete(id) })
                     }
                 }
             }
@@ -96,10 +93,12 @@ fun SavedGraphItem(graph: Graph, name: String, onUsePressed: () -> Unit, onDelet
         Text(text = graph.size.toString(), modifier = Modifier.padding(10.dp), fontSize = 20.sp)
 
         Row(modifier = Modifier.padding(10.dp)) {
-            Icon(Icons.Default.Check,
+            Icon(
+                Icons.Default.Check,
                 contentDescription = "Use",
                 tint = Color(0xFF21a038),
-                modifier = Modifier.clickable { onUsePressed() }.testTag("UseButton"))
+                modifier = Modifier.clickable { onUsePressed() }.testTag("UseButton")
+            )
             Divider(Modifier.width(20.dp))
             Icon(Icons.Default.Delete,
                 contentDescription = "Delete",
